@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>雅思学习台</title>
+<title>优雅思考</title>
 <style>
   :root{
     --bg:#f5f3ee; --card:#fff; --ink:#1e2a26; --muted:#8a938e;
@@ -50,7 +50,7 @@
   .brand-settings{
     width:26px;height:26px;border:none;border-radius:8px;
     background:var(--green-soft);color:var(--green);
-    font-size:14px;cursor:pointer;display:grid;place-items:center;
+    cursor:pointer;display:grid;place-items:center;padding:0;
     transition:.15s;flex:none;
   }
   .brand-settings:hover{background:var(--green);color:#fff}
@@ -1146,7 +1146,9 @@
         <div class="brand-mark">IELTS</div>
         <div class="brand-sub">DESK</div>
       </div>
-      <button class="brand-settings" id="settingsBtn" title="设置">⚙</button>
+      <button class="brand-settings" id="settingsBtn" title="设置">
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+</button>
     </div>
     <nav class="nav">
       <button class="nav-item active" data-view="plan"><span class="nav-ico">◎</span>学习任务</button>
@@ -1364,10 +1366,14 @@
     <div class="settings-row" style="flex-direction:column;align-items:stretch">
       <div class="settings-row-label" style="margin-bottom:8px">数据备份</div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="ghost-btn" id="exportBtn" style="font-size:12px;padding:7px 12px">导出备份</button>
         <button class="ghost-btn" id="importBtn" style="font-size:12px;padding:7px 12px">导入备份</button>
         <input type="file" id="importFile" accept="application/json" hidden>
+      </div>
+      <!-- 👇 新增：清空当前数据 -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+        <button class="ghost-btn" id="clearDataBtn" style="font-size:12px;padding:7px 12px;color:var(--danger);">清空当前数据</button>
       </div>
     </div>
 
@@ -5990,7 +5996,27 @@ document.getElementById('settingsModal').addEventListener('click', e => {
 });
 
 document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
-
+// 👇 新增：清空数据按钮
+document.getElementById('clearDataBtn').addEventListener('click', () => {
+  askConfirm(
+    '⚠️ 危险操作：清空所有数据？', 
+    '这会彻底删除你的所有任务、专注记录、复习数据和设置，并且无法恢复！确定要清空吗？', 
+    () => {
+      // 清除本地存储
+      localStorage.removeItem(STORE_KEY);
+      // 清除所有历史版本的缓存
+      LEGACY_KEYS.forEach(k => localStorage.removeItem(k));
+      
+      // 重置状态
+      state = makeEmptyState();
+      save();
+      
+      // 刷新页面，恢复最干净的状态
+      window.location.reload();
+    }, 
+    '确定清空'
+  );
+});
 /* ============================================================
    目标设置
 ============================================================ */

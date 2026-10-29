@@ -219,12 +219,21 @@
   .task.done .check{background:var(--cat-color,#2f5d50);border-color:var(--cat-color,#2f5d50)}
   .task-body{flex:1;min-width:0;cursor:pointer}
   .task-text{font-size:13.5px;line-height:1.5;word-break:break-word;transition:.15s}
+  .toggle-btn:hover {
+    color: var(--cat-color, #2f5d50) !important;
+    background-color: var(--aux-bg);
+    border-radius: 4px;
+  }
   .task-body:hover .task-text{color:var(--cat-color,#2f5d50)}
   .task.done .task-text{text-decoration:line-through;color:var(--muted)}
   .task.done .task-body:hover .task-text{color:var(--muted)}
   .task.sub-level .task-text{font-size:12.5px;color:var(--ink)}
   .task.sub-level .task-body:hover .task-text{color:var(--cat-color,#2f5d50)}
   .task.sub-level.done .task-text{color:var(--muted);opacity:.75;text-decoration:line-through}
+  .task.subsub-level{padding-left:42px}
+  .task.subsub-level .task-text{font-size:12px;color:var(--ink)}
+  .task.subsub-level.done .task-text{color:var(--muted);opacity:.75;text-decoration:line-through}
+  .subsub-indent{flex:none;color:var(--muted);font-size:11px;margin-top:1px;width:10px;text-align:center}
   .archived-badge{
     display:inline-block;font-size:10px;padding:1px 6px;border-radius:99px;
     background:var(--aux-line);color:var(--muted);margin-left:5px;
@@ -325,8 +334,38 @@
     display:flex;align-items:center;justify-content:space-between;gap:8px;
   }
 
-  /* 完成列表：两列（名称 + 时长） */
-  .done-tree{list-style:none;display:flex;flex-direction:column;gap:0;max-height:480px;overflow:auto}
+    /* 完成列表：两列（名称 + 时长） */
+  .done-tree{
+    list-style:none;display:flex;flex-direction:column;gap:0;
+    max-height:480px;overflow-y:auto;overflow-x:hidden;
+    padding-right:12px; /* 👈 右侧留白，防止滚动条遮挡文字 */
+    padding-left:6px;  /* 👈 左侧稍微往里缩一点 */
+    scrollbar-width: none; /* Firefox 默认隐藏滚动条 */
+  }
+  
+  /* 针对 Chrome/Safari 默认隐藏滚动条 */
+  .done-tree::-webkit-scrollbar {
+    width: 6px;
+  }
+  .done-tree::-webkit-scrollbar-thumb {
+    background: transparent; /* 平时透明不可见 */
+    border-radius: 10px;
+  }
+  .done-tree::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* 👇 鼠标悬停在列表上时，才显示滚动条 */
+  .done-tree:hover::-webkit-scrollbar-thumb {
+    background: var(--aux-line);
+  }
+  .done-tree:hover::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+  }
+  .done-tree::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   .done-tree-item{
     padding:7px 0;border-bottom:1px dashed var(--aux-line);
   }
@@ -515,7 +554,18 @@
   }
 
   /* 月度时间轴 */
-  .tl-wrap{width:100%;overflow-x:auto;padding-bottom:4px}
+  .tl-wrap{
+    width:100%;
+    overflow-x:auto;
+    padding-bottom:4px;
+    padding-right:16px; /* 👈 新增：右侧留白，防止贴边 */
+    scrollbar-width: none; /* 👈 新增：Firefox 彻底隐藏滚动条 */
+  }
+  
+  /* 👇 新增：Chrome/Safari/Edge 彻底隐藏滚动条，但不影响滑动 */
+  .tl-wrap::-webkit-scrollbar {
+    display: none; 
+  }
   .tl-canvas{position:relative;min-width:640px}
   .tl-days-row{
     display:grid;grid-template-columns:40px repeat(var(--tl-days,31), 1fr);
@@ -551,7 +601,7 @@
     position:relative;min-width:0;
     border-left:1px dashed transparent;
   }
-  .tl-day-col.today{background:var(--green-soft);opacity:.6}
+  .tl-day-col.today{background:var(--green-soft)}
   .tl-block{
     position:absolute;left:0;right:0;
     border-radius:2px;
@@ -615,9 +665,9 @@
   .part-btn.done{background:var(--green-soft);color:var(--green);font-weight:600}
   .cnt{background:var(--green);color:#fff;font-size:9.5px;border-radius:99px;padding:1px 5px;line-height:1.5}
 
-  .modal{position:fixed;inset:0;background:rgba(20,30,26,.42);display:none;place-items:center;padding:20px;z-index:50;overflow:auto}
+  .modal{position:fixed;inset:0;background:rgba(20,30,26,.42);display:none;place-items:center;padding:20px;z-index:9999;overflow:auto}
   .modal.show{display:grid}
-  .modal.confirm-layer{z-index:55}
+  .modal.confirm-layer{z-index:10010}
   .modal-box{
     background:var(--card);border-radius:18px;padding:22px;width:min(500px,100%);
     display:flex;flex-direction:column;gap:13px;max-height:88vh;overflow:auto;
@@ -626,11 +676,45 @@
   .modal-box.small{width:min(360px,100%);gap:8px}
   .modal-box.wide{width:min(720px,100%)}
   .modal-box h3{font-size:15px;font-weight:700;line-height:1.4}
+  .modal-error-msg {
+    display: none;
+    background: var(--danger);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    animation: shake 0.3s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
   .modal-box p{font-size:12.5px;color:var(--muted);line-height:1.6;word-break:break-word}
   .modal-box label{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--muted)}
   .modal-box input, .modal-box textarea, .modal-box select{
     border:none;background:var(--aux-bg);border-radius:9px;
     padding:9px 12px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;transition:.15s;
+  }
+
+  /* 👇 新增：统一美化并自定义下拉箭头 */
+  .modal-box select, .date-fields select, .duration-row select {
+    /* 隐藏原生箭头 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* 用 SVG 画一个默认的下箭头 */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a938e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    /* 关键：调整这里的位置 */
+    /* 第一个值 calc(100% - 16px) 是左右位置，数值越大越靠左（这里从贴边改为了留出 16px） */
+    /* 第二个值 center 是上下居中 */
+    background-position: calc(100% - 16px) center;
+    background-size: 16px;
+    background-repeat: no-repeat;
+    /* 右侧留出足够的 padding 防止文字被箭头挡住 */
+    padding-right: 36px; 
   }
   .modal-box input:focus, .modal-box textarea:focus, .modal-box select:focus{background:var(--card);box-shadow:0 0 0 2px var(--green-2)}
   .modal-box input:disabled{opacity:.5}
@@ -985,6 +1069,10 @@
   .tl-task-line{font-size:13px;line-height:1.5;margin-top:8px}
   .tl-task-line .muted{color:var(--muted);font-size:12px}
 
+    /* 单独调宽任务详情弹窗的行间距 */
+  #editModal .modal-box {
+    gap: 18px;
+  }
   @media(max-width:1180px){
     .review-two-col{grid-template-columns:1fr}
     .daily-weekly-row{grid-template-columns:1fr}
@@ -995,22 +1083,48 @@
   @media(max-width:880px){
     .app{flex-direction:column}
     .sidebar{
-      width:auto;height:auto;position:static;flex-direction:row;
-      align-items:center;gap:14px;padding:12px 14px;
-      border-bottom:1px solid var(--aux-line);flex-wrap:wrap;
+      width:auto;height:auto;position:static;
+      flex-direction:column; /* 👈 改成纵向排列 */
+      align-items:stretch;gap:12px;padding:16px 14px;
+      border-bottom:1px solid var(--aux-line);
     }
-    .brand{padding:0}
+    
+    /* 第一行：Logo 和 导航按钮 */
+    .brand{padding:0;margin-bottom:4px;}
     .brand-sub{display:none}
-    .nav{flex-direction:row;gap:6px;flex:1;flex-wrap:wrap}
-    .nav-item{padding:8px 11px;font-size:13px;white-space:nowrap}
-    .side-foot{margin-top:0;flex-direction:row;align-items:center;gap:10px}
-    .side-countdown{padding:8px 12px;text-align:left}
-    .side-cd-num{font-size:18px}
-    .side-cd-label{font-size:10.5px}
+    .brand-mark{font-size:18px;}
+    .nav{flex-direction:row;gap:8px;flex:1;flex-wrap:wrap;margin-bottom:4px;}
+    .nav-item{padding:8px 12px;font-size:13px;white-space:nowrap;background:var(--aux-bg);justify-content:center;flex:1;}
+    .nav-item.active{background:var(--green);color:#fff;}
+    
+    /* 第二行：倒计时和目标 */
+    .side-foot{
+      margin-top:0;flex-direction:row;align-items:stretch;gap:10px;
+    }
+    .side-countdown{
+      flex: 1; padding:12px 16px; text-align:left;
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+    }
+    .side-cd-line {justify-content: flex-start;}
+    .side-cd-num{font-size:22px}
+    .side-cd-label{font-size:12px}
     .side-cd-date{display:none}
-    .side-goals{margin-top:2px;padding-top:4px;font-size:10.5px}
-    .side-goals .goals-main{font-size:11.5px}
-    .ghost-btn.small{width:auto;white-space:nowrap}
+    
+    /* 把目标分数单独拿出来，不要挤在一行 */
+    .side-goals{
+      margin-top:4px;padding-top:0;border-top:none;font-size:11px;
+      width: 100%; display: flex; flex-wrap: wrap; gap: 4px;
+    }
+    .side-goals .goals-main{font-size:12px;margin-right:6px;}
+    .side-goals .goals-sub{font-size:11px;}
+    
+    /* 学习记录按钮 */
+    .ghost-btn.small{
+      width:auto;white-space:nowrap;flex:none;display:flex;align-items:center;justify-content:center;
+      font-size:12.5px;padding:0 18px;border-radius:14px;
+    }
+    
+    /* 主体内容外边距 */
     main{padding:20px 14px 56px}
     .plan-head-left h1{font-size:20px}
     .cat-columns{grid-template-columns:1fr}
@@ -1287,14 +1401,16 @@
 
 <!-- 新建任务 -->
 <div class="modal" id="addModal">
-  <div class="modal-box">
+  <div class="modal-box" id="amBox">
     <h3 id="amTitle">新建任务 · 单词</h3>
+    <div class="modal-error-msg" id="amErrorMsg"></div>
     <label>任务内容<input type="text" id="amTaskText" maxlength="80"></label>
     <div class="date-fields">
       <label>学科<select id="amCategory"></select></label>
-      <label>任务层级<select id="amLevel"><option value="top">一级任务</option><option value="sub">二级任务</option></select></label>
+      <label><span id="amLevelLabelText">任务层级</span><select id="amLevel"><option value="top">一级任务</option><option value="sub">二级任务</option><option value="subsub">三级任务</option></select></label>
     </div>
-    <label id="amParentRow" hidden>所属一级任务<select id="amParent"></select></label>
+    <label id="amParentRow" hidden><span id="amParentLabelText">所属一级任务</span><select id="amParent"></select></label>
+    <label id="amSubParentRow" hidden>所属二级任务<select id="amSubParent"></select></label>
     <label>备注说明<textarea id="amTaskNote" class="note-input" maxlength="200" rows="1"></textarea></label>
     <div class="date-fields">
       <label>开始日期<input type="date" id="amStartDate"></label>
@@ -1304,13 +1420,28 @@
       <input type="checkbox" id="amEndless" checked>
       <label for="amEndless">无限期</label>
     </div>
-    <div class="sub-edit-area">
-      <div class="sub-edit-header">
-        <span class="sub-edit-label">二级任务</span>
-        <button class="sub-add-icon-btn" id="amSubAddBtn" type="button" title="添加二级任务">+</button>
+    <div id="amChildAreas">
+      <div class="sub-edit-area" id="amSubArea">
+        <div class="sub-edit-header">
+          <span class="sub-edit-label">二级任务</span>
+          <button class="sub-add-icon-btn" id="amSubAddBtn" type="button" title="添加二级任务">+</button>
+        </div>
+        <ul class="sub-edit-list" id="amSubList"></ul>
+        <div style="font-size:11px;color:var(--muted)">保存后可在编辑弹窗中单击编辑、删除，长按拖动排序</div>
       </div>
-      <ul class="sub-edit-list" id="amSubList"></ul>
-      <div style="font-size:11px;color:var(--muted)">保存后可在编辑弹窗中单击编辑、删除，长按拖动排序</div>
+      
+      <!-- 新增三级任务区 -->
+      <div class="sub-edit-area" id="amSubSubArea">
+        <div class="sub-edit-header">
+          <span class="sub-edit-label">三级任务</span>
+          <button class="sub-add-icon-btn" id="amSubSubAddBtn" type="button" title="添加三级任务">+</button>
+        </div>
+        <label id="amSubSubParentRow" style="font-size:12px;color:var(--muted);gap:4px">所属二级任务
+          <select id="amSubSubParent"></select>
+        </label>
+        <ul class="sub-edit-list" id="amSubSubList"></ul>
+        <div style="font-size:11px;color:var(--muted)">三级任务需选一个已保存的二级任务作为上级</div>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="ghost-btn" id="amCancel">取消</button>
@@ -1321,21 +1452,23 @@
 
 <!-- 编辑任务 -->
 <div class="modal" id="editModal">
-  <div class="modal-box">
+  <div class="modal-box" id="emBox">
     <h3>任务详情</h3>
+    <div class="modal-error-msg" id="emErrorMsg"></div>
     
     <!-- 新增包裹层，用于整体隐藏 -->
     <div id="emNormalFields">
       <label>任务内容<input type="text" id="emTaskText" maxlength="80"></label>
       <div class="date-fields">
         <label>学科<select id="emCategory"></select></label>
-        <label>任务层级<select id="emLevel"><option value="top">一级任务</option><option value="sub">二级任务</option></select></label>
+        <label>任务层级<select id="emLevel"><option value="top">一级任务</option><option value="sub">二级任务</option><option value="subsub">三级任务</option></select></label>
       </div>
       <label id="emParentRow" hidden>所属一级任务<select id="emParent"></select></label>
+      <label id="emSubParentRow" hidden>所属二级任务<select id="emSubParent"></select></label>
       <label id="emRuleRow">完成规则
         <select id="emCompleteRule">
-          <option value="all">全部二级任务完成才勾选</option>
-          <option value="any">任意一个二级任务完成就勾选</option>
+          <option value="all">全部子任务完成才勾选</option>
+          <option value="any">任意一个子任务完成就勾选</option>
         </select>
       </label>
       <label>备注说明<textarea id="emTaskNote" class="note-input" maxlength="200" rows="1"></textarea></label>
@@ -1349,11 +1482,22 @@
       </div>
       <div class="sub-edit-area">
         <div class="sub-edit-header">
-          <span class="sub-edit-label">二级任务</span>
-          <button class="sub-add-icon-btn" id="emSubAddBtn" type="button" title="添加二级任务">+</button>
+          <span class="sub-edit-label" id="emSubTitle">二级任务</span>
+          <button class="sub-add-icon-btn" id="emSubAddBtn" type="button" title="添加任务">+</button>
         </div>
         <ul class="sub-edit-list" id="emSubList"></ul>
-        <div style="font-size:11px;color:var(--muted)">单击编辑、删除；长按拖动排序</div>
+      </div>
+      
+      <!-- 新增三级任务区 -->
+      <div class="sub-edit-area" id="emSubSubArea">
+        <div class="sub-edit-header">
+          <span class="sub-edit-label">三级任务</span>
+          <button class="sub-add-icon-btn" id="emSubSubAddBtn" type="button" title="添加三级任务">+</button>
+        </div>
+        <label id="emSubSubParentRow" style="font-size:12px;color:var(--muted);gap:4px">所属二级任务
+          <select id="emSubSubParent"></select>
+        </label>
+        <ul class="sub-edit-list" id="emSubSubList"></ul>
       </div>
     </div>
 
@@ -1445,6 +1589,7 @@
     <label>所属学科<select id="seCategory"></select></label>
     <label>所属一级任务<select id="seParent"></select></label>
     <label>所属二级任务<select id="seChild"></select></label>
+    <label>所属三级任务<select id="seSubChild"></select></label>
     <div style="font-size:11.5px;color:var(--muted);margin-top:-4px">填了时长则覆盖按时间计算的结果；修改所属任务会移动这条专注记录</div>
     <div class="modal-actions">
       <button class="ghost-btn" id="seCancel">取消</button>
@@ -1467,6 +1612,7 @@
     <label>所属学科<select id="rfCategory"></select></label>
     <label>所属一级任务<select id="rfParent"></select></label>
     <label>所属二级任务<select id="rfChild"></select></label>
+    <label>所属三级任务<select id="rfSubChild"></select></label>
     <div style="font-size:11.5px;color:var(--muted);margin-top:-4px">填了时长则覆盖按时间计算的结果；修改所属任务会移动这条专注记录</div>
     <div class="modal-actions">
       <button class="ghost-btn" id="rfCancel">取消</button>
@@ -1771,7 +1917,8 @@ function makeEmptyState(){
       auxSettings: Object.assign({}, DEFAULT_AUX_SETTINGS),
       catColors:{}
     },
-    tasks: {}, dayStatus: {}, papers: {}
+    tasks: {}, dayStatus: {}, papers: {},
+    collapsedTasks: [] // 👈 新增：保存折叠的任务 ID
   };
   DEFAULT_CATEGORIES.forEach(c => s.settings.taskOrder[c.key] = []);
   return s;
@@ -1880,6 +2027,7 @@ function migrateSubtasksToChildTasks(s){
 
 function normalizeState(s){
   if(!s) return makeEmptyState();
+  if(!s.collapsedTasks) s.collapsedTasks = []; // 👈 新增：兼容老数据
   if(s.days && !s.tasks){
     const n = makeEmptyState();
     n.settings.examDate = (s.settings && s.settings.examDate) || '';
@@ -2088,6 +2236,8 @@ function taskAppliesTo(task, dateKey){
 }
 
 let showArchived = false;
+// 👇 改为从 state 中读取折叠状态
+let collapsedTasks = new Set(state.collapsedTasks || []);  
 
 function sortTasksTree(list, catKey){
   const byParent = {};
@@ -2119,16 +2269,59 @@ function getTasksForDate(dateKey, includeArchived){
   const result = {};
   DEFAULT_CATEGORIES.forEach(c => {
     result[c.key] = [];
+    
+    // 用来快速判断某个任务（或其父级）在今天是否应该显示
+    const taskValidityCache = {};
+
+    const isTaskValidToday = (id) => {
+      if (taskValidityCache[id] !== undefined) return taskValidityCache[id];
+      
+      const t = state.tasks[id];
+      if (!t || t.deleted) return false;
+      if (t.archived && !includeArchived) return false;
+      
+      // 如果自身时间不匹配
+      if (!taskAppliesTo(t, dateKey)) {
+        taskValidityCache[id] = false;
+        return false;
+      }
+      
+      // 真题子任务特有：只在那一天显示
+      if (t.isPaperSub && t.paperDate && t.paperDate !== dateKey) {
+        taskValidityCache[id] = false;
+        return false;
+      }
+
+      // 👇 最核心的“连坐”逻辑：如果它有父级，但父级在今天不显示，它自己也不能显示
+      if (t.parentId) {
+        if (!state.tasks[t.parentId]) {
+           taskValidityCache[id] = false;
+           return false;
+        }
+        if (!isTaskValidToday(t.parentId)) {
+           taskValidityCache[id] = false;
+           return false;
+        }
+      }
+      
+      taskValidityCache[id] = true;
+      return true;
+    };
+
     (state.settings.taskOrder[c.key] || []).forEach(taskId => {
       const task = state.tasks[taskId];
       if(!task || task.category !== c.key) return;
-      if(task.deleted) return;
-      if(task.archived && !includeArchived) return;
-      if(!taskAppliesTo(task, dateKey)) return;
-      /* 新增：真题子任务只在添加的那一天显示 */
-      if(task.isPaperSub && task.paperDate && task.paperDate !== dateKey) return;
+      
+      // 使用递归校验，确保父级不在的话，子级也不推入列表
+      if (!isTaskValidToday(taskId)) return;
+      
+      if(task.parentId && !state.tasks[task.parentId]) {
+        task.parentId = ''; 
+      }
+      
       result[c.key].push(task);
     });
+    
     result[c.key] = sortTasksTree(result[c.key], c.key);
   });
   return result;
@@ -2203,6 +2396,17 @@ function reconcileDayStatus(){
     state.settings.taskOrder[c.key] = (state.settings.taskOrder[c.key] || []).filter(id => state.tasks[id] && !state.tasks[id].deleted);
   });
 
+  // 👇 新增：强制清理“丢失父级”或“错误挂载”的二级任务
+  Object.keys(state.tasks).forEach(id => {
+    const t = state.tasks[id];
+    if (!t) return;
+    
+    // 如果它的 parentId 指向的任务已经不存在了，或者等于自己，强制清空
+    if (t.parentId && (!state.tasks[t.parentId] || t.parentId === id)) {
+      t.parentId = '';
+    }
+  });
+
   ensureSystemFixedTasks(state);
 }
 
@@ -2225,6 +2429,25 @@ function toast(msg){
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+function showModalError(boxId, msgId, msg) {
+  const box = document.getElementById(boxId);
+  const el = document.getElementById(msgId);
+  if(el) {
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'shake 0.3s ease';
+  }
+  if(box) box.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function clearModalError(msgId) {
+  const el = document.getElementById(msgId);
+  if(el) {
+    el.style.display = 'none';
+    el.textContent = '';
+  }
 }
 function iconSvg(key){
   const ic = ICONS[key] || ICONS.vocab;
@@ -2374,16 +2597,25 @@ function renderCatCard(c, tasks, dateKey, isLive){
   const total = tasks.length;
   const pct = total ? Math.round(doneCount/total * 100) : 0;
 
+  // 用一个变量记录被折叠的父级ID，这样在循环时就可以跳过它的子项
+  let hideChildrenOf = null;
+
   const items = tasks.length ? tasks.map(t => {
+    // 如果当前任务的父级、或爷爷级被折叠了，直接返回空，不渲染
+    if (t.parentId) {
+      if (t.parentId === hideChildrenOf) return '';
+      const parentTask = state.tasks[t.parentId];
+      if (parentTask && parentTask.parentId && parentTask.parentId === hideChildrenOf) return '';
+    }
+
     const st = getTaskStatus(dateKey, t.id);
     const running = !!st.runningStart;
     const hasTime = running || (st.sessions || []).length > 0;
     const isSub = !!t.parentId;
     const isSystemFixed = !!t.isSystemFixed;
-    const hasChildren = !isSub && tasks.some(x => x.parentId === t.id);
     const isPaperSub = !!t.isPaperSub;
 
-    /* 系统固定真题任务：仅显示 +添加真题，无开始学习 */
+    /* 系统固定真题任务 */
     if(isSystemFixed){
       return '<li class="task system-fixed' + (st.done ? ' done' : '') + '" data-cat="' + c.key + '" data-id="' + t.id + '" data-fixed="1" style="' + catStyle(c) + '">' +
         '<div class="check" data-cat="' + c.key + '" data-id="' + t.id + '">' + (st.done ? '✓' : '') + '</div>' +
@@ -2396,17 +2628,28 @@ function renderCatCard(c, tasks, dateKey, isLive){
       '</li>';
     }
 
+    // 判断有没有子任务
+    const hasChildren = tasks.some(x => x.parentId === t.id);
+    const isCollapsed = collapsedTasks.has(t.id);
+    // 如果这个任务被折叠了，告诉后面的子任务要隐藏
+    if (isCollapsed && hasChildren) {
+      hideChildrenOf = t.id;
+    }
+
     let actionsHtml = '';
     if(isPaperSub){
-      /* 真题子任务：始终显示开始学习，无需先有计时 */
       actionsHtml = '<div class="task-actions">' +
         (hasTime ? '<span class="timer-display" style="color:' + c.color + '" data-tcat="' + c.key + '" data-tid="' + t.id + '">' + fmtTimer(statusSeconds(st)) + '</span>' : '') +
         (isLive && !t.archived ? '<button class="start-btn' + (running ? ' on' : '') + '" data-cat="' + c.key + '" data-id="' + t.id + '">' + (running ? '结束学习' : '开始学习') + '</button>' : '') +
       '</div>';
-    } else if(hasTime){
+    } else if(hasTime && !hasChildren){ 
       actionsHtml = '<div class="task-actions">' +
         '<span class="timer-display" style="color:' + c.color + '" data-tcat="' + c.key + '" data-tid="' + t.id + '">' + fmtTimer(statusSeconds(st)) + '</span>' +
-        (isLive && !t.archived && !hasChildren ? '<button class="start-btn' + (running ? ' on' : '') + '" data-cat="' + c.key + '" data-id="' + t.id + '">' + (running ? '结束学习' : '开始学习') + '</button>' : '') +
+        (isLive && !t.archived ? '<button class="start-btn' + (running ? ' on' : '') + '" data-cat="' + c.key + '" data-id="' + t.id + '">' + (running ? '结束学习' : '开始学习') + '</button>' : '') +
+      '</div>';
+    } else if(hasTime && hasChildren){ 
+      actionsHtml = '<div class="task-actions">' +
+        '<span class="timer-display" style="color:' + c.color + '" data-tcat="' + c.key + '" data-tid="' + t.id + '">' + fmtTimer(statusSeconds(st)) + '</span>' +
       '</div>';
     } else if(isLive && !t.archived && !hasChildren && !isPaperSub){
       actionsHtml = '<div class="task-actions">' +
@@ -2416,13 +2659,36 @@ function renderCatCard(c, tasks, dateKey, isLive){
 
     const archivedBadge = t.archived ? '<span class="archived-badge">已归档</span>' : '';
     const noteHtml = t.note ? '<div class="task-note">' + escapeHtml(t.note) + '</div>' : '';
+    const parentTaskRef = t.parentId ? state.tasks[t.parentId] : null;
+    const isSubSub = isSub && parentTaskRef && !!parentTaskRef.parentId;
+    const boldStyle = (isSub || isSubSub) ? '' : ' style="font-weight:700;"';
 
-    const boldStyle = isSub ? '' : ' style="font-weight:700;"';
-    return '<li class="task' + (st.done ? ' done' : '') + (t.archived ? ' archived' : '') + (isSub ? ' sub-level' : '') + '" draggable="true" data-cat="' + c.key + '" data-id="' + t.id + '" style="' + catStyle(c) + '">' +
-      (isSub ? '<span class="sub-indent">└</span>' : '') +
+        let prefixHtml = '';
+    if (isSubSub) {
+      prefixHtml = '<span class="subsub-indent">└</span>';
+    } else if (isSub) {
+      prefixHtml = '<span class="sub-indent">└</span>';
+    }
+
+    // 将折叠按钮放在名字后面，并加大尺寸
+    let toggleHtml = '';
+    if (hasChildren) {
+      // 使用 SVG 绘制折叠箭头，大小更可控
+      const arrowIcon = isCollapsed 
+        ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+        : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        
+      toggleHtml = '<span class="toggle-btn" data-toggle-task="' + t.id + '" style="cursor:pointer; margin-left:8px; color:var(--muted); display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; vertical-align:middle;">' + arrowIcon + '</span>';
+    }
+
+    return '<li class="task' + (st.done ? ' done' : '') + (t.archived ? ' archived' : '') + (isSubSub ? ' subsub-level' : (isSub ? ' sub-level' : '')) + '" draggable="true" data-cat="' + c.key + '" data-id="' + t.id + '" style="' + catStyle(c) + '">' +
+      prefixHtml +
       '<div class="check" data-cat="' + c.key + '" data-id="' + t.id + '">' + (st.done ? '✓' : '') + '</div>' +
       '<div class="task-body" data-cat="' + c.key + '" data-id="' + t.id + '">' +
-        '<div class="task-text"' + boldStyle + '>' + escapeHtml(t.text) + archivedBadge + '</div>' +
+        '<div class="task-text"' + boldStyle + ' style="display:flex; align-items:center;">' + 
+          '<span>' + escapeHtml(t.text) + archivedBadge + '</span>' + 
+          toggleHtml + 
+        '</div>' +
         noteHtml +
       '</div>' + actionsHtml +
     '</li>';
@@ -2552,7 +2818,14 @@ function fillCategorySelect(sel, selectedKey){
 function fillParentSelect(sel, catKey, excludeId, selectedId){
   const tops = (state.settings.taskOrder[catKey] || [])
     .map(id => state.tasks[id])
-    .filter(t => t && !t.deleted && !t.parentId && t.id !== excludeId && !t.isSystemFixed);
+    .filter(t => {
+      // 👇 关键修复：必须是有效任务、未删除、不是系统固定任务，且绝对没有 parentId（即真正的一级任务）
+      if (!t || t.deleted || t.isSystemFixed) return false;
+      if (t.parentId && t.parentId !== '') return false; 
+      if (t.id === excludeId) return false;
+      // 可选：如果这个一级任务今天/当前不生效，也不显示（取决于你的习惯，一般不需要加）
+      return true;
+    });
   if(!tops.length){
     sel.innerHTML = '<option value="">（该学科暂无一级任务）</option>';
     return;
@@ -2565,6 +2838,39 @@ function updateParentRowVisibility(levelValue, parentRowEl, parentSel, catKey, e
   const isSub = levelValue === 'sub';
   parentRowEl.hidden = !isSub;
   if(isSub) fillParentSelect(parentSel, catKey, excludeId, selectedId);
+}
+
+/* 填充“所属二级任务”下拉：列出该学科所有二级任务（parentId 指向一级任务） */
+function fillSubParentSelect(sel, catKey, excludeId, selectedId){
+  const order = state.settings.taskOrder[catKey] || [];
+  const subs = order
+    .map(id => state.tasks[id])
+    .filter(t => t && !t.deleted && t.parentId && state.tasks[t.parentId] && !state.tasks[t.parentId].parentId && t.id !== excludeId);
+  if(!subs.length){
+    sel.innerHTML = '<option value="">（该学科暂无二级任务）</option>';
+    return;
+  }
+  sel.innerHTML = subs.map(t =>
+    '<option value="' + t.id + '"' + (t.id === selectedId ? ' selected' : '') + '>' + escapeHtml(t.text) + '</option>'
+  ).join('');
+}
+
+function updateAddParentVisibility(levelValue){
+  const parentRow = document.getElementById('amParentRow');
+  const subParentRow = document.getElementById('amSubParentRow');
+  const cat = document.getElementById('amCategory').value || (addTarget && addTarget.cat);
+  if(levelValue === 'sub'){
+    parentRow.hidden = false;
+    subParentRow.hidden = true;
+    fillParentSelect(document.getElementById('amParent'), cat, null, null);
+  } else if(levelValue === 'subsub'){
+    parentRow.hidden = true;
+    subParentRow.hidden = false;
+    fillSubParentSelect(document.getElementById('amSubParent'), cat, null, null);
+  } else {
+    parentRow.hidden = true;
+    subParentRow.hidden = true;
+  }
 }
 
 /* ============================================================
@@ -2770,8 +3076,6 @@ function renderFixedPaperList(){
   }).join('');
 }
 
-
-
 document.getElementById('fpmList').addEventListener('click', e => {
   const openBtn = e.target.closest('[data-fpm-open]');
   if(openBtn){
@@ -2815,41 +3119,120 @@ document.getElementById('fixedPaperModal').addEventListener('click', e => {
 let addTarget = null;
 let addSubs = [];
 let addSubDragId = null;
+let addSubSubs = [];
+let addSubSubParentId = null;
 
-function openAddModal(cat){
+let currentAddParentId = null;
+let currentAddLevel = 'top';
+
+function openAddModal(cat, parentId = '', level = 'top'){
+  clearModalError('amErrorMsg');
   addTarget = { cat: cat };
   addSubs = [];
-  document.getElementById('amTitle').textContent = '新建任务 · ' + catName(cat);
+  addSubSubs = [];
+  currentAddParentId = parentId;
+  currentAddLevel = level;
+
   document.getElementById('amTaskText').value = '';
   document.getElementById('amTaskNote').value = '';
-  document.getElementById('amStartDate').value = viewDate;
-  document.getElementById('amEndDate').value = '';
-  document.getElementById('amEndless').checked = true;
-  document.getElementById('amEndDate').disabled = true;
+  
+  const parentTask = parentId ? state.tasks[parentId] : null;
+  const finalCat = parentTask ? parentTask.category : cat;
 
-  fillCategorySelect(document.getElementById('amCategory'), cat);
-  document.getElementById('amLevel').value = 'top';
-  document.getElementById('amParentRow').hidden = true;
-  document.getElementById('amParent').innerHTML = '';
+  // 👇 智能带入父级时间范围
+  let defaultStart = viewDate;
+  let defaultEnd = '';
+  let defaultEndless = true;
+
+  if (parentTask) {
+    // 如果父级有开始时间，且当前视图日期早于父级开始时间，则默认用父级的
+    if (parentTask.startDate && defaultStart < parentTask.startDate) {
+      defaultStart = parentTask.startDate;
+    }
+    // 如果父级有结束时间，自动填入并取消无限期
+    if (parentTask.endDate) {
+      defaultEnd = parentTask.endDate;
+      defaultEndless = false;
+    }
+  }
+
+  document.getElementById('amStartDate').value = defaultStart;
+  document.getElementById('amEndDate').value = defaultEnd;
+  document.getElementById('amEndless').checked = defaultEndless;
+  document.getElementById('amEndDate').disabled = defaultEndless;
+
+  fillCategorySelect(document.getElementById('amCategory'), finalCat);
+  
+  if (level === 'sub' && parentTask) {
+    // 情况A：一级任务下的加号 -> 新建二级任务
+    document.getElementById('amTitle').textContent = '新建二级任务';
+    document.getElementById('amCategory').value = parentTask.category;
+    document.getElementById('amLevel').value = 'sub';
+    document.getElementById('amLevel').disabled = true; // 锁定层级
+    document.getElementById('amParentRow').hidden = false;
+    fillParentSelect(document.getElementById('amParent'), parentTask.category, null, parentId);
+    document.getElementById('amParent').disabled = true; // 锁定所属父级
+    
+    // 👇 新建二级任务时，下面所有的添加区域都不要显示
+    document.getElementById('amChildAreas').style.display = 'none';
+  } else if (level === 'subSub' && parentTask) {
+    // 情况B：二级任务下的加号 -> 新建三级任务
+    document.getElementById('amTitle').textContent = '新建三级任务';
+    document.getElementById('amCategory').value = parentTask.category;
+    document.getElementById('amLevel').value = 'subsub';
+    document.getElementById('amLevel').disabled = true; 
+    document.getElementById('amParentRow').hidden = false;
+    
+    // 👇 修改1：把标题改成“所属二级任务”
+    document.getElementById('amParentLabelText').textContent = '所属二级任务';
+    
+    // 👇 修改2：清空并填入当前点击的二级任务（parentTask）
+    const parentSel = document.getElementById('amParent');
+    parentSel.innerHTML = '<option value="' + parentTask.id + '" selected>' + escapeHtml(parentTask.text) + '</option>';
+    parentSel.disabled = true; 
+    
+    // 👇 新建三级任务时，最底层，什么添加区域都不需要
+    document.getElementById('amChildAreas').style.display = 'none';
+  } else {
+    // 情况C：直接新建一级任务
+    document.getElementById('amTitle').textContent = '新建任务';
+    document.getElementById('amLevel').value = 'top';
+    document.getElementById('amLevel').disabled = false;
+    document.getElementById('amParentRow').hidden = true;
+    document.getElementById('amParentLabelText').textContent = '所属一级任务'; // 👈 还原标题
+    document.getElementById('amParent').innerHTML = '';
+    document.getElementById('amParent').disabled = false;
+    
+    // 👇 新建一级任务时，也不需要显示下方添加区域
+    document.getElementById('amChildAreas').style.display = 'none';
+  }
 
   renderAddSubList();
-  document.getElementById('addModal').classList.add('show');
+  renderAddSubSubList();
+  const modalEl = document.getElementById('addModal');
+  modalEl.style.zIndex = '10005';
+  modalEl.classList.add('show');
   setTimeout(() => document.getElementById('amTaskText').focus(), 50);
 }
 
 document.getElementById('amEndless').addEventListener('change', e => {
   const endInput = document.getElementById('amEndDate');
   endInput.disabled = e.target.checked;
-  if(e.target.checked) endInput.value = '';
+  if(e.target.checked) {
+    endInput.value = '';
+  } else {
+    // 👇 取消勾选无限期时，自动填入开始日期（如果没有开始日期就用今天/当前查看的日期）
+    const startVal = document.getElementById('amStartDate').value;
+    endInput.value = startVal || viewDate;
+  }
 });
 
 document.getElementById('amCategory').addEventListener('change', e => {
-  const level = document.getElementById('amLevel').value;
-  updateParentRowVisibility(level, document.getElementById('amParentRow'), document.getElementById('amParent'), e.target.value, null, null);
+  updateAddParentVisibility(document.getElementById('amLevel').value);
+  refreshAmSubSubParentSelect();
 });
 document.getElementById('amLevel').addEventListener('change', e => {
-  const cat = document.getElementById('amCategory').value;
-  updateParentRowVisibility(e.target.value, document.getElementById('amParentRow'), document.getElementById('amParent'), cat, null, null);
+  updateAddParentVisibility(e.target.value);
 });
 
 function renderAddSubList(){
@@ -2937,6 +3320,41 @@ document.getElementById('amSubList').addEventListener('dragend', () => {
   });
 });
 
+function renderAddSubSubList(){
+  const list = document.getElementById('amSubSubList');
+  if(!addSubSubs.length){
+    list.innerHTML = '<li class="sub-edit-empty">还没有三级任务</li>';
+    return;
+  }
+  list.innerHTML = addSubSubs.map(s =>
+    '<li class="sub-edit-item"><span class="sub-edit-text">' + escapeHtml(s.text) + '</span>' +
+    '<button class="sub-del-btn" type="button" onclick="addSubSubs=addSubSubs.filter(x=>x.id!==\'' + s.id + '\');renderAddSubSubList()">×</button></li>'
+  ).join('');
+}
+
+document.getElementById('amSubSubAddBtn').addEventListener('click', () => {
+  const s = { id: uid(), text: '新三级任务' };
+  addSubSubs.push(s);
+  renderAddSubSubList();
+  setTimeout(() => {
+    const li = document.getElementById('amSubSubList').lastElementChild;
+    if(!li) return;
+    const textEl = li.querySelector('.sub-edit-text');
+    const input = document.createElement('input');
+    input.type = 'text'; input.value = s.text; input.className = 'sub-inline-input'; input.maxLength = 60;
+    textEl.replaceWith(input); input.focus(); input.select();
+    const finish = () => {
+      if(input.value.trim()) s.text = input.value.trim();
+      renderAddSubSubList();
+    };
+    input.addEventListener('blur', finish);
+    input.addEventListener('keydown', ev => {
+      if(ev.key === 'Enter'){ ev.preventDefault(); input.blur(); }
+      if(ev.key === 'Escape'){ ev.preventDefault(); input.value = s.text; input.blur(); }
+    });
+  }, 30);
+});
+
 function saveNewTask(){
   const text = document.getElementById('amTaskText').value.trim();
   if(!text){ toast('请先填写任务内容'); return; }
@@ -2944,17 +3362,45 @@ function saveNewTask(){
   const startDate = document.getElementById('amStartDate').value || viewDate;
   const endless = document.getElementById('amEndless').checked;
   const endDate = endless ? null : (document.getElementById('amEndDate').value || null);
-  if(endDate && endDate < startDate){ toast('结束日期不能早于开始日期'); return; }
+  if(endDate && endDate < startDate){ 
+    showModalError('amBox', 'amErrorMsg', '结束日期不能早于开始日期，已自动为您修正');
+    document.getElementById('amEndDate').value = startDate; 
+    return; 
+  }
+
+  // 👇 新增：跨层级时间校验（需要在获取 parentId 之后进行）
 
   const cat = document.getElementById('amCategory').value || addTarget.cat;
   const level = document.getElementById('amLevel').value;
   let parentId = '';
-  if(level === 'sub'){
+  if(currentAddLevel === 'subSub'){
+    /* 三级任务：直接挂在点 + 的那个二级任务下 */
+    parentId = currentAddParentId;
+    if(!parentId){ toast('没有找到所属二级任务'); return; }
+  } else if(level === 'sub'){
     parentId = document.getElementById('amParent').value;
     if(!parentId){ toast('请选择一个所属一级任务'); return; }
   }
   const parentTask = parentId ? state.tasks[parentId] : null;
   if(parentTask && parentTask.isSystemFixed){ toast('固定真题任务下不能手动添加子任务，请用「+ 添加真题」'); return; }
+    // 👇 新增：跨层级时间校验
+  if (parentTask) {
+    if (parentTask.startDate && startDate < parentTask.startDate) {
+      showModalError('amBox', 'amErrorMsg', '开始日期不能早于上级任务「' + parentTask.text + '」的开始日期');
+      return;
+    }
+    if (parentTask.endDate && endDate && endDate > parentTask.endDate) {
+      showModalError('amBox', 'amErrorMsg', '结束日期不能晚于上级任务「' + parentTask.text + '」的结束日期');
+      return;
+    }
+    if (parentTask.endDate && !endDate) {
+       showModalError('amBox', 'amErrorMsg', '上级设置了结束日期，本任务不能选择无限期');
+       return;
+    }
+  }
+  if(currentAddLevel === 'subSub' && parentTask && !parentTask.parentId){
+    toast('三级任务的上级必须是二级任务'); return;
+  }
   const finalCat = parentTask ? parentTask.category : cat;
 
   const taskId = uid();
@@ -2970,24 +3416,17 @@ function saveNewTask(){
   if(!state.settings.taskOrder[finalCat]) state.settings.taskOrder[finalCat] = [];
   state.settings.taskOrder[finalCat].push(taskId);
 
-  if(level === 'top' && addSubs.length){
-    addSubs.forEach(s => {
-      const childId = uid();
-      state.tasks[childId] = {
-        id: childId, text: s.text, note: '', category: finalCat,
-        parentId: taskId, completeRule: 'all',
-        startDate: startDate, endDate: endDate,
-        createdAt: Date.now(), archived: false, deleted: false,
-        isSystemFixed: false,
-        isPaperSub: false
-      };
-      state.settings.taskOrder[finalCat].push(childId);
-    });
-  }
-
+  // 注意：这里不需要处理 addSubs 和 addSubSubs 的预设插入逻辑了
+  // 因为我们现在采用逐个添加的方式。之前遗留的 addSubs/addSubSubs 空数组不需要使用
+  
   save();
   document.getElementById('addModal').classList.remove('show');
   renderPlan();
+  // 刷新当前打开的详情页
+  if (editTaskId) {
+    const t = state.tasks[editTaskId];
+    if (t) openEditModal(t.category, editTaskId);
+  }
   toast('任务已添加');
 }
 
@@ -2996,9 +3435,7 @@ document.getElementById('amSave').addEventListener('click', saveNewTask);
 document.getElementById('amCancel').addEventListener('click', () => {
   document.getElementById('addModal').classList.remove('show');
 });
-document.getElementById('amTaskText').addEventListener('keydown', e => {
-  if(e.key === 'Enter'){ e.preventDefault(); saveNewTask(); }
-});
+
 document.getElementById('amSubList').addEventListener('click', e => {
   const textEl = e.target.closest('[data-add-edit]');
   if(textEl){ startAddSubEdit(textEl); return; }
@@ -3019,6 +3456,7 @@ let draggedSubId = null;
 let editingSessionId = null;
 
 function openEditModal(cat, id){
+  clearModalError('emErrorMsg');
   const task = state.tasks[id];
   if(!task) return;
 
@@ -3045,26 +3483,52 @@ function openEditModal(cat, id){
 
   fillCategorySelect(document.getElementById('emCategory'), task.category);
   document.getElementById('emCategory').disabled = isPaperSub;
-  document.getElementById('emLevel').value = task.parentId ? 'sub' : 'top';
+  
+  // 👇 修改1：正确识别三级任务，并设置层级和父级下拉
+  const parentTask = task.parentId ? state.tasks[task.parentId] : null;
+  const isSubSub = !!(parentTask && parentTask.parentId);
+  
+  const levelVal = isSubSub ? 'subsub' : (task.parentId ? 'sub' : 'top');
+  document.getElementById('emLevel').value = levelVal;
   document.getElementById('emLevel').disabled = isPaperSub;
+  
   document.getElementById('emParentRow').hidden = !task.parentId;
-  if(task.parentId) fillParentSelect(document.getElementById('emParent'), task.category, id, task.parentId);
-  else document.getElementById('emParent').innerHTML = '';
-  document.getElementById('emParent').disabled = isPaperSub;
-
-  const ruleRow = document.getElementById('emRuleRow');
-  if(task.parentId){
-    ruleRow.hidden = true;
-  } else {
-    ruleRow.hidden = false;
-    document.getElementById('emCompleteRule').value = task.completeRule === 'any' ? 'any' : 'all';
+  const parentLabelEl = document.getElementById('emParentRow').firstChild; 
+  if (parentLabelEl && parentLabelEl.nodeType === 3) {
+    parentLabelEl.textContent = isSubSub ? '所属二级任务' : '所属一级任务';
   }
 
-  /* 真题子任务：隐藏二级任务管理区 */
-  document.getElementById('emSubAddBtn').style.display = isPaperSub ? 'none' : '';
-  document.getElementById('emSubList').parentElement.style.display = isPaperSub ? 'none' : '';
+  if (task.parentId) {
+    if (isSubSub) {
+      document.getElementById('emParent').innerHTML = '<option value="' + parentTask.id + '" selected>' + escapeHtml(parentTask.text) + '</option>';
+    } else {
+      fillParentSelect(document.getElementById('emParent'), task.category, id, task.parentId);
+    }
+  } else {
+    document.getElementById('emParent').innerHTML = '';
+  }
+  document.getElementById('emParent').disabled = isPaperSub;
+
+  // 👇 只要它有子任务（不管是一级还是二级），都显示完成规则
+  const ruleRow = document.getElementById('emRuleRow');
+  const hasChildren = getChildTasks(id).length > 0;
+  if(hasChildren){
+    ruleRow.hidden = false;
+    document.getElementById('emCompleteRule').value = task.completeRule === 'any' ? 'any' : 'all';
+  } else {
+    ruleRow.hidden = true;
+  }
+
+  const isSub = !!task.parentId;
+  // 👇 修改2：如果是三级任务或真题子任务，把整个子任务区域（标题、加号、列表）彻底隐藏
+  document.getElementById('emSubList').parentElement.style.display = (isPaperSub || isSubSub) ? 'none' : '';
+  document.getElementById('emSubSubArea').style.display = 'none'; 
+
+  const subTitleEl = document.getElementById('emSubTitle');
+  if (subTitleEl) {
+    subTitleEl.textContent = isSub ? '三级任务' : '二级任务';
+  }
   
-  /* 新增：真题子任务隐藏日期选择区 */
   document.getElementById('emStartDate').closest('label').style.display = isPaperSub ? 'none' : '';
   document.getElementById('emEndDate').closest('label').style.display = isPaperSub ? 'none' : '';
   document.getElementById('emEndless').closest('.endless-row').style.display = isPaperSub ? 'none' : '';
@@ -3098,7 +3562,13 @@ function openEditModal(cat, id){
 document.getElementById('emEndless').addEventListener('change', e => {
   const endInput = document.getElementById('emEndDate');
   endInput.disabled = e.target.checked;
-  if(e.target.checked) endInput.value = '';
+  if(e.target.checked) {
+    endInput.value = '';
+  } else {
+    // 👇 取消勾选无限期时，自动填入开始日期（如果没有开始日期就用今天/当前查看的日期）
+    const startVal = document.getElementById('emStartDate').value;
+    endInput.value = startVal || viewDate;
+  }
 });
 
 document.getElementById('emCategory').addEventListener('change', e => {
@@ -3108,7 +3578,10 @@ document.getElementById('emCategory').addEventListener('change', e => {
 document.getElementById('emLevel').addEventListener('change', e => {
   const cat = document.getElementById('emCategory').value;
   updateParentRowVisibility(e.target.value, document.getElementById('emParentRow'), document.getElementById('emParent'), cat, editTaskId, null);
-  document.getElementById('emRuleRow').hidden = (e.target.value === 'sub');
+  
+  // 👇 根据是否有下级任务来决定是否显示完成规则
+  const hasChildren = editTaskId ? getChildTasks(editTaskId).length > 0 : false;
+  document.getElementById('emRuleRow').hidden = !hasChildren;
 });
 
 function renderEditSessionList(){
@@ -3157,19 +3630,19 @@ function renderEditSubList(){
   if(!editTaskId) return;
   const task = state.tasks[editTaskId];
   if(!task) return;
-  const children = getChildTasks(editTaskId);
+
   const list = document.getElementById('emSubList');
+  const allChildren = getChildTasks(editTaskId);
+  const children = allChildren.filter(t => taskAppliesTo(t, viewDate));
+
   if(!children.length){
-    list.innerHTML = '<li class="sub-edit-empty">还没有二级任务，点右上角 + 添加</li>';
+    list.innerHTML = '<li class="sub-edit-empty">点右上角 + 添加</li>';
     return;
   }
+
   list.innerHTML = children.map(t => {
-    const st = getTaskStatus(viewDate, t.id);
-    const done = !!st.done;
-    return '<li class="sub-edit-item' + (done ? ' done' : '') + '" draggable="true" data-child-id="' + t.id + '">' +
-      '<span class="sub-check" data-em-toggle="' + t.id + '">' + (done ? '✓' : '') + '</span>' +
+    return '<li class="sub-edit-item" draggable="true" data-child-id="' + t.id + '">' +
       '<span class="sub-edit-text" data-em-edit="' + t.id + '">' + escapeHtml(t.text) + '</span>' +
-      '<button class="sub-del-btn" data-em-del="' + t.id + '">×</button>' +
     '</li>';
   }).join('');
 }
@@ -3202,35 +3675,24 @@ function addEditSub(){
   if(!editTaskId) return;
   const task = state.tasks[editTaskId];
   if(!task) return;
-  if(task.parentId){ toast('二级任务下不能再加二级任务'); return; }
   if(task.isSystemFixed){ toast('固定真题任务请用「+ 添加真题」'); return; }
-  const childId = uid();
-  state.tasks[childId] = {
-    id: childId, text: '新二级任务', note: '', category: task.category,
-    parentId: editTaskId, completeRule: 'all',
-    startDate: task.startDate || viewDate, endDate: task.endDate || null,
-    createdAt: Date.now(), archived: false, deleted: false,
-    isSystemFixed: false,
-    isPaperSub: false
-  };
-  if(!state.settings.taskOrder[task.category]) state.settings.taskOrder[task.category] = [];
-  state.settings.taskOrder[task.category].push(childId);
-  save(); renderEditSubList(); renderPlan();
-  setTimeout(() => {
-    const el = document.querySelector('[data-em-edit="' + childId + '"]');
-    if(el) startEditSubtask(el);
-  }, 30);
+
+  if(task.parentId){
+    /* 当前是二级任务 -> 新建三级 */
+    openAddModal(task.category, editTaskId, 'subSub');
+  } else {
+    /* 当前是一级任务 -> 新建二级 */
+    openAddModal(task.category, editTaskId, 'sub');
+  }
 }
 
 function applyCompleteRuleToTask(taskId, dateKey){
   const task = state.tasks[taskId];
-  if(!task || task.parentId) return;
+  if(!task) return;
   const children = getChildTasks(taskId);
   if(!children.length) return;
   const st = getTaskStatus(dateKey, taskId);
   const vals = children.map(c => !!getTaskStatus(dateKey, c.id).done);
-  
-  // 强制：如果是系统固定真题任务，只要有一个子任务完成就勾选
   if(task.isSystemFixed || task.completeRule === 'any'){
     st.done = vals.some(v => v);
   } else {
@@ -3256,6 +3718,8 @@ function syncTaskDoneState(taskId, dateKey) {
       });
     }
   } else {
+    /* 二级或三级：先更新自己（如果有下级），再更新父级 */
+    applyCompleteRuleToTask(taskId, dateKey);
     applyCompleteRuleToTask(task.parentId, dateKey);
   }
 }
@@ -3274,27 +3738,53 @@ function saveEditTask(){
   const startDate = document.getElementById('emStartDate').value || viewDate;
   const endless = document.getElementById('emEndless').checked;
   const endDate = endless ? null : (document.getElementById('emEndDate').value || null);
-  if(endDate && endDate < startDate){ toast('结束日期不能早于开始日期'); return; }
+  
+  if(endDate && endDate < startDate){ 
+    showModalError('emBox', 'emErrorMsg', '结束日期不能早于开始日期，已自动为您修正');
+    document.getElementById('emEndDate').value = startDate; 
+    return; 
+  }
+
+  const parentTask = task.parentId ? state.tasks[task.parentId] : null;
+  if (parentTask) {
+    if (parentTask.startDate && startDate < parentTask.startDate) {
+      toast('子任务的开始日期不能早于所属上级（' + parentTask.text + '）的开始日期');
+      return;
+    }
+    if (parentTask.endDate && endDate && endDate > parentTask.endDate) {
+      toast('子任务的结束日期不能晚于所属上级（' + parentTask.text + '）的结束日期');
+      return;
+    }
+    if (parentTask.endDate && !endDate && !endless) {
+       toast('上级设置了结束日期，子任务不能选择无限期');
+       return;
+    }
+  }
 
   const newCat = isPaperSub ? task.category : (document.getElementById('emCategory').value || task.category);
   const oldCat = task.category;
   const level = isPaperSub ? 'sub' : document.getElementById('emLevel').value;
   let newParentId = '';
-  if(level === 'sub'){
+  
+  // 👇 修改3：无论是二级还是三级，只要选了层级，就获取对应的父级
+  if(level === 'sub' || level === 'subsub'){
     newParentId = isPaperSub ? task.parentId : document.getElementById('emParent').value;
-    if(!newParentId){ toast('请选择一个所属一级任务'); return; }
+    if(!newParentId){ toast(level === 'subsub' ? '请选择一个所属二级任务' : '请选择一个所属一级任务'); return; }
     if(newParentId === editTaskId){ toast('不能选择自己作为上级'); return; }
     let cur = state.tasks[newParentId];
     let guard = 0;
     while(cur && guard++ < 100){
-      if(cur.id === editTaskId){ toast('不能挂在自己的二级任务下'); return; }
+      if(cur.id === editTaskId){ toast('不能挂在自己的子任务下'); return; }
       cur = cur.parentId ? state.tasks[cur.parentId] : null;
     }
   }
 
   task.text = text; task.note = note; task.startDate = startDate; task.endDate = endDate;
-  task.parentId = newParentId;
-  if(!newParentId){
+  
+  // 👇 修复：强制更新为你重新选择的新父级（而不是保留旧父级）
+  task.parentId = newParentId || ''; 
+  
+  if(!document.getElementById('emRuleRow').hidden){
     const rule = document.getElementById('emCompleteRule').value;
     task.completeRule = rule === 'any' ? 'any' : 'all';
   }
@@ -3310,7 +3800,15 @@ function saveEditTask(){
       state.settings.taskOrder[oldCat] = state.settings.taskOrder[oldCat].filter(id => id !== editTaskId);
     }
     if(!state.settings.taskOrder[finalCat]) state.settings.taskOrder[finalCat] = [];
-    state.settings.taskOrder[finalCat].push(editTaskId);
+    
+    // 👇 优化：如果是子任务，尝试插入到新父级任务的紧后面，而不是整个学科的最后面
+    let insertIdx = state.settings.taskOrder[finalCat].length;
+    if (newParentId) {
+      const parentIdx = state.settings.taskOrder[finalCat].indexOf(newParentId);
+      if (parentIdx >= 0) insertIdx = parentIdx + 1;
+    }
+    state.settings.taskOrder[finalCat].splice(insertIdx, 0, editTaskId);
+    
     task.category = finalCat;
     getChildTasks(editTaskId).forEach(c => { c.category = finalCat; });
   } else {
@@ -3318,8 +3816,6 @@ function saveEditTask(){
   }
 
   reconcileDayStatus();
-  applyCompleteRuleToTask(editTaskId, viewDate);
-
   save();
   document.getElementById('editModal').classList.remove('show');
   editTaskId = null; editingSessionId = null;
@@ -3328,6 +3824,7 @@ function saveEditTask(){
 }
 
 document.getElementById('emSubAddBtn').addEventListener('click', addEditSub);
+/* 三级区已合并进 emSubList，emSubSubAddBtn 不再使用 */
 document.getElementById('emSave').addEventListener('click', saveEditTask);
 document.getElementById('emTaskText').addEventListener('keydown', e => {
   if(e.key === 'Enter'){ e.preventDefault(); saveEditTask(); }
@@ -3341,6 +3838,7 @@ document.getElementById('editModal').addEventListener('click', e => {
 
 document.getElementById('emSubList').addEventListener('click', e => {
   if(!editTaskId) return;
+
   const toggleBtn = e.target.closest('[data-em-toggle]');
   if(toggleBtn){
     const childId = toggleBtn.dataset.emToggle;
@@ -3351,23 +3849,30 @@ document.getElementById('emSubList').addEventListener('click', e => {
     save(); renderEditSubList(); renderPlan();
     return;
   }
+
   const delBtn = e.target.closest('[data-em-del]');
   if(delBtn){
     const childId = delBtn.dataset.emDel;
     const child = state.tasks[childId];
     if(child){
-      askConfirm('确定删除二级任务？', '「' + child.text + '」删除后不可恢复。', () => {
+      askConfirm('确定删除任务？', '「' + child.text + '」及其下级、专注记录都会删除。', () => {
         hardRemoveTask(childId);
         applyCompleteRuleToTask(editTaskId, viewDate);
-        save();
-        renderEditSubList();
-        renderPlan();
+        save(); renderEditSubList(); renderPlan();
       });
     }
     return;
   }
+
   const textEl = e.target.closest('[data-em-edit]');
-  if(textEl){ startEditSubtask(textEl); return; }
+  if(textEl){
+    const childId = textEl.dataset.emEdit;
+    const child = state.tasks[childId];
+    if(!child) return;
+    /* 单击文字：如果是二级任务，打开它自己的详情（里面有三级列表）；如果是一级下的二级，也打开自己的详情 */
+    openEditModal(child.category, childId);
+    return;
+  }
 });
 
 document.getElementById('emSubList').addEventListener('dragstart', e => {
@@ -3476,15 +3981,42 @@ let editingSession = null;
 function buildSeTaskSelectors(){
   const task = state.tasks[editTaskId];
   if(!task) return;
+  
   const catSel = document.getElementById('seCategory');
   fillCategorySelect(catSel, task.category);
+  
   const parentSel = document.getElementById('seParent');
-  fillParentSelect(parentSel, task.category, null, task.parentId ? task.parentId : task.id);
-  const parentId = task.parentId ? task.parentId : task.id;
   const childSel = document.getElementById('seChild');
-  const children = getChildTasks(parentId);
+  const subChildSel = document.getElementById('seSubChild');
+
+  // 找出这个任务的真实一级和二级
+  let level1Id = '';
+  let level2Id = '';
+  if (!task.parentId) {
+    level1Id = task.id;
+  } else {
+    const p1 = state.tasks[task.parentId];
+    if (p1 && p1.parentId) {
+      level2Id = p1.id;
+      level1Id = p1.parentId;
+    } else {
+      level2Id = task.id;
+      level1Id = task.parentId;
+    }
+  }
+
+  fillParentSelect(parentSel, task.category, null, level1Id);
+  
+  // 填入二级
+  const children = level1Id ? getChildTasks(level1Id) : [];
   childSel.innerHTML = '<option value="">（只属于一级任务）</option>' + children.map(c =>
-    '<option value="' + c.id + '"' + (c.id === task.id ? ' selected' : '') + '>' + escapeHtml(c.text) + '</option>'
+    '<option value="' + c.id + '"' + (c.id === level2Id ? ' selected' : '') + '>' + escapeHtml(c.text) + '</option>'
+  ).join('');
+
+  // 填入三级
+  const subChildren = level2Id ? getChildTasks(level2Id) : [];
+  subChildSel.innerHTML = '<option value="">（只属于二级任务）</option>' + subChildren.map(c =>
+    '<option value="' + c.id + '"' + (c.id === task.id && task.parentId && state.tasks[task.parentId].parentId ? ' selected' : '') + '>' + escapeHtml(c.text) + '</option>'
   ).join('');
 }
 
@@ -3517,8 +4049,27 @@ document.getElementById('seCategory').addEventListener('change', e => {
   childSel.innerHTML = '<option value="">（只属于一级任务）</option>' + children.map(c =>
     '<option value="' + c.id + '">' + escapeHtml(c.text) + '</option>'
   ).join('');
+  document.getElementById('seSubChild').innerHTML = '<option value="">（只属于二级任务）</option>';
 });
-document.getElementById('seParent').addEventListener('change', refreshSeChildSelect);
+
+document.getElementById('seParent').addEventListener('change', () => {
+  const parentId = document.getElementById('seParent').value;
+  const childSel = document.getElementById('seChild');
+  const children = parentId ? getChildTasks(parentId) : [];
+  childSel.innerHTML = '<option value="">（只属于一级任务）</option>' + children.map(c =>
+    '<option value="' + c.id + '">' + escapeHtml(c.text) + '</option>'
+  ).join('');
+  document.getElementById('seSubChild').innerHTML = '<option value="">（只属于二级任务）</option>';
+});
+
+document.getElementById('seChild').addEventListener('change', () => {
+  const childId = document.getElementById('seChild').value;
+  const subChildSel = document.getElementById('seSubChild');
+  const subChildren = childId ? getChildTasks(childId) : [];
+  subChildSel.innerHTML = '<option value="">（只属于二级任务）</option>' + subChildren.map(c =>
+    '<option value="' + c.id + '">' + escapeHtml(c.text) + '</option>'
+  ).join('');
+});
 
 document.getElementById('seCancel').addEventListener('click', () => {
   editingSession = null;
@@ -3550,7 +4101,9 @@ document.getElementById('seSave').addEventListener('click', () => {
 
   const targetParentId = document.getElementById('seParent').value;
   const targetChildId = document.getElementById('seChild').value;
-  const targetTaskId = targetChildId || targetParentId;
+  const targetSubChildId = document.getElementById('seSubChild').value;
+  // 优先取最底层的三级 > 二级 > 一级
+  const targetTaskId = targetSubChildId || targetChildId || targetParentId;
 
   if(targetTaskId && targetTaskId !== editTaskId){
     const oldSt = getTaskStatus(viewDate, editTaskId);
@@ -3688,12 +4241,16 @@ function archiveTask(taskId){
   finishRunning(st);
   task.archived = true;
   task.archivedAt = Date.now();
-  Object.keys(state.tasks).forEach(cid => {
-    const c = state.tasks[cid];
-    if(c && c.parentId === taskId && !c.archived && !c.isSystemFixed){
-      c.archived = true; c.archivedAt = Date.now();
-    }
-  });
+  function markArchived(id){
+    Object.keys(state.tasks).forEach(cid => {
+      const c = state.tasks[cid];
+      if(c && c.parentId === id && !c.archived && !c.isSystemFixed){
+        c.archived = true; c.archivedAt = Date.now();
+        markArchived(cid);
+      }
+    });
+  }
+  markArchived(taskId);
   reconcileDayStatus();
   save();
   renderPlan();
@@ -3706,12 +4263,16 @@ function unarchiveTask(taskId){
   if(!task) return;
   task.archived = false;
   task.archivedAt = 0;
-  Object.keys(state.tasks).forEach(cid => {
-    const c = state.tasks[cid];
-    if(c && c.parentId === taskId && c.archived){
-      c.archived = false; c.archivedAt = 0;
-    }
-  });
+  function markUnarchived(id){
+    Object.keys(state.tasks).forEach(cid => {
+      const c = state.tasks[cid];
+      if(c && c.parentId === id && c.archived){
+        c.archived = false; c.archivedAt = 0;
+        markUnarchived(cid);
+      }
+    });
+  }
+  markUnarchived(taskId);
   save();
   renderPlan();
   updateDateNav();
@@ -3851,8 +4412,25 @@ document.getElementById('catColumns').addEventListener('drop', e => {
 document.getElementById('catColumns').addEventListener('dragend', cleanupDrag);
 
 document.getElementById('catColumns').addEventListener('click', e => {
+  // 👇 新增：处理折叠按钮的点击
+  const toggleBtn = e.target.closest('[data-toggle-task]');
+  if(toggleBtn){
+    e.stopPropagation(); // 阻止触发其他点击事件（比如打开详情）
+    const taskId = toggleBtn.dataset.toggleTask;
+    if (collapsedTasks.has(taskId)) {
+      collapsedTasks.delete(taskId);
+    } else {
+      collapsedTasks.add(taskId);
+    }
+    state.collapsedTasks = Array.from(collapsedTasks); // 👈 转换为数组保存进 state
+    save(); // 👈 立即保存到 localStorage
+    renderPlan(); // 重新渲染页面
+    return;
+  }
+
   /* 系统固定任务：+ 添加真题 */
   const fixedAddBtn = e.target.closest('[data-fixed-add]');
+  // ... 原有的其他代码保持不变 ...
   if(fixedAddBtn){
     e.stopPropagation();
     openPaperPicker(fixedAddBtn.dataset.fixedAdd);
@@ -3878,17 +4456,21 @@ document.getElementById('catColumns').addEventListener('click', e => {
     const st = getTaskStatus(viewDate, taskId);
     
     if(task.parentId){
-      // 如果点的是二级任务，更新父级
       const parent = state.tasks[task.parentId];
-      const parentSt = getTaskStatus(viewDate, task.parentId);
-      
-      // 👇 强制处理：如果是系统真题，直接算有没有完成，不查规则
-      if (parent && parent.isSystemFixed) {
-        const children = getChildTasks(task.parentId);
-        const anyDone = children.some(c => !!getTaskStatus(viewDate, c.id).done);
-        parentSt.done = anyDone;
-      } else {
+      const grandParent = parent ? state.tasks[parent.parentId] : null;
+      if(grandParent){
+        /* 三级：更新二级，再更新一级 */
         applyCompleteRuleToTask(task.parentId, viewDate);
+        applyCompleteRuleToTask(parent.parentId, viewDate);
+      } else {
+        const parentSt = getTaskStatus(viewDate, task.parentId);
+        if (parent && parent.isSystemFixed) {
+          const children = getChildTasks(task.parentId);
+          const anyDone = children.some(c => !!getTaskStatus(viewDate, c.id).done);
+          parentSt.done = anyDone;
+        } else {
+          applyCompleteRuleToTask(task.parentId, viewDate);
+        }
       }
     } else {
       // 如果点的是父级任务，同步底下所有子任务状态
@@ -3929,7 +4511,7 @@ function buildCompletedTree(dateKeys){
     if(!dd) return;
 
     const rootMap = new Map();
-    const childAgg = new Map();
+    const childAgg = new Map(); // 这里我们依然存所有非一级任务，但渲染时再搭树
 
     if(dd.statuses){
       Object.keys(dd.statuses).forEach(id => {
@@ -3939,15 +4521,24 @@ function buildCompletedTree(dateKeys){
         const sec = statusSeconds(st);
         const done = !!st.done;
         const hasSess = (st.sessions||[]).length>0 || !!st.runningStart;
-        if(!task.parentId){
+        
+        // 向上找顶级（一级任务）
+        let rootId = task.parentId;
+        while(rootId && state.tasks[rootId] && state.tasks[rootId].parentId) {
+          rootId = state.tasks[rootId].parentId;
+        }
+        
+        if(!rootId){
+          // 是一级任务
           if(!rootMap.has(id)) rootMap.set(id, { task, ownSec:0, done:false, hasSess:false });
           const r = rootMap.get(id);
           r.ownSec += sec;
           if(done) r.done = true;
           if(hasSess) r.hasSess = true;
         } else {
-          if(!childAgg.has(task.parentId)) childAgg.set(task.parentId, []);
-          childAgg.get(task.parentId).push({ task, sec, done, hasSess });
+          // 二级或三级任务，先存进 childAgg（挂在最顶级 rootId 名下）
+          if(!childAgg.has(rootId)) childAgg.set(rootId, []);
+          childAgg.get(rootId).push({ task, sec, done, hasSess });
         }
       });
     }
@@ -3961,7 +4552,6 @@ function buildCompletedTree(dateKeys){
 
     rootMap.forEach((r, rootId) => {
       const children = childAgg.get(rootId) || [];
-      const childSec = children.reduce((a,c) => a + c.sec, 0);
       const catKey = r.task.category;
       const anyDone = r.done || children.some(c => c.done);
       const anySess = r.hasSess || children.some(c => c.hasSess);
@@ -3971,27 +4561,42 @@ function buildCompletedTree(dateKeys){
       const m = catRoots[catKey];
       if(!m.has(rootId)){
         m.set(rootId, {
-          rootId, catKey,
-          name: r.task.text,
-          ownSec: 0,
-          children: [],
-          childIds: new Set(),
-          anyDone: false
+          rootId, catKey, name: r.task.text,
+          ownSec: 0, children: [], anyDone: false
         });
       }
       const item = m.get(rootId);
       item.ownSec += r.ownSec;
       if(r.done) item.anyDone = true;
 
+      // 👇 核心重构：在挂载二级和三级时，构建嵌套的层级（children 里面包含 subChildren）
       children.forEach(c => {
         if(c.done) item.anyDone = true;
         if(!c.done && !c.hasSess) return;
-        if(item.childIds.has(c.task.id)){
-          const exist = item.children.find(x => x.id === c.task.id);
-          if(exist){ exist.sec += c.sec; exist.done = exist.done || c.done; }
+        
+        const t = c.task;
+        if (!t.parentId || t.parentId === rootId) {
+          // 这是一个二级任务
+          let exist = item.children.find(x => x.id === t.id);
+          if(!exist){
+            exist = { id: t.id, name: t.text, ownSec: 0, subChildren: [] };
+            item.children.push(exist);
+          }
+          exist.ownSec += c.sec;
         } else {
-          item.childIds.add(c.task.id);
-          item.children.push({ id: c.task.id, name: c.task.text, sec: c.sec, done: c.done });
+          // 这是一个三级任务
+          let p = item.children.find(x => x.id === t.parentId);
+          if (!p) {
+            const pt = state.tasks[t.parentId];
+            p = { id: pt.id, name: pt.text, ownSec: 0, subChildren: [] };
+            item.children.push(p);
+          }
+          let subEx = p.subChildren.find(x => x.id === t.id);
+          if (!subEx) {
+            subEx = { id: t.id, name: t.text, sec: 0 };
+            p.subChildren.push(subEx);
+          }
+          subEx.sec += c.sec;
         }
       });
     });
@@ -4000,9 +4605,16 @@ function buildCompletedTree(dateKeys){
   const items = [];
   Object.keys(catRoots).forEach(catKey => {
     catRoots[catKey].forEach(item => {
-      const childSec = item.children.reduce((a,c) => a + c.sec, 0);
-      item.totalSec = item.ownSec + childSec;
-      item.children.forEach(c => { c.noTime = c.sec <= 0; });
+      let topLevelSec = item.ownSec;
+      
+      item.children.forEach(c => {
+        let childTotal = c.ownSec;
+        c.subChildren.forEach(sc => { childTotal += sc.sec; });
+        c.sec = childTotal; // 二级任务的时间 = 自己的时间 + 三级所有时间
+        topLevelSec += childTotal;
+      });
+
+      item.totalSec = topLevelSec;
       if(item.totalSec <= 0 && !item.children.length && !item.anyDone) return;
       items.push(item);
     });
@@ -4073,7 +4685,7 @@ function buildDoneTreeHtml(dateKeys){
       '<div class="done-cat-name" style="color:' + cat.color + '; padding-left:0;">' +
         '<span class="done-cat-dot" style="background:' + cat.color + '"></span>' + cat.name +
       '</div>' +
-      '<div class="done-item-time done-cat-time">' +
+      '<div class="done-item-time done-cat-time" style="color:' + cat.color + '">' +
         (catTotal > 0 ? fmtDurationShort(catTotal) : '<span class="no-time">未记录时长</span>') +
       '</div>' +
     '</div>';
@@ -4082,8 +4694,8 @@ function buildDoneTreeHtml(dateKeys){
       const topTime = it.totalSec > 0 ? fmtDurationShort(it.totalSec) : '未记录时长';
       
       html += '<div class="done-item-row">' +
-        '<div class="done-top-name">' + escapeHtml(it.name) + '</div>' +
-        '<div class="done-item-time">' + topTime + '</div>' +
+        '<div class="done-top-name" style="font-weight:700; color:var(--ink);">' + escapeHtml(it.name) + '</div>' +
+        '<div class="done-item-time" style="font-weight:700; color:var(--ink);">' + topTime + '</div>' +
       '</div>';
       
       if(it.children && it.children.length){
@@ -4093,9 +4705,23 @@ function buildDoneTreeHtml(dateKeys){
         sortedChildren.forEach(c => {
           const subTime = c.sec > 0 ? fmtDurationShort(c.sec) : '未记录时长';
           html += '<div class="done-item-row">' +
-            '<div class="done-sub-name">└ ' + escapeHtml(c.name) + '</div>' +
-            '<div class="done-item-time sub">' + subTime + '</div>' +
+            '<div class="done-sub-name" style="color:var(--muted);">└ ' + escapeHtml(c.name) + '</div>' +
+            '<div class="done-item-time" style="color:var(--muted);">' + subTime + '</div>' +
           '</div>';
+
+          // 👇 核心新增：渲染三级任务（带更深缩进）
+          if (c.subChildren && c.subChildren.length) {
+            const sortedSub = c.subChildren.slice().sort((a, b) => b.sec - a.sec);
+            sortedSub.forEach(sc => {
+              const scTime = sc.sec > 0 ? fmtDurationShort(sc.sec) : '未记录时长';
+              // 使用 mixHex 让颜色比 --muted 再淡 35%
+              const subColor = mixHex(state.settings.theme === 'dark' ? '#171b19' : '#ffffff', '#8a938e', 0.65);
+              html += '<div class="done-item-row">' +
+                '<div class="done-sub-name" style="padding-left: 40px; color:' + subColor + ';">└ ' + escapeHtml(sc.name) + '</div>' +
+                '<div class="done-item-time" style="color:' + subColor + ';">' + scTime + '</div>' +
+              '</div>';
+            });
+          }
         });
         if(it.ownSec > 0){
           html += '<div class="done-item-row">' +
@@ -4659,15 +5285,32 @@ function renderFocusItemHtml(f){
   const catHtml = '<span class="record-cat" style="background:' + (cat ? cat.soft : 'var(--aux-line)') +
     ';color:' + (cat ? cat.color : 'var(--muted)') + '">' + (cat ? cat.name : catKey) + '</span>';
 
-  let nameMain, nameSub;
-  if(f.task.parentId){
-    const parent = state.tasks[f.task.parentId];
-    nameMain = parent ? parent.text : '（已删除一级任务）';
-    nameSub = f.task.text;
-  } else {
-    nameMain = f.task.text;
-    nameSub = '';
+  // 1. 顺着 parentId 往上找，把整个任务链收集起来
+  const chain = [];
+  let curr = f.task;
+  let guard = 0;
+  while (curr && guard++ < 10) {
+    chain.unshift(curr.text); // 插到数组最前面，这样就是从高级到低级
+    if (curr.parentId && state.tasks[curr.parentId]) {
+      curr = state.tasks[curr.parentId];
+    } else {
+      curr = null;
+    }
   }
+
+  // 2. 把任务链用“›”连起来，区分一级、二级、三级
+  let nameHtml = chain.map((text, idx) => {
+    if (idx === 0) {
+      // 一级任务：加粗黑色
+      return '<span style="font-weight:700;color:var(--ink)">' + escapeHtml(text) + '</span>';
+    } else if (idx === 1) {
+      // 二级任务：正常黑色
+      return '<span style="color:var(--ink)">' + escapeHtml(text) + '</span>';
+    } else {
+      // 三级及以下：灰色
+      return '<span style="color:var(--muted)">' + escapeHtml(text) + '</span>';
+    }
+  }).join('<span style="color:var(--muted);margin:0 4px">›</span>');
 
   let statusHtml = '';
   if(f.task.isSystemFixed) statusHtml = '<span class="status-tag">系统固定</span>';
@@ -4679,8 +5322,7 @@ function renderFocusItemHtml(f){
     catHtml +
     '<div class="record-info">' +
       '<div class="record-top">' +
-        '<span class="record-name-main">' + escapeHtml(nameMain) + '</span>' +
-        (nameSub ? '<span class="record-name-sub">' + escapeHtml(nameSub) + '</span>' : '') +
+        nameHtml +
         statusHtml +
       '</div>' +
       '<div class="record-meta">' + f.dateKey + ' · ' + fmtHM(f.session.startAt) + ' – ' + fmtHM(f.session.endAt) + '</div>' +
@@ -4809,13 +5451,39 @@ function removeSessionByType(dateKey, type, sessionId){
 function buildRfTaskSelectors(task){
   const catSel = document.getElementById('rfCategory');
   fillCategorySelect(catSel, task.category);
+  
   const parentSel = document.getElementById('rfParent');
-  fillParentSelect(parentSel, task.category, null, task.parentId ? task.parentId : task.id);
-  const parentId = task.parentId ? task.parentId : task.id;
   const childSel = document.getElementById('rfChild');
-  const children = getChildTasks(parentId);
+  const subChildSel = document.getElementById('rfSubChild');
+
+  // 找出这个任务的真实一级和二级
+  let level1Id = '';
+  let level2Id = '';
+  if (!task.parentId) {
+    level1Id = task.id;
+  } else {
+    const p1 = state.tasks[task.parentId];
+    if (p1 && p1.parentId) {
+      level2Id = p1.id;
+      level1Id = p1.parentId;
+    } else {
+      level2Id = task.id;
+      level1Id = task.parentId;
+    }
+  }
+
+  fillParentSelect(parentSel, task.category, null, level1Id);
+  
+  // 填入二级
+  const children = level1Id ? getChildTasks(level1Id) : [];
   childSel.innerHTML = '<option value="">（只属于一级任务）</option>' + children.map(c =>
-    '<option value="' + c.id + '"' + (c.id === task.id ? ' selected' : '') + '>' + escapeHtml(c.text) + '</option>'
+    '<option value="' + c.id + '"' + (c.id === level2Id ? ' selected' : '') + '>' + escapeHtml(c.text) + '</option>'
+  ).join('');
+
+  // 填入三级
+  const subChildren = level2Id ? getChildTasks(level2Id) : [];
+  subChildSel.innerHTML = '<option value="">（只属于二级任务）</option>' + subChildren.map(c =>
+    '<option value="' + c.id + '"' + (c.id === task.id && task.parentId && state.tasks[task.parentId].parentId ? ' selected' : '') + '>' + escapeHtml(c.text) + '</option>'
   ).join('');
 }
 
@@ -4829,12 +5497,24 @@ document.getElementById('rfCategory').addEventListener('change', e => {
   childSel.innerHTML = '<option value="">（只属于一级任务）</option>' + children.map(c =>
     '<option value="' + c.id + '">' + escapeHtml(c.text) + '</option>'
   ).join('');
+  document.getElementById('rfSubChild').innerHTML = '<option value="">（只属于二级任务）</option>';
 });
+
 document.getElementById('rfParent').addEventListener('change', () => {
   const parentId = document.getElementById('rfParent').value;
   const childSel = document.getElementById('rfChild');
   const children = parentId ? getChildTasks(parentId) : [];
   childSel.innerHTML = '<option value="">（只属于一级任务）</option>' + children.map(c =>
+    '<option value="' + c.id + '">' + escapeHtml(c.text) + '</option>'
+  ).join('');
+  document.getElementById('rfSubChild').innerHTML = '<option value="">（只属于二级任务）</option>';
+});
+
+document.getElementById('rfChild').addEventListener('change', () => {
+  const childId = document.getElementById('rfChild').value;
+  const subChildSel = document.getElementById('rfSubChild');
+  const subChildren = childId ? getChildTasks(childId) : [];
+  subChildSel.innerHTML = '<option value="">（只属于二级任务）</option>' + subChildren.map(c =>
     '<option value="' + c.id + '">' + escapeHtml(c.text) + '</option>'
   ).join('');
 });
@@ -4903,7 +5583,9 @@ document.getElementById('rfSave').addEventListener('click', () => {
   if(recEditTarget.type.startsWith('task:')){
     const parentId = document.getElementById('rfParent').value;
     const childId = document.getElementById('rfChild').value;
-    const chosenId = childId || parentId;
+    const subChildId = document.getElementById('rfSubChild').value;
+    // 优先取最底层的三级 > 二级 > 一级
+    const chosenId = subChildId || childId || parentId;
     if(chosenId) targetTaskId = chosenId;
   }
 
@@ -5200,8 +5882,6 @@ function savePaperRun(){
 /* ============================================================
    设置弹窗
 ============================================================ */
-
-
 function openSettingsModal(){
   const cats = getCategories();
   document.querySelectorAll('#themeToggle button').forEach(b => {

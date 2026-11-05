@@ -1309,6 +1309,59 @@ h1{font-size:26px;font-weight:500}
     grid-template-columns: 1fr 1fr !important;
   }
 }
+@media (max-width:900px){
+  .app-layout{height:auto;min-height:100vh;min-height:100dvh;overflow:visible}
+  .sidebar{position:sticky;top:0;z-index:90;flex-wrap:wrap;gap:8px;padding:10px 14px;align-items:center}
+  .sidebar-brand{flex:1 1 auto;padding:0!important;font-size:16px!important;justify-content:flex-start}
+  .sidebar-brand>div:first-child{width:32px!important;height:32px!important;font-size:18px!important}
+  .sidebar-brand>div:last-child>div:first-child{font-size:15px!important}
+  .sidebar-brand>div:last-child>div:last-child{font-size:9px!important;letter-spacing:1px!important}
+  .sidebar>div:last-child{margin-top:0!important;padding:0!important;flex:0 0 auto}
+  #sidebarSettingsBtn{padding:8px 12px!important;font-size:12px!important;white-space:nowrap}
+  .sidebar-nav{order:3;flex:1 1 100%;flex-direction:row!important;padding:0!important;gap:8px!important;margin-top:0!important}
+  .sidebar-nav-btn{flex:1;justify-content:center;padding:9px 12px!important;font-size:13px!important}
+  .top-header-bar{padding:12px 14px!important;align-items:flex-start!important;gap:8px!important}
+  .top-header-bar>div:first-child{font-size:17px!important}
+  .top-header-bar>div:first-child span{font-size:20px!important}
+  .top-actions{width:100%;gap:8px!important}
+  .top-actions>.btn-secondary-sm{flex:1 1 calc(50% - 8px);width:auto!important;justify-content:center;text-align:center}
+  .top-actions>.segmented-control{flex:1 1 100%;justify-content:center}
+  .top-actions>div:last-child{flex:1 1 100%;justify-content:center;padding:4px 10px!important}
+}
+@media (max-width:767px){
+  .new-layout-grid{gap:12px!important}
+  .row-two-col{grid-template-columns:1fr!important;gap:12px!important}
+  .top-cards-flex{display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important}
+  .top-card-item{min-width:0;padding:14px 10px!important}
+  .top-card-item.card-user{grid-column:1 / -1}
+  .top-card-item:last-child{grid-column:1 / -1}
+  .col-info .top-info-item{font-size:12px!important;padding:8px 10px!important}
+  .user-card-avatar{width:56px!important;height:56px!important}
+  .user-card-name{font-size:16px!important}
+  .col-figure .body-figure{height:170px!important}
+  .stat-panel,.trend-block{padding:12px!important}
+  .viz-info-col{margin-top:8px!important}
+  .chart-nav-row{gap:4px!important}
+  .chart-range{font-size:12px!important}
+  .back-to-current-btn{font-size:9px!important;margin-left:4px!important}
+  .chart-range-container::before{margin-right:4px!important}
+}
+@media (max-width:480px){
+  .top-cards-flex{grid-template-columns:1fr!important}
+  .top-card-item.card-user,.top-card-item:last-child{grid-column:auto}
+  .top-card-item{padding:12px!important}
+  .main-inner{padding:12px 10px 48px!important}
+  .top-header-bar{padding:10px 10px!important}
+  .top-actions>.btn-secondary-sm{flex:1 1 100%}
+  .ov-item .ov-num{font-size:24px!important}
+  .ov-item .ov-label{font-size:12px!important}
+  .cal-day{min-height:34px!important}
+  .cal-day .dweight{font-size:8px!important}
+  .cal-day .dnum{width:18px!important;height:18px!important;font-size:10px!important}
+  .modal{width:94%!important;padding:16px!important}
+  .weight-overview{flex-direction:column}
+  .layout-row .trend-block h3{font-size:14px!important}
+}
 </style>
 </head>
 <body>

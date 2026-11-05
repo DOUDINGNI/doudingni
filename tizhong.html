@@ -1362,6 +1362,187 @@ h1{font-size:26px;font-weight:500}
   .weight-overview{flex-direction:column}
   .layout-row .trend-block h3{font-size:14px!important}
 }
+/* ======== 移动端完美响应式修复补丁 ======== */
+@media (max-width: 900px) {
+  /* 1. 解决顶部卡片排版挤压 */
+  .top-cards-flex {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  .top-card-item {
+    width: 100% !important;
+    padding: 16px !important;
+    flex: none !important;
+  }
+  .col-info {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+  .col-info .top-info-item {
+    padding: 8px 10px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    min-width: 0;
+  }
+  .col-info .top-info-label {
+    font-size: 11px !important;
+    white-space: nowrap;
+  }
+  .col-info .top-info-value {
+    font-size: 13px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .col-figure .body-figure {
+    height: 170px !important;
+  }
+  .user-card-avatar {
+    width: 60px !important;
+    height: 60px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  /* 2. 解决全局横向溢出 */
+  body, html, .app-layout, .main-area, .main-inner {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+  /* 3. 两列变一列并解决子元素撑破 */
+  .row-two-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  .col-half {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+  }
+  .trend-block, .stat-panel {
+    padding: 14px 12px !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  /* 4. 修复减重进展里的文字重叠 */
+  .stat-panel > div[style*="max-width: 420px"] {
+    height: 130px !important;
+    margin-top: 10px !important;
+    max-width: 100% !important;
+  }
+  .ov-item[data-edit="start"] {
+    left: 0 !important;
+    top: 55% !important;
+    width: 30% !important;
+  }
+  .ov-item[data-edit="target"] {
+    right: 0 !important;
+    top: 55% !important;
+    width: 30% !important;
+  }
+  .ov-item[data-edit="current"] {
+    bottom: -10px !important;
+  }
+  .ov-item[data-edit="start"] > div:nth-child(2),
+  .ov-item[data-edit="target"] > div:nth-child(2) {
+    font-size: 15px !important;
+    white-space: nowrap;
+  }
+  .ov-item[data-edit="start"] > div:nth-child(1),
+  .ov-item[data-edit="target"] > div:nth-child(1) {
+    font-size: 11px !important;
+  }
+  .ov-item[data-edit="current"] > div:nth-child(2) {
+    font-size: 22px !important;
+  }
+  .ov-item[data-edit="current"] > div:nth-child(3) {
+    font-size: 11px !important;
+    margin-top: 2px !important;
+  }
+  .ov-item[data-edit="current"] > div:nth-child(1) {
+    font-size: 11px !important;
+  }
+
+  /* 5. 顶栏操作按钮适配换行 */
+  .top-header-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 12px !important;
+  }
+  .top-header-bar > div:first-child {
+    justify-content: center !important;
+    margin-bottom: 8px !important;
+  }
+  .top-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+  .top-actions > * {
+    flex: 1 1 calc(50% - 4px) !important;
+    min-width: 100px;
+    margin: 0 !important;
+  }
+
+  /* 6. 图表区域文字截断防撑破 */
+  .chart-nav-row {
+    gap: 4px !important;
+  }
+  .chart-range-container {
+    min-width: 0 !important;
+    padding: 0 4px !important;
+  }
+  .chart-range {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 100%;
+    font-size: 12px !important;
+  }
+  .chart-range-container::before {
+    display: none !important;
+  }
+  .back-to-current-btn {
+    font-size: 9px !important;
+    margin-left: 4px !important;
+  }
+
+  /* 7. 日历格子缩放防挤爆 */
+  .cal-day {
+    min-height: 34px !important;
+  }
+  .cal-day .dweight {
+    font-size: 9px !important;
+    transform: scale(0.9);
+    margin-top: 0 !important;
+  }
+  .cal-day .dnum {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-inner {
+    padding: 10px 8px 60px !important;
+  }
+  .viz-info-row {
+    font-size: 11px !important;
+    padding: 6px 8px !important;
+  }
+}
 </style>
 </head>
 <body>

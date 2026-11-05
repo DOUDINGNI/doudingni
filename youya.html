@@ -46,18 +46,191 @@
   }
   button{font-family:inherit}
 
-  .app{display:flex;min-height:100vh}
-  .sidebar{
-    width:216px;flex:none;background:var(--card);
-    padding:26px 14px;position:sticky;top:0;height:100vh;
-    display:flex;flex-direction:column;gap:22px;
+  .app { display: flex; height: 100vh; overflow: hidden; }
+  
+  .sidebar {
+    width: 220px;
+    flex: none;
+    background: var(--card);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 101;
   }
-  main{flex:1;min-width:0;padding:30px 32px 70px}
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 20px;
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .brand-name { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .brand-sub { font-size: 9px; color: var(--muted); letter-spacing: 2px; margin-top: 2px; font-weight: 600; }
+  
+  .sidebar-nav {
+    flex: 1;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .sidebar-nav::-webkit-scrollbar { display: none; }
+  
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    transition: 0.15s;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+  }
+  .nav-link:hover {
+    background: var(--bg);
+  }
+  .nav-link.active {
+    background: #7b97cb; /* 图5中的蓝色 */
+    color: #fff;
+  }
+  .nav-icon { font-size: 16px; }
+  
+  .sidebar-footer {
+    padding: 16px 14px;
+  }
+  .sidebar-footer .nav-link {
+    justify-content: center;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    border-radius: 12px;
+  }
+  .app-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  /* 新增顶部栏样式 */
+  .topbar {
+    display: flex;
+    align-items: center;
+    background: var(--card);
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--line);
+    z-index: 100;
+    gap: 20px;
+    flex-wrap: wrap;
+    flex: none;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .brand-icon { font-size: 20px; }
+  .nav-segmented {
+    display: flex;
+    background: var(--aux-bg);
+    padding: 3px;
+    border-radius: 10px;
+  }
+  .nav-segmented .nav-item {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .nav-segmented .nav-item:hover { color: var(--ink); }
+  .nav-segmented .nav-item.active {
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .top-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .top-btn {
+    border: 1px solid var(--line);
+    background: var(--card);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--ink);
+    transition: 0.15s;
+  }
+  .top-btn:hover { background: var(--aux-bg); }
+  .exam-info {
+    font-size: 13px;
+    color: var(--muted);
+    background: var(--aux-bg);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  /* 修改 main 的样式 */
+  main { 
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 32px 70px; 
+    flex: 1;
+    overflow-y: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  main::-webkit-scrollbar {
+    display: none; /* Chrome/Safari 隐藏滚动条 */
+  }
 
-  .brand{display:flex;align-items:center;gap:8px;padding:0 8px}
-  .brand-text{flex:1;min-width:0}
-  .brand-mark{font-size:15px;font-weight:800;letter-spacing:3px;color:var(--green)}
-  .brand-sub{font-size:10px;letter-spacing:4px;color:var(--muted);margin-top:3px}
+  /* 响应式调整 */
+  @media(max-width:880px){
+    .topbar { gap: 12px; }
+    .nav-segmented { order: 4; width: 100%; justify-content: center; }
+    .top-actions { margin-left: 0; flex: 1; justify-content: flex-end; }
+    main { padding: 20px 14px 56px; }
+  }
+
+
+
   .brand-settings{
     width:26px;height:26px;border:none;border-radius:8px;
     background:var(--green-soft);color:var(--green);
@@ -66,16 +239,7 @@
   }
   .brand-settings:hover{background:var(--green);color:#fff}
 
-  .nav{display:flex;flex-direction:column;gap:4px}
-  .nav-item{
-    display:flex;align-items:center;gap:10px;background:none;border:none;
-    font-size:14px;color:var(--muted);padding:10px 12px;border-radius:10px;
-    cursor:pointer;text-align:left;transition:.15s;
-  }
-  .nav-item:hover{background:var(--green-soft);color:var(--green)}
-  .nav-item.active{background:var(--green);color:#fff;font-weight:600}
-  .nav-ico{font-size:12px;opacity:.9}
-  .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+
 
   .side-countdown{
     background:var(--green-soft);border-radius:14px;padding:14px;
@@ -706,8 +870,11 @@
   .modal-box p{font-size:12.5px;color:var(--muted);line-height:1.6;word-break:break-word}
   .modal-box label{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--muted)}
   .modal-box input, .modal-box textarea, .modal-box select{
-    border:none;background:var(--aux-bg);border-radius:9px;
+    border:1px solid #e2e4e8;background:#f7f8fa;border-radius:9px;
     padding:9px 12px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;transition:.15s;
+  }
+  .modal-box input:focus, .modal-box textarea:focus, .modal-box select:focus{
+    background:#fff;border-color:var(--green-2);box-shadow:0 0 0 2px var(--green-soft);
   }
 
   /* 👇 新增：统一美化并自定义下拉箭头 */
@@ -1092,13 +1259,10 @@
     .review-totals{grid-template-columns:repeat(2,1fr)}
   }
   @media(max-width:880px){
-    .app{flex-direction:column}
-    .sidebar{
-      width:auto;height:auto;position:static;
-      flex-direction:column; /* 👈 改成纵向排列 */
-      align-items:stretch;gap:12px;padding:16px 14px;
-      border-bottom:1px solid var(--aux-line);
-    }
+    .app { flex-direction: column; height: auto; min-height: 100vh; overflow: auto; }
+    .app-main { height: auto; overflow: visible; }
+    main { overflow-y: visible; }
+    .sidebar { display: none; }
     
     /* 第一行：Logo 和 导航按钮 */
     .brand{padding:0;margin-bottom:4px;}
@@ -1151,35 +1315,48 @@
 <body>
 
 <div class="app">
+  <!-- 左侧导航栏 -->
   <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-text">
-        <div class="brand-mark">IELTS</div>
-        <div class="brand-sub">DESK</div>
+    <div class="sidebar-brand">
+      <div class="avatar">👦🏻</div>
+      <div class="brand-info">
+        <div class="brand-name">个人工作台</div>
+        <div class="brand-sub">WORKBENCH</div>
       </div>
-      <button class="brand-settings" id="settingsBtn" title="设置">
-  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-</button>
     </div>
-    <nav class="nav">
-      <button class="nav-item active" data-view="plan"><span class="nav-ico">◎</span>学习任务</button>
-      <button class="nav-item" data-view="papers"><span class="nav-ico">▤</span>做题记录</button>
-      <button class="nav-item" data-view="review"><span class="nav-ico">◈</span>学习复盘</button>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-link active">
+        <span class="nav-icon">🌐</span> 外语学习
+      </a>
     </nav>
-    <div class="side-foot">
-      <div class="side-countdown" id="sideCountdown" title="点击设置考试日期与目标分">
-        <div class="side-cd-line">
-          <span class="side-cd-num" id="cdNum">--</span>
-          <span class="side-cd-label">天后考试</span>
-        </div>
-        <div class="side-cd-date" id="cdDate"></div>
-        <div class="side-goals" id="sideGoals"></div>
-      </div>
-      <button class="ghost-btn small" id="recordBtn">学习记录</button>
+    <div class="sidebar-footer">
+      <button class="nav-link">⚙️ 设置</button>
     </div>
   </aside>
+  
+  <!-- 右侧应用主体 -->
+  <div class="app-main">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-icon">🌐</span>
+        <span class="brand-title">外语学习</span>
+      </div>
+      <div class="nav-segmented">
+        <button class="nav-item active" data-view="plan">学习任务</button>
+        <button class="nav-item" data-view="papers">做题记录</button>
+        <button class="nav-item" data-view="review">学习复盘</button>
+      </div>
+      <div class="top-actions">
+        <button class="top-btn" id="recordBtn">学习记录</button>
+        <button class="top-btn" id="settingsBtn">学科色</button>
+        <div class="exam-info" id="sideCountdown" title="点击设置考试日期与目标分">
+          <span id="cdContent">点击设置考试日期</span>
+        </div>
+      </div>
+    </header>
 
-  <main>
+    <main>
+      <!-- 这里保留你原本的 <section class="view" id="view-plan"> 等全部内容不变 -->
     <section class="view" id="view-plan">
       <header class="plan-header">
         <div class="plan-head-left">
@@ -1342,36 +1519,6 @@
     <div class="settings-row" style="flex-direction:column;align-items:stretch">
       <div class="settings-row-label" style="margin-bottom:8px">学科颜色</div>
       <div class="color-picker-row" id="catColorRow"></div>
-    </div>
-
-    <div class="settings-row" style="flex-direction:column;align-items:stretch">
-      <div class="settings-row-label" style="margin-bottom:8px">辅助色</div>
-      <div class="color-picker-row">
-        <div class="color-field">
-          <input type="color" id="auxPageBg" value="#f5f3ee">
-          <span>页面底色</span>
-        </div>
-        <div class="color-field">
-          <input type="color" id="auxStartBtn" value="#e6efeb">
-          <span>开始学习按键</span>
-        </div>
-        <div class="color-field">
-          <input type="color" id="auxProgress" value="#e9e5dd">
-          <span>进度条底色</span>
-        </div>
-        <div class="color-field">
-          <input type="color" id="auxToggle" value="#e9e5dd">
-          <span>任务切换键</span>
-        </div>
-        <div class="color-field">
-          <input type="color" id="auxCheckin" value="#e9e5dd">
-          <span>打卡方块</span>
-        </div>
-        <div class="color-field">
-          <input type="color" id="auxInputBg" value="#faf9f6">
-          <span>输入框底色</span>
-        </div>
-      </div>
     </div>
 
     <div class="settings-row" style="flex-direction:column;align-items:stretch">
@@ -1860,9 +2007,18 @@ function catStyle(c){
 function applyTheme(){
   const theme = state.settings.theme || 'light';
   const themeColor = state.settings.themeColor || '#2f5d50';
-  const aux = state.settings.auxColor || DEFAULT_AUX;
+  const aux = '#f5f5f7'; // 固定灰底
   const cats = getCategories();
-  const auxSet = Object.assign({}, DEFAULT_AUX_SETTINGS, state.settings.auxSettings || {});
+  // 强制固定辅助色，去掉了用户自定义
+  const auxSet = {
+    pageBg: '#f5f5f7',
+    startBtn: '#e5e5ea',
+    progressTrack: '#e5e5ea',
+    toggleBg: '#e5e5ea',
+    checkinOff: '#e5e5ea',
+    inputBg: '#ffffff',
+    checkinOn: ''
+  };
 
   document.documentElement.setAttribute('data-theme', theme);
 
@@ -2528,33 +2684,27 @@ function renderHeader(){
   else greet = '夜深了，收个尾就休息';
   document.getElementById('greeting').textContent = greet;
 
-  const num = document.getElementById('cdNum');
-  const dateEl = document.getElementById('cdDate');
-  const goalsEl = document.getElementById('sideGoals');
+  const contentEl = document.getElementById('cdContent');
   const goals = state.settings.goals || {};
 
   if(!state.settings.examDate){
-    num.textContent = '--';
-    dateEl.textContent = '点击设置考试日期';
+    contentEl.textContent = '点击设置考试日期';
   } else {
     const exam = new Date(state.settings.examDate + 'T00:00:00');
     const base = new Date(); base.setHours(0,0,0,0);
     const diff = Math.round((exam - base)/86400000);
-    num.textContent = Math.max(0, diff);
-    dateEl.textContent = state.settings.examDate;
-  }
-
-  const overall = calcOverallGoal(goals);
-  if(overall){
-    const parts = [];
-    if(goals.l) parts.push('听力 ' + goals.l);
-    if(goals.r) parts.push('阅读 ' + goals.r);
-    if(goals.w) parts.push('写作 ' + goals.w);
-    if(goals.s) parts.push('口语 ' + goals.s);
-    goalsEl.innerHTML = '<div class="goals-main">目标分数 ' + escapeHtml(overall) + '</div>' +
-      (parts.length ? '<span class="goals-sub">' + parts.join(' · ') + '</span>' : '');
-  } else {
-    goalsEl.innerHTML = '<span class="goals-empty">未设置目标分数</span>';
+    let text = '距考试 ' + Math.max(0, diff) + ' 天 · ' + state.settings.examDate;
+    
+    const overall = calcOverallGoal(goals);
+    if(overall){
+      const parts = [];
+      if(goals.l) parts.push('听力 ' + goals.l);
+      if(goals.r) parts.push('阅读 ' + goals.r);
+      if(goals.w) parts.push('写作 ' + goals.w);
+      if(goals.s) parts.push('口语 ' + goals.s);
+      text += ' · 目标分数 ' + overall + (parts.length ? ' ' + parts.join(' · ') : '');
+    }
+    contentEl.textContent = text;
   }
 }
 
@@ -5906,13 +6056,7 @@ function openSettingsModal(){
   });
   document.getElementById('themeColorInput').value = state.settings.themeColor || '#2f5d50';
 
-  const auxSet = Object.assign({}, DEFAULT_AUX_SETTINGS, state.settings.auxSettings || {});
-  document.getElementById('auxPageBg').value = auxSet.pageBg || '#f5f3ee';
-  document.getElementById('auxStartBtn').value = auxSet.startBtn || '#e6efeb';
-  document.getElementById('auxProgress').value = auxSet.progressTrack || '#e9e5dd';
-  document.getElementById('auxToggle').value = auxSet.toggleBg || '#e9e5dd';
-  document.getElementById('auxCheckin').value = auxSet.checkinOff || '#e9e5dd';
-  document.getElementById('auxInputBg').value = auxSet.inputBg || '#faf9f6';
+
 
   const row = document.getElementById('catColorRow');
   row.innerHTML = cats.map(c => {
@@ -5944,22 +6088,6 @@ document.getElementById('themeColorInput').addEventListener('input', e => {
   applyTheme();
 });
 
-function updateAuxSetting(key, value){
-  if(!state.settings.auxSettings){
-    state.settings.auxSettings = Object.assign({}, DEFAULT_AUX_SETTINGS);
-  }
-  state.settings.auxSettings[key] = value;
-  state.settings.auxColor = state.settings.auxSettings.pageBg || DEFAULT_AUX;
-  save();
-  applyTheme();
-}
-
-document.getElementById('auxPageBg').addEventListener('input', e => updateAuxSetting('pageBg', e.target.value));
-document.getElementById('auxStartBtn').addEventListener('input', e => updateAuxSetting('startBtn', e.target.value));
-document.getElementById('auxProgress').addEventListener('input', e => updateAuxSetting('progressTrack', e.target.value));
-document.getElementById('auxToggle').addEventListener('input', e => updateAuxSetting('toggleBg', e.target.value));
-document.getElementById('auxCheckin').addEventListener('input', e => updateAuxSetting('checkinOff', e.target.value));
-document.getElementById('auxInputBg').addEventListener('input', e => updateAuxSetting('inputBg', e.target.value));
 
 document.getElementById('catColorRow').addEventListener('input', e => {
   const inp = e.target.closest('[data-cat-color]');
@@ -6110,7 +6238,7 @@ function switchView(name){
   if(name === 'review') renderReview();
   window.scrollTo(0, 0);
 }
-document.querySelector('.nav').addEventListener('click', e => {
+document.querySelector('.nav-segmented').addEventListener('click', e => {
   const btn = e.target.closest('.nav-item');
   if(btn) switchView(btn.dataset.view);
 });
@@ -6151,6 +6279,21 @@ function renderAll(){
   renderPapers();
   renderReview();
 }
+
+// 监听所有弹窗的显示状态，彻底解决滚动穿透
+const modalObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.target.classList.contains('modal')) {
+      const hasShow = document.querySelector('.modal.show');
+      document.body.style.overflow = hasShow ? 'hidden' : '';
+      const mainEl = document.querySelector('main');
+      if (mainEl) mainEl.style.overflowY = hasShow ? 'hidden' : 'auto';
+    }
+  });
+});
+document.querySelectorAll('.modal').forEach(m => {
+  modalObserver.observe(m, { attributes: true, attributeFilter: ['class'] });
+});
 
 applyTheme();
 renderAll();

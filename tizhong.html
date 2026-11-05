@@ -17,7 +17,17 @@
   --gray-text:#aaa;--primary:#6699ff;--error-red:#ff7878;
   --up-color:#ffb057;--down-color:#4cd07d;--same-color:#888;
 }
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif}
+  /* 隐藏滚动条但不影响滑动 */
+  ::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;
+  }
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
 html{
   -webkit-text-size-adjust:100%;
   text-size-adjust:100%;
@@ -91,12 +101,32 @@ input:focus,select:focus{outline:none;border-color:var(--primary)}
 .home-page{display:block}.home-page.hide{display:none}
 
 /* ===== 桌面网页版布局 ===== */
-.app-layout{display:flex;min-height:100vh;min-height:100dvh;background:var(--bg)}
-.sidebar{
-  width:260px;flex-shrink:0;position:sticky;top:0;height:100vh;height:100dvh;
-  display:flex;flex-direction:column;gap:18px;
-  padding:24px 16px;background:var(--card-bg);
-  border-right:1px solid var(--border);overflow-y:auto;
+  .app-layout{display:flex;height:100vh;height:100dvh;background:var(--bg);overflow:hidden;}
+  .sidebar{
+    width:260px;flex-shrink:0;height:100%;
+    display:flex;flex-direction:column;gap:18px;
+    padding:24px 16px;background:var(--card-bg);
+    border-right:1px solid var(--border);overflow-y:auto;
+  }
+  @media (max-width: 900px) {
+    .app-layout { flex-direction: column; height: auto; min-height: 100vh; overflow: visible; }
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      overflow-y: visible;
+    }
+    .main-area { height: auto; }
+    .main-inner { overflow-y: visible; padding: 16px 14px 56px; }
+  .sidebar-brand { font-size: 18px; padding: 0; }
+  .sidebar-nav { flex-direction: row; margin-top: 0; gap: 8px; }
+  .sidebar-nav-btn { padding: 8px 12px; }
 }
 .sidebar-brand{font-size:22px;font-weight:600;letter-spacing:2px;text-align:center;color:var(--text);padding:4px 0 8px}
 .sidebar-section-title{font-size:11px;color:var(--gray-text);letter-spacing:1px;padding:0 4px;margin-bottom:6px}
@@ -123,12 +153,19 @@ input:focus,select:focus{outline:none;border-color:var(--primary)}
   cursor:pointer;text-align:left;transition:.15s;
 }
 .sidebar-nav-btn:hover:not(:disabled){background:var(--bg);color:var(--text)}
-.sidebar-nav-btn.active{background:rgba(64,128,255,.12);color:var(--primary);font-weight:600}
+.sidebar-nav-btn.active{background:var(--primary);color:#fff;font-weight:600}
 .sidebar-nav-btn:disabled{opacity:.35;cursor:not-allowed}
 .sidebar-nav-btn svg{width:18px;height:18px;flex-shrink:0}
 
-.main-area{flex:1;min-width:0;display:flex;flex-direction:column}
-.main-inner{max-width:1400px;width:100%;margin:0 auto;padding:32px 40px 60px;flex:1}
+  .main-area{flex:1;min-width:0;display:flex;flex-direction:column;height:100%;}
+  .main-inner{
+    max-width:1400px;
+    width:100%;
+    margin:0 auto;
+    padding:24px 40px 60px; /* 减小顶部 padding 避免与通栏相撞 */
+    flex:1;
+    overflow-y: auto; /* 只有内容区域独立滚动 */
+  }
 .main-empty{
   display:flex;align-items:center;justify-content:center;
   min-height:70vh;color:var(--gray-text);font-size:15px;text-align:center;line-height:1.8;
@@ -492,6 +529,70 @@ h1{font-size:26px;font-weight:500}
   color: var(--gray-text);
 }
 
+/* ===== 导入数据弹窗 UI 专属样式 ===== */
+.import-select-btn {
+  background: #e0e0e0 !important;
+  color: #333 !important;
+  border: none;
+  border-radius: 6px;
+  padding: 0 16px;
+  font-size: 13px;
+  height: 34px;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  width: auto !important;
+  margin: 0 !important;
+  transition: opacity 0.2s;
+}
+.dark .import-select-btn {
+  background: #3a3a3a !important;
+  color: #ddd !important;
+}
+.import-select-btn:hover {
+  opacity: 0.8;
+}
+.import-file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+.import-file-name {
+  font-size: 13px;
+  color: var(--gray-text);
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.import-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+  padding-right: 0;
+}
+/* 数据传输弹窗：功能分区 */
+.transfer-section {
+  margin-bottom: 22px;
+}
+.transfer-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+/* 按钮禁用态 */
+.modal-btn.confirm:disabled,
+.modal-btn.confirm[disabled] {
+  opacity: .4;
+  cursor: not-allowed;
+}
 /* 主题色板 */
 .theme-swatches{display:flex;flex-wrap:wrap;gap:12px;padding:4px 0}
 .theme-swatch{
@@ -509,48 +610,7 @@ h1{font-size:26px;font-weight:500}
 .color-setting-row:last-of-type{margin-bottom:0}
 .settings-hint{font-size:12px;color:var(--gray-text);margin-top:10px;line-height:1.6}
 
-/* ===== 饮食与运动 ===== */
-.diet-date-nav{
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-  margin-bottom:14px;padding:6px 12px;background:var(--card-bg);border-radius:12px;
-}
-.diet-date-nav .chart-range{font-size:13px}
-.diet-calorie-main{text-align:center;padding:6px 0 10px}
-.diet-remain-label{font-size:12px;color:var(--gray-text);margin-bottom:4px}
-.diet-remain-value{font-size:42px;font-weight:800;line-height:1.05;letter-spacing:-1.5px;color:var(--primary)}
-.diet-remain-unit{font-size:12px;color:var(--gray-text);margin-top:2px}
-.diet-bar{margin-top:6px}
-.diet-bar-track{height:8px;border-radius:6px;background:var(--bg);overflow:hidden}
-.diet-bar-fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--primary),var(--down-color));transition:width .35s}
-.diet-bar-info{display:flex;justify-content:space-between;gap:6px;margin-top:8px;font-size:11px;color:var(--gray-text)}
-.diet-bar-info b{color:var(--text);font-weight:700}
-.diet-hint{font-size:11px;color:var(--gray-text);line-height:1.6;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
-.macro-list{display:flex;flex-direction:column;gap:11px}
-.macro-head{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;margin-bottom:5px}
-.macro-name{color:var(--text);font-weight:600}
-.macro-val{color:var(--gray-text);font-size:11px}
-.macro-track{height:7px;border-radius:5px;background:var(--bg);overflow:hidden}
-.macro-fill{height:100%;border-radius:5px;transition:width .35s}
-.meal-block{background:var(--bg);border-radius:12px;padding:12px 14px;margin-bottom:8px}
-.meal-block:last-child{margin-bottom:0}
-.meal-header{display:flex;align-items:center;gap:8px}
-.meal-name{font-size:14px;font-weight:600}
-.meal-kcal{font-size:12px;color:var(--gray-text);margin-left:auto}
-.meal-add-btn{
-  border:none;background:rgba(64,128,255,.12);color:var(--primary);
-  font-size:12px;padding:4px 10px;border-radius:20px;cursor:pointer;flex-shrink:0;
-}
-.meal-add-btn:active{transform:scale(.95)}
-.meal-items{margin-top:8px;display:flex;flex-direction:column;gap:6px}
-.meal-empty{font-size:12px;color:var(--gray-text);padding:2px 0}
-.meal-item{
-  display:flex;align-items:center;gap:10px;
-  padding:8px 10px;border-radius:8px;background:var(--card-bg);cursor:pointer;
-}
-.meal-item-main{flex:1;min-width:0}
-.meal-item-name{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.meal-item-macro{font-size:10px;color:var(--gray-text);margin-top:2px}
-.meal-item-kcal{font-size:12px;font-weight:700;color:var(--primary);flex-shrink:0}
+
 
 .mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:9999}
 /* 把这三个弹窗的层级调高，放在 maskUserSelect(10040) 之上 */
@@ -558,11 +618,14 @@ h1{font-size:26px;font-weight:500}
 #maskEdit{z-index:10050}
 #maskDataTransfer{z-index:10050}
 
-#maskModify{z-index:10005}#maskAvatarSelect{z-index:10010}#maskEmojiFull{z-index:10015}
-#maskRecord{z-index:10008}#maskAllRecords{z-index:10020}#maskJumpDate{z-index:10025}
-#maskMetricEdit{z-index:10030}#maskHealthInfo{z-index:10035}#maskWeightEdit{z-index:10012}
-#maskMetricHistoryFull{z-index:10028}
-#maskPK{z-index:10018}#maskDietAdd{z-index:10018}#maskExerciseAdd{z-index:10018}
+#maskModify{z-index:10040}#maskAvatarSelect{z-index:10060}#maskEmojiFull{z-index:10065}
+#maskRecord{z-index:20010 !important}
+#maskMetricEdit{z-index:20010 !important}
+#maskAllRecords{z-index:20020 !important}
+#maskMetricHistoryFull{z-index:20020 !important}
+#maskJumpDate{z-index:10025}
+#maskHealthInfo{z-index:10035}#maskWeightEdit{z-index:10012}
+#maskPK{z-index:10018}
 .mask.show{display:flex}
 .modal{background:var(--modal-bg);padding:20px;border-radius:14px;width:min(92%,440px);max-height:90vh;overflow:auto}
 .modal h3{margin-bottom:14px;font-size:18px}
@@ -587,6 +650,51 @@ h1{font-size:26px;font-weight:500}
 .sort-item.dragging{opacity:.4}
 .sort-handle{color:var(--gray-text);font-size:20px;user-select:none}
 .top-tip{color:var(--gray-text);font-size:13px;margin-bottom:10px}
+/* 个人信息弹窗内的历史记录列表专用样式 */
+.modal-record-list .record-item,
+.modal-record-list .metric-history-item {
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  background: var(--bg);
+}
+.modal-record-list .rec-weight,
+.modal-record-list .mh-value {
+  font-size: 14px;
+  font-weight: 400; /* 与普通 label 粗细一致 */
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 2px;
+}
+.modal-record-list .rec-meta,
+.modal-record-list .mh-date {
+  font-size: 12px;
+  color: var(--gray-text);
+  line-height: 1.4;
+}
+.modal-record-list .rec-diff,
+.modal-record-list .mh-diff {
+  font-size: 13px;
+  font-weight: 500;
+}
+/* 强制让围度历史的数值和日期与体重历史保持完全一致 */
+.modal-record-list .mh-value {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: var(--text) !important;
+  line-height: 1.4 !important;
+  margin-bottom: 2px !important;
+}
+.modal-record-list .mh-date {
+  font-size: 12px !important;
+  color: var(--gray-text) !important;
+  line-height: 1.4 !important;
+}
+/* 强制围度右侧的加减数值与体重右侧一致 */
+.modal-record-list .mh-diff {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
 .avatar-modal-content{display:grid;gap:14px}
 .avatar-section h4{font-size:14px;margin-bottom:8px}
 .avatar-preview-big{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto;overflow:hidden}
@@ -598,7 +706,7 @@ h1{font-size:26px;font-weight:500}
 .emoji-footer{margin-top:8px;display:flex;justify-content:flex-end}
 .bg-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .color-select-btn{border:none;background:transparent;color:var(--primary);font-size:14px;cursor:pointer;padding:4px 0}
-.hidden-native-color{visibility:hidden;width:0;height:0;position:absolute}
+.hidden-native-color{opacity:0;width:1px;height:1px;position:absolute;pointer-events:none;}
 .hidden-file{display:none}
 .emoji-full-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;max-height:60vh;overflow-y:auto;padding-right:4px}
 .upload-row{display:flex;gap:10px;align-items:center}
@@ -636,18 +744,60 @@ h1{font-size:26px;font-weight:500}
 }
 .body-info-item .info-label{color:var(--gray-text);font-size:11px;flex-shrink:0}
 .body-info-item .info-value{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;width:100%}
-.whr-excellent{color:var(--down-color)}
-.whr-good{color:var(--text)}
-.whr-normal{color:var(--up-color)}
-.bf-low{color:var(--text)}
-.bf-normal{color:var(--down-color)}
-.bf-high{color:var(--up-color)}
-.bf-vhigh{color:#e04b4b}
+/* 状态色改为读取 JS 动态注入的变量 */
+.bf-low{color:var(--status-color-low);}
+.bf-normal{color:var(--status-color-normal);}
+.bf-high{color:var(--status-color-high);}
+.bf-vhigh{color:var(--status-color-vhigh);}
+
+.whr-excellent{color:var(--status-color-normal);}
+.whr-good{color:var(--status-color-normal);}
+.whr-normal{color:var(--status-color-high);}
 .metric-dual-row{display:flex;gap:16px;margin-top:12px;align-items:flex-start}
 .metric-col:first-child{flex:6;min-width:0;display:flex;flex-direction:column;}
 .metric-col:last-child{flex:4;min-width:0;display:flex;flex-direction:column;}
 .metric-col-title{font-size:13px;font-weight:600;margin-bottom:6px}
 .metric-col select{font-size:12px;padding:0 6px;margin-bottom:8px;height:32px}
+
+/* =========================================================
+   新增：强制围度历史列表与体重历史字体完全一致
+   ========================================================= */
+.modal-record-list .mh-value {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: var(--text) !important;
+  line-height: 1.4 !important;
+  margin-bottom: 2px !important;
+}
+.modal-record-list .mh-date {
+  font-size: 12px !important;
+  color: var(--gray-text) !important;
+  line-height: 1.4 !important;
+}
+.modal-record-list .mh-diff {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+/* 新增：给围度下拉框加个明显的下拉小箭头图标 */
+.metric-select {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px !important;
+  padding-right: 36px !important; /* 给图标留出空间，防止文字被挡住 */
+}
+
+/* 夜间模式下箭头变白一点 */
+.dark .metric-select {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") !important;
+}
+
+/* 专门针对围度添加弹窗里的“部位”下拉框，稍微缩小右侧留白，防止和右侧的左右选择框挤在一起 */
+#popupBodyPartSelect.metric-select {
+  padding-right: 28px !important;
+  background-position: right 8px center !important;
+}
 .metric-history-scroll{max-height:220px;overflow-y:auto;padding-right:2px}
 .metric-history-item{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;background:var(--bg);border:1px solid transparent;font-size:12px;gap:6px;margin-bottom:4px;cursor:pointer;transition:.15s}
 .metric-history-item:hover{background:var(--card-bg)}
@@ -663,9 +813,10 @@ h1{font-size:26px;font-weight:500}
 .hi-current-lbl{font-size:12px;color:var(--gray-text);margin-top:6px}
 .hi-table{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .hi-row{display:flex;justify-content:space-between;padding:9px 12px;border-radius:8px;background:var(--bg);font-size:13px;border:1px solid transparent}
-.hi-row.active{background:rgba(64,128,255,.12);border-color:rgba(64,128,255,.35);font-weight:600;color:var(--primary)}
+.hi-row.active{background:rgba(64,128,255,.12);border-color:rgba(64,128,255,.35);font-weight:600}
 .hi-row .hi-level{font-weight:500}
 .hi-row.active .hi-level{font-weight:700}
+.hi-row .val-only{color:var(--text);font-weight:500;}
 .hi-desc{font-size:12px;color:var(--gray-text);line-height:1.7;padding:10px 12px;background:var(--bg);border-radius:8px}
 
 @media (max-width:480px){
@@ -728,7 +879,7 @@ h1{font-size:26px;font-weight:500}
   .container{padding-left:14px;padding-right:14px}
   .detail-page{padding-left:14px;padding-right:14px}
   .nav-btn{font-size:9px}
-  .diet-remain-value{font-size:36px}
+
 }
 @media (max-width:360px){
   .ov-num{font-size:18px}
@@ -741,13 +892,42 @@ h1{font-size:26px;font-weight:500}
   .container{padding-left:12px;padding-right:12px}
 }
 
-/* ===== 顶部通栏 4 卡片 ===== */
+/* ===== 顶部通栏 4 卡片 + 图标列 ===== */
 .top-cards{
   display:grid;
-  grid-template-columns:1.2fr 1fr 1fr 1fr;
+  grid-template-columns:1.2fr 1fr 1fr 1fr auto;
   gap:10px;
   margin-bottom:18px;
 }
+/* 顶部通栏右侧纵向图标列 */
+.top-icon-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:var(--card-bg);
+  border-radius:14px;
+  padding:12px 10px;
+  min-width:56px;
+}
+.top-icon-btn{
+  border:none;
+  background:transparent;
+  color:var(--gray-text);
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  padding:0;
+  transition:.15s;
+}
+.top-icon-btn:hover{background:var(--bg);color:var(--primary)}
+.top-icon-btn:active{transform:scale(.92)}
+.top-icon-btn svg{width:20px;height:20px}
 .user-card{
   background:var(--card-bg);
   border-radius:14px;
@@ -764,11 +944,12 @@ h1{font-size:26px;font-weight:500}
 /* 让这一行变成一个整体，并在卡片中居中 */
 .user-card-name-row{
   display:flex;
+  flex-direction:row;
   align-items:center;
   justify-content:center;
-  gap:8px; /* 名字和按钮的间距 */
-  max-width:90%; /* 防止过长撑破卡片 */
-  margin:0 auto; /* 保证整体居中 */
+  gap:6px;
+  max-width:95%;
+  margin:0 auto;
 }
 /* 名字文字居中且自适应宽度 */
 .user-card-name{
@@ -778,12 +959,9 @@ h1{font-size:26px;font-weight:500}
   text-overflow:ellipsis;
   white-space:nowrap;
   text-align:center;
-  cursor:pointer;
   transition:color .15s;
 }
-.user-card-name:hover{
-  color:var(--primary);
-}
+/* 删除了 hover 变色的样式，鼠标悬浮时不再变色 */
 .switch-user-btn{
   border:none;
   background:transparent; /* 去掉了原有底色 */
@@ -808,6 +986,32 @@ h1{font-size:26px;font-weight:500}
   gap: 6px; /* 数字和下方标题的间距 */
   padding: 16px 12px;
 }
+/* ===== 鼠标悬浮数字变色效果 ===== */
+/* 只对带有 data-edit 的卡片中，包含数字和单位的 span 加上悬浮效果 */
+.ov-item[data-edit] > div > span {
+  transition: color 0.2s ease-in-out;
+}
+
+/* 悬浮变色，但排除掉 vizSpeedInner（减重速度区域） */
+.ov-item[data-edit]:hover > div > span:not(#vizSpeedInner) {
+  color: var(--primary) !important;
+}
+
+.ov-item[data-edit]:hover #vizSpeedInner span {
+  color: var(--text) !important;
+}
+
+/* 减重速度区域强制不随悬浮变色 */
+#vizSpeedInner span {
+  color: var(--text) !important;
+  transition: none !important;
+}
+#vizSpeedInner {
+  cursor: pointer;
+}
+#vizSpeedInner:hover {
+  color: var(--text) !important;
+}
 .ov-item .ov-value{
   justify-content: center;
   align-items: baseline;
@@ -829,6 +1033,14 @@ h1{font-size:26px;font-weight:500}
   margin-bottom: 0;
   font-size: 13px;
   color: var(--gray-text);
+}
+.weight-cards-row {
+  display: flex;
+  gap: 12px;
+}
+.weight-cards-row > .ov-item {
+  flex: 1;
+  padding: 20px 10px;
 }
 
 /* ===== 左右两栏布局（替代原 combined-row） ===== */
@@ -931,6 +1143,172 @@ h1{font-size:26px;font-weight:500}
   transition: border-color 0.2s, color 0.2s;
 }
 .btn-secondary-sm:hover { border-color: var(--primary); color: var(--primary); }
+/* ===== 顶部四卡片布局 ===== */
+.top-cards-flex {
+  display: flex;
+  gap: 16px;
+  align-items: stretch; /* 确保高度一致 */
+  width: 100%;
+}
+.top-card-item {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-width: 0;
+  flex: 1; /* 默认等宽 */
+}
+/* 模块1稍微窄一点点，模块4稍微窄一点点，中间两个宽一点（可根据实际视觉效果微调） */
+.top-card-item.card-user { flex: 0.9; }
+.top-card-item:nth-child(2),
+.top-card-item:nth-child(3) { flex: 1.1; }
+.top-card-item:nth-child(4) { flex: 1; }
+
+/* 针对模块2里身高的上边距 */
+.top-card-item .top-info-item {
+  margin-top: 0; /* 清除原本的内联 margin-top 影响 */
+}
+/* ===== 全新主页网格排版 ===== */
+.new-layout-grid{display:flex;flex-direction:column;gap:20px;}
+.layout-row{width:100%;}
+.row-two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch;}
+
+/* 第一行：统一大卡片 */
+.row-top{
+  display: block;
+  background: transparent; /* 移除原本的大背景，让内部模块独立 */
+}
+.col-left-card{
+  background: transparent;
+  border-radius: 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 20px;
+}
+
+/* 第一行：左侧图标列 */
+.col-icons{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  width: 40px;
+  flex-shrink: 0;
+}
+.col-icons .top-icon-btn{
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: var(--gray-text);
+}
+.col-icons .top-icon-btn:hover{
+  background: var(--bg);
+  color: var(--primary);
+}
+
+/* 第一行：内部信息与图形网格 */
+.info-figure-group{
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 2.5fr; /* 中间头像固定，右侧数据扩展 */
+  gap: 30px;
+  align-items: center;
+}
+
+/* 第一行：右侧数据与人体图（横向三等分） */
+.info-figure-group > div:last-child {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 16px;
+  align-items: center;
+}
+
+/* 第一行：信息列 */
+.col-info{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:10px;
+}
+.col-info .top-info-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+  padding:10px 14px;
+  background:var(--bg); 
+  border-radius:8px;
+  border: none; 
+  flex: 1;
+}
+.top-icon-col{
+  display:none !important;
+}
+.col-info .top-info-label{color:var(--gray-text);}
+.col-info .top-info-value{font-weight:600;color:var(--text);cursor:pointer;}
+.col-info .top-info-empty{color:var(--gray-text);font-weight:400;font-size:12px;}
+
+/* 新增：让数值和标签各自应用对应状态的颜色 */
+.col-info .top-info-value .val-only { color: var(--text); }
+.col-info .top-info-value .status-txt { color: var(--text); font-size: 12px; font-weight: 500; margin-left: 4px; }
+.col-figure{position:relative;}
+.figure-add-btn{
+  position:absolute;right:4px;bottom:4px;width:26px;height:26px;
+  background:var(--primary);color:#fff;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:bold;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.2);
+  transition:transform .15s;
+  line-height: 1;
+  padding: 0;
+}
+.figure-add-btn:hover{transform:scale(1.05);}
+
+/* 第一行：人体图 */
+.col-figure{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:default;
+  transition:.15s;
+  border-radius:12px;
+  padding:8px;
+}
+.col-figure .body-figure{width:100%;height:230px;margin:0;padding:0;background:transparent;}
+
+/* 响应式调整 */
+@media (max-width: 900px){
+  .col-left-card {
+    flex-direction: column;
+    align-items: center;
+  }
+  .col-icons {
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .info-figure-group {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+  .info-figure-group > div:last-child {
+    grid-template-columns: 1fr 1fr;
+  }
+  .col-left-card > div[style*="flex-direction: row; gap: 20px;"] {
+    flex-direction: column !important;
+  }
+  .col-left-card > div[style*="flex-direction: row; gap: 20px;"] > div[style*="flex: 2.5"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -938,98 +1316,173 @@ h1{font-size:26px;font-weight:500}
 <div class="app-layout">
 
   <aside class="sidebar">
-  <div class="sidebar-brand">小园丁体重管理</div>
+    <div class="sidebar-brand" style="display:flex; align-items:center; gap:10px; padding:20px 16px 10px;">
+      <div style="width:40px; height:40px; border-radius:50%; background:#e0e0e0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:24px;">👦🏻</div>
+      <div>
+        <div style="font-size:18px; font-weight:700; color:var(--text); letter-spacing:1px;">个人工作台</div>
+        <div style="font-size:10px; color:var(--gray-text); letter-spacing:2px; font-weight:600;">WORKBENCH</div>
+      </div>
+    </div>
 
-  <div class="sidebar-nav" id="sidebarNav">
-    <button class="sidebar-nav-btn" data-tab="combined" disabled>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="8" height="7" rx="1.5"/><rect x="13" y="13" width="8" height="7" rx="1.5"/></svg>
-      <span>体重</span>
-    </button>
-    <button class="sidebar-nav-btn" data-tab="diet" disabled>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a9 9 0 0 1-9 9 9 9 0 0 1-9-9z"/><path d="M8 7.5c0-1.4.9-1.9.9-3.3M12 7.5c0-1.4.9-1.9.9-3.3M16 7.5c0-1.4.9-1.9.9-3.3"/></svg>
-      <span>饮食</span>
-    </button>
-    <button class="sidebar-nav-btn" data-tab="settings" disabled>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span>设置</span>
-    </button>
-  </div>
-</aside>
+    <div class="sidebar-nav" id="sidebarNav" style="padding: 10px 12px; gap: 4px;">
+      <button class="sidebar-nav-btn active" data-tab="combined" style="background: var(--primary); color: #fff; border-radius: 10px; font-weight: 600; padding: 10px 14px; border:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
+        <span>体重记录</span>
+      </button>
+    </div>
+    <div style="margin-top:auto; padding:16px;">
+      <button id="sidebarSettingsBtn" style="width:100%; border:1px solid var(--border); background:transparent; color:var(--text); padding:10px; border-radius:10px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">⚙️ 设置</button>
+    </div>
+  </aside>
 
-  <!-- 右侧主内容区 -->
+    <!-- 右侧主内容区 -->
   <main class="main-area">
-    <div class="main-inner">
-      <!-- 删掉了原来的 mainEmpty，让内容区默认展示 -->
+    <!-- 顶部导航通栏 -->
+    <div class="top-header-bar" style="display:flex; justify-content:space-between; align-items:center; padding: 16px 32px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap:wrap; gap:12px; flex-shrink: 0; z-index: 10;">
+      <div style="display:flex; align-items:center; gap:8px; font-size:20px; font-weight:700; color:var(--text);">
+        <span style="font-size:24px;">⚖️</span> 体重记录
+      </div>
+      
+      <div class="top-actions" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <button class="btn-secondary-sm" onclick="openRecordModal(null)" style="width:auto; border-radius:20px; padding:6px 16px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-size:13px; cursor:pointer;">+ 添加</button>
+          
+          <button class="btn-secondary-sm" onclick="showUserSelectModal()" style="width:auto; border-radius:20px; padding:6px 16px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> 切换用户
+          </button>
+          
+          <div class="segmented-control" style="border-radius:20px; padding:2px; border:1px solid var(--border);">
+            <button class="segment-btn" data-unit="kg" onclick="applyGlobalUnit('kg')" style="padding:4px 16px; border-radius:18px; font-size:13px;">公斤</button>
+            <button class="segment-btn" data-unit="jin" onclick="applyGlobalUnit('jin')" style="padding:4px 16px; border-radius:18px; font-size:13px;">斤</button>
+          </div>
+          
+          <div style="display:flex; align-items:center; gap:10px; background:var(--card-bg); border:1px solid var(--border); padding:4px 14px; border-radius:20px; font-size:13px;">
+            <div style="display:flex; align-items:center; gap:4px; cursor:pointer; position:relative;" id="topUpColorBtn" title="点击修改上升颜色">
+              <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:var(--up-color);"></span> 上升
+              <input type="color" id="topUpColorPicker" style="position:absolute; top:100%; left:50%; transform:translateX(-50%); opacity:0; width:20px; height:20px; border:none; padding:0; pointer-events:none;">
+            </div>
+            <div style="display:flex; align-items:center; gap:4px; cursor:pointer; position:relative;" id="topDownColorBtn" title="点击修改下降颜色">
+              <span style="display:inline-block; width:12px; height:12px; border-radius:3px; background:var(--down-color);"></span> 下降
+              <input type="color" id="topDownColorPicker" style="position:absolute; top:100%; left:50%; transform:translateX(-50%); opacity:0; width:20px; height:20px; border:none; padding:0; pointer-events:none;">
+            </div>
+          </div>
+        </div>
+         </div>
 
-            <div class="detail-page show" id="detailPage">
+         <div class="main-inner">
+           <div class="detail-page show" id="detailPage">
 
   <!-- ===== Tab 1：综合（合并 记录 + 趋势） ===== -->
   <div class="tab-content show" id="tab-combined">
 
-    <!-- 第一行通栏：用户卡片 + 三块体重卡片 -->
-    <div class="top-cards" id="weightOverview">
-      <div class="user-card" style="position:relative;">
-        <!-- 把PK按钮移到这里，并绝对定位到右上角 -->
-        <button class="pk-icon-btn" id="openPKBtn" aria-label="PK 对比" style="position:absolute; top:12px; right:12px;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M6 3h12v5a6 6 0 0 1-12 0z"/><path d="M6 5H3v2a4 4 0 0 0 4 4M18 5h3v2a4 4 0 0 1-4 4"/></svg>
-        </button>
-        <!-- 有用户时的展示 -->
-        <div id="userCardHasData" style="display:none; flex-direction:column; align-items:center; gap:8px; width:100%;">
-          <div class="user-card-avatar" id="topUserAvatar"></div>
-          <div class="user-card-name-row">
-            <span class="user-card-name" id="topUserName"></span>
-            <button class="switch-user-btn" id="openUserSelect" aria-label="切换用户">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-            </button>
+        <!-- ===== 全新的页面网格排版 ===== -->
+    <div class="new-layout-grid" id="weightOverview">
+      
+            <!-- ✅ 第一行（统一大卡片，内部横向分为：图标 / 头像 / 数据） -->
+      <div class="layout-row row-top">
+        <!-- 四卡片统一容器 -->
+        <div class="top-cards-flex">
+          
+          <!-- 模块 1：头像、用户名（去掉齿轮，加主用户标签） -->
+          <div class="top-card-item card-user">
+            <div class="user-card" id="topUserInfoClickArea" style="background:transparent; padding:0; width: 100%; cursor: pointer; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;" title="点击修改个人信息">
+              <div id="userCardHasData" style="display:none; flex-direction:column; align-items:center; justify-content:center; width:100%;">
+                <div class="user-card-avatar" id="topUserAvatar" style="margin-bottom: 12px; width: 70px; height: 70px;"></div>
+                <div class="user-card-name-row" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:6px; width:100%;">
+                  <span class="user-card-name" id="topUserName" style="font-size: 18px;"></span>
+                  <span class="user-select-tag" style="background:var(--primary); color:#fff; padding:2px 8px; border-radius:10px; font-size:11px; margin-left:6px;">主用户</span>
+                </div>
+              </div>
+              <div id="userCardEmpty" style="display:flex; flex-direction:column; gap:8px; width:100%;">
+                <button class="btn-primary-sm" id="emptyCreateBtn">创建用户</button>
+                <button class="btn-secondary-sm" id="emptyImportBtn">导入数据</button>
+              </div>
+            </div>
           </div>
+
+          <!-- 模块 2：性别、年龄、身高、体重 -->
+          <div class="top-card-item">
+            <div class="col-info" id="topInfoCol3" style="gap:10px; width:100%;"></div>
+          </div>
+
+          <!-- 模块 3：基础代谢、BMI、体脂率、腰臀比 -->
+          <div class="top-card-item">
+            <div class="col-info" id="topInfoCol1" style="gap:10px; width:100%;"></div>
+          </div>
+
+          <!-- 模块 4：体型示意图小人、体型文字（去掉悬浮加号） -->
+          <div class="top-card-item" style="justify-content:center;">
+            <div class="col-figure" id="topFigureCol" style="width:100%; height:100%; justify-content:center;">
+              <div class="body-figure" id="bodyFigure" style="width: 100%; height: 190px; margin-bottom: 4px;"></div>
+              <div class="body-shape-label" id="bodyShapeLabel" style="text-align: center; font-size: 13px; font-weight: 600; color: var(--text); line-height:1.4;"></div>
+            </div>
+          </div>
+
         </div>
-        <!-- 无用户时的空状态展示 -->
-        <div id="userCardEmpty" style="display:flex; flex-direction:column; gap:8px; width:100%;">
-          <button class="btn-primary-sm" id="emptyCreateBtn">创建用户</button>
-          <button class="btn-secondary-sm" id="emptyImportBtn">导入数据</button>
-        </div>
       </div>
-      <div class="ov-item" data-edit="start">
-        <div class="ov-value"><span class="ov-num" id="ovStart">--</span><span class="ov-unit" id="ovStartUnit"></span></div>
-        <div class="ov-label">初始体重</div>
-      </div>
-      <div class="ov-item" data-edit="current">
-        <div class="ov-value"><span class="ov-num" id="ovCurrent">--</span><span class="ov-unit" id="ovCurrentUnit"></span></div>
-        <div class="ov-label">最新体重</div>
-      </div>
-      <div class="ov-item" data-edit="target">
-        <div class="ov-value"><span class="ov-num" id="ovTarget">--</span><span class="ov-unit" id="ovTargetUnit"></span></div>
-        <div class="ov-label">目标体重</div>
-      </div>
-    </div>
 
-        <!-- ===== 全新的综合页布局：左右两栏 ===== -->
-    <div class="combined-grid">
-
-      <!-- 左栏 -->
-      <div class="combined-col combined-col-left">
-
-        <!-- 减重进展 -->
-        <div class="stat-panel">
-          <h3 class="viz-panel-title">减重进展</h3>
-          <div class="viz-block-new">
-            <div class="viz-ring-wrap">
-              <svg viewBox="0 0 100 100" class="viz-ring">
+      <!-- ✅ 第二行（左右两栏） -->
+      <div class="layout-row row-two-col">
+        <!-- 左栏：拆分为上下两部分 -->
+        <div class="col-half left-col">
+                    <div class="stat-panel" style="margin-bottom:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <h3 class="viz-panel-title" style="margin-bottom:0;">减重进展</h3>
+              <button class="top-icon-btn" id="openPKBtn" aria-label="PK 对比" style="width:28px; height:28px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M6 3h12v5a6 6 0 0 1-12 0z"/><path d="M6 5H3v2a4 4 0 0 0 4 4M18 5h3v2a4 4 0 0 1-4 4"/></svg>
+              </button>
+            </div>
+            
+            <!-- 圆弧与数据容器 -->
+            <div style="position:relative; width:100%; max-width: 420px; margin: 0 auto; height: 140px;">
+              <!-- 圆弧 SVG -->
+              <svg viewBox="0 0 240 140" style="width:100%; height:100%; display:block;">
                 <defs>
-                  <linearGradient id="progGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="progGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.5"/>
                     <stop offset="100%" stop-color="var(--primary)"/>
                   </linearGradient>
                 </defs>
-                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="9" opacity="0.35"/>
-                <circle id="vizProgressRing" cx="50" cy="50" r="42" fill="none" stroke="url(#progGrad)" stroke-width="9" stroke-dasharray="263.9" stroke-dashoffset="263.9" transform="rotate(-90 50 50)" stroke-linecap="round"/>
+                <!-- 刻度线 -->
+                <g transform="translate(120, 125)" stroke="var(--border)" stroke-width="1.5" stroke-linecap="round">
+                  <line x1="-70" y1="0" x2="-78" y2="0" transform="rotate(-90)" />
+                  <line x1="-70" y1="0" x2="-78" y2="0" transform="rotate(-60)" />
+                  <line x1="-70" y1="0" x2="-78" y2="0" transform="rotate(-30)" />
+                  <line x1="-70" y1="0" x2="-78" y2="0" transform="rotate(0)" />
+                  <line x1="-70" y1="0" x2="-78" y2="0" transform="rotate(30)" />
+                  <line x1="-70" y1="0" x2="-78" y2="0" transform="rotate(60)" />
+                  <line x1="-70" y1="0" x2="-78" y2="0" transform="rotate(90)" />
+                </g>
+                <!-- 背景轨道 -->
+                <path d="M 42 125 A 78 78 0 0 1 198 125" fill="none" stroke="var(--border)" stroke-width="12" opacity="0.2" stroke-linecap="round"/>
+                <!-- 进度条 -->
+                <path id="vizProgressRing" d="M 42 125 A 78 78 0 0 1 198 125" fill="none" stroke="url(#progGrad)" stroke-width="12" stroke-dasharray="245" stroke-dashoffset="245" stroke-linecap="round" style="transition: stroke-dashoffset 0.5s ease-in-out;"/>
               </svg>
-              <div class="viz-ring-text">
-                <div class="viz-ring-pct" id="vizProgressPct">0%</div>
-                <div class="viz-ring-speed-inner" id="vizSpeedInner"></div>
+              
+              <!-- 进度百分比 -->
+              <div id="vizProgressPct" style="position:absolute; left:50%; top:0; transform:translateX(-50%); font-size:14px; font-weight:800; color:#fff; background:var(--primary); padding:3px 10px; border-radius:20px; white-space:nowrap; z-index: 2;">0%</div>
+
+              <!-- 初始体重 -->
+              <div class="ov-item" data-edit="start" style="position:absolute; left:6%; top: 60%; transform:translateY(-50%); cursor:pointer; text-align:center; padding:0; background:transparent;">
+                <div style="font-size:12px; color:var(--gray-text); margin-bottom:2px;">初始体重</div>
+                <div style="font-size:20px; font-weight:800;"><span id="ovStart">--</span><span style="font-size:13px; font-weight:400; color:var(--gray-text); margin-left:2px;" id="ovStartUnit"></span></div>
+              </div>
+
+              <!-- 目标体重 -->
+              <div class="ov-item" data-edit="target" style="position:absolute; right:6%; top: 60%; transform:translateY(-50%); cursor:pointer; text-align:center; padding:0; background:transparent;">
+                <div style="font-size:12px; color:var(--gray-text); margin-bottom:2px;">目标体重</div>
+                <div style="font-size:20px; font-weight:800;"><span id="ovTarget">--</span><span style="font-size:13px; font-weight:400; color:var(--gray-text); margin-left:2px;" id="ovTargetUnit"></span></div>
+              </div>
+
+              <!-- 最新体重与速度 -->
+              <div class="ov-item" data-edit="current" style="position:absolute; left:50%; bottom: 0; transform:translateX(-50%); cursor:pointer; text-align:center; padding:0; background:transparent;">
+                <div style="font-size:12px; color:var(--gray-text); margin-bottom:2px;">最新体重</div>
+                <div style="font-size:26px; font-weight:800; line-height:1;"><span id="ovCurrent">--</span><span style="font-size:12px; font-weight:400; color:var(--gray-text); margin-left:2px;" id="ovCurrentUnit"></span></div>
+                <div style="font-size:13px; color:var(--gray-text); margin-top:4px;" id="vizSpeedInner"></div>
               </div>
             </div>
-            <div class="viz-info-col">
+            
+            <!-- 减重详情列表（这里原本有多余的嵌套，已修复） -->
+            <div class="viz-info-col" style="margin-top: 10px;">
               <div class="viz-info-row viz-day-row"><span id="statDays">减重第 0 天</span></div>
               <div class="viz-info-row"><span class="viz-info-key">身体变化</span><span class="viz-info-val" id="statBodyChange">--</span></div>
               <div class="viz-info-row"><span class="viz-info-key">距离目标还有</span><span class="viz-info-val" id="statRemain">--</span></div>
@@ -1038,78 +1491,41 @@ h1{font-size:26px;font-weight:500}
           </div>
         </div>
 
-        <!-- 体重日历 -->
-        <div class="trend-block">
-          <div class="chart-title-row" style="margin-bottom:10px;">
-            <h3 style="margin:0;">体重日历</h3>
-          </div>
-          <!-- 将头部改成与折线图完全一致的结构 -->
-          <div class="chart-nav-row" style="margin-top: 10px;">
-            <button class="chart-arrow" id="calPrevBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-            <div class="chart-range-container">
-              <span class="chart-range clickable" id="calTitle" title="点击选择时间"></span>
-              <button class="back-to-current-btn" id="backToTodayBtn" style="display:none;">回到本月</button>
-            </div>
-            <button class="chart-arrow" id="calNextBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
-          </div>
-          
-          <div class="calendar-single" id="calendarSingle">
-            <div class="cal-weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
-            <div class="cal-days" id="calDaysSingle"></div>
-          </div>
-        </div>
+        <!-- 右栏：体重日历 -->
 
-        <!-- 体重历史 -->
-        <div class="trend-block">
-          <div class="block-title-row"><h3>体重历史</h3></div>
-          <div class="record-list" id="recordList"></div>
-          <div style="text-align:center;margin-top:12px;"><button class="small-ghost-btn" id="showAllRecordsBtn">更多记录</button></div>
-        </div>
-
-        <!-- 身体围度与指数 -->
-        <div class="trend-block">
-          <h3>身体围度与指数</h3>
-          <div class="body-record-row">
-            <select id="bodyPartSelect"><option value="neck">颈围</option><option value="shoulder">肩宽</option><option value="chest">胸围</option><option value="waist">腰围</option><option value="hip">臀围</option><option value="arm">臂围</option><option value="thigh">大腿围</option><option value="calf">小腿围</option></select>
-            <select id="bodySideSelect" style="display:none;"><option value="L">左</option><option value="R">右</option><option value="N">/</option></select>
-            <input type="number" step="0.1" id="bodyMetricValue" placeholder="厘米">
-            <input type="date" id="bodyMetricDate">
-            <button id="bodyMetricSave">记录</button>
-          </div>
-          <div class="body-figure-row">
-            <div class="body-figure" id="bodyFigure"></div>
-            <div class="body-info" id="bodyInfo"></div>
-          </div>
-          <div class="metric-dual-row">
-            <div class="metric-col">
-              <div class="metric-col-title">围度趋势变化</div>
-              <select id="metricTrendSelect"><option value="neck">颈围</option><option value="shoulder">肩宽</option><option value="chest">胸围</option><option value="waist">腰围</option><option value="hip">臀围</option><option value="arm">臂围</option><option value="thigh">大腿围</option><option value="calf">小腿围</option></select>
-              <div class="chart-wrap" id="metricTrendChart"></div>
+        <!-- 右栏：体重日历 -->
+        <div class="col-half right-col">
+          <div class="trend-block" style="margin-bottom:0; height:100%;">
+            <div class="chart-title-row" style="margin-bottom:10px;">
+              <h3 style="margin:0;">体重日历</h3>
             </div>
-            <div class="metric-col">
-              <div class="metric-col-title">围度历史</div>
-              <select id="metricHistorySelect"><option value="neck">颈围</option><option value="shoulder">肩宽</option><option value="chest">胸围</option><option value="waist">腰围</option><option value="hip">臀围</option><option value="arm">臂围</option><option value="thigh">大腿围</option><option value="calf">小腿围</option></select>
-              <div class="metric-history-scroll" id="metricHistoryList"></div>
-              <div style="text-align:center;margin-top:8px;"><button class="small-ghost-btn" id="showAllMetricRecordsBtn" style="display:none;">更多记录</button></div>
+            <div class="chart-nav-row" style="margin-top: 10px;">
+              <button class="chart-arrow" id="calPrevBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+              <div class="chart-range-container">
+                <span class="chart-range clickable" id="calTitle" title="点击选择时间"></span>
+                <button class="back-to-current-btn" id="backToTodayBtn" style="display:none;">回到本月</button>
+              </div>
+              <button class="chart-arrow" id="calNextBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+            </div>
+            <div class="calendar-single" id="calendarSingle">
+              <div class="cal-weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+              <div class="cal-days" id="calDaysSingle"></div>
             </div>
           </div>
         </div>
-
       </div>
 
-      <!-- 右栏：4 张折线图垂直堆叠 -->
-      <div class="combined-col combined-col-right">
-
+      <!-- ✅ 第三行（左右两栏） -->
+      <div class="layout-row row-two-col">
         <!-- 计划周期 -->
-        <div class="trend-block">
+        <div class="col-half left-col trend-block" style="margin-bottom:0;">
           <h3>计划周期体重变化</h3>
           <div class="overall-range" id="overallRange"></div>
           <div class="chart-wrap" id="chartOverall"></div>
           <div class="stage-analysis" id="stageOverall"></div>
         </div>
-
         <!-- 每周 -->
-        <div class="trend-block">
+        <div class="col-half right-col trend-block" style="margin-bottom:0;">
           <div class="chart-title-row"><span class="chart-title">每周体重变化</span></div>
           <div class="chart-nav-row">
             <button class="chart-arrow" id="weekPrevBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
@@ -1122,9 +1538,12 @@ h1{font-size:26px;font-weight:500}
           <div class="chart-wrap" id="chartWeek"></div>
           <div class="stage-analysis" id="stageWeek"></div>
         </div>
+      </div>
 
+      <!-- ✅ 第四行（左右两栏） -->
+      <div class="layout-row row-two-col">
         <!-- 每月 -->
-        <div class="trend-block">
+        <div class="col-half left-col trend-block" style="margin-bottom:0;">
           <div class="chart-title-row"><span class="chart-title">每月体重变化</span></div>
           <div class="chart-nav-row">
             <button class="chart-arrow" id="monthPrevBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
@@ -1137,82 +1556,37 @@ h1{font-size:26px;font-weight:500}
           <div class="chart-wrap" id="chartMonth"></div>
           <div class="stage-analysis" id="stageMonth"></div>
         </div>
-
         <!-- 每年 -->
-        <div class="trend-block">
+        <div class="col-half right-col trend-block" style="margin-bottom:0;">
           <div class="chart-title-row"><span class="chart-title">每年体重变化</span></div>
           <div class="chart-nav-row">
-            <button class="chart-arrow" id="yearPrevBtn">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </button>
+            <button class="chart-arrow" id="yearPrevBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
             <div class="chart-range-container">
               <span class="chart-range clickable" id="yearRange" title="点击选择时间"></span>
               <button class="back-to-current-btn" id="backToYearBtn" style="display:none;">回到今年</button>
             </div>
-            <button class="chart-arrow" id="yearNextBtn">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </button>
+            <button class="chart-arrow" id="yearNextBtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
           </div>
           <div class="chart-wrap" id="chartYear"></div>
           <div class="stage-analysis" id="stageYear"></div>
         </div>
-
       </div>
+      
+    </div><!-- /new-layout-grid -->
 
-    </div>
-  </div><!-- ✅ 闭合 #tab-combined -->
 
-  <!-- ===== Tab 2：饮食（原样） ===== -->
-  <div class="tab-content" id="tab-diet">
-    <div class="diet-date-nav">
-      <button class="chart-arrow" id="dietPrevDay" aria-label="前一天">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      </button>
-      <span class="chart-range clickable" id="dietDateLabel" title="点击回到今天"></span>
-      <button class="chart-arrow" id="dietNextDay" aria-label="后一天">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-      </button>
-    </div>
 
-    <div class="stat-panel">
-      <h3 class="viz-panel-title">热量概览</h3>
-      <div class="diet-calorie-main">
-        <div class="diet-remain-label">还可以吃</div>
-        <div class="diet-remain-value" id="dietRemain">--</div>
-        <div class="diet-remain-unit">千卡</div>
-      </div>
-      <div class="diet-bar">
-        <div class="diet-bar-track"><div class="diet-bar-fill" id="dietBarFill"></div></div>
-        <div class="diet-bar-info">
-          <span>已摄入 <b id="dietIntake">0</b></span>
-          <span>运动消耗 <b id="dietBurn">0</b></span>
-          <span>预算 <b id="dietBudget">0</b></span>
-        </div>
-      </div>
-      <div class="diet-hint" id="dietHint"></div>
-    </div>
 
-    <div class="stat-panel">
-      <h3 class="viz-panel-title">三大营养素</h3>
-      <div class="macro-list" id="macroList"></div>
-    </div>
-
-    <div class="trend-block">
-      <div class="block-title-row"><h3>饮食记录</h3></div>
-      <div id="mealList"></div>
-    </div>
-
-    <div class="trend-block">
-      <div class="block-title-row">
-        <h3>运动记录</h3>
-        <button class="ghost-btn" id="addExerciseBtn">+ 添加运动</button>
-      </div>
-      <div id="exerciseList"></div>
-    </div>
-  </div>
 
   <!-- ===== Tab 3：设置（原样） ===== -->
   <div class="tab-content" id="tab-settings">
+    <div class="trend-block">
+      <div class="settings-row" id="openUserSelect" style="cursor:pointer;">
+        <span>切换用户</span>
+        <span class="settings-chevron">›</span>
+      </div>
+    </div>
+
     <div class="trend-block">
       <div class="settings-row" style="cursor:default;">
         <span>体重单位</span>
@@ -1247,6 +1621,13 @@ h1{font-size:26px;font-weight:500}
         <input type="color" id="downColorInput">
       </div>
     </div>
+
+    <div class="trend-block">
+      <div class="settings-row" id="openDataTransfer" style="cursor:pointer;">
+        <span>数据传输</span>
+        <span class="settings-chevron">›</span>
+      </div>
+    </div>
   </div>
 
 </div><!-- /detailPage -->
@@ -1263,58 +1644,9 @@ h1{font-size:26px;font-weight:500}
   </div>
 </div>
 
-<!-- 饮食记录 -->
-<div class="mask" id="maskDietAdd">
-  <div class="modal">
-    <h3 id="dietAddTitle">添加饮食记录</h3>
-    <div class="form-item"><label>餐次</label>
-      <select id="inpDietMeal">
-        <option value="breakfast">早餐</option>
-        <option value="lunch">午餐</option>
-        <option value="dinner">晚餐</option>
-        <option value="snack">加餐</option>
-      </select>
-    </div>
-    <div class="form-item"><label>食物名称<span class="error-tip" id="errDietName"></span></label>
-      <input type="text" id="inpDietName" placeholder="例如：鸡胸肉">
-    </div>
-    <div class="form-item"><label>热量（千卡）</label>
-      <input type="number" step="1" id="inpDietKcal" placeholder="0">
-    </div>
-    <div class="form-item"><label>蛋白质（克）</label>
-      <input type="number" step="0.1" id="inpDietProtein" placeholder="0">
-    </div>
-    <div class="form-item"><label>脂肪（克）</label>
-      <input type="number" step="0.1" id="inpDietFat" placeholder="0">
-    </div>
-    <div class="form-item"><label>碳水化合物（克）</label>
-      <input type="number" step="0.1" id="inpDietCarb" placeholder="0">
-    </div>
-    <div class="modal-footer">
-      <button class="modal-btn danger" id="deleteDietBtn">删除</button>
-      <button class="modal-btn cancel" id="cancelDietAdd">取消</button>
-      <button class="modal-btn confirm" id="saveDietAdd">确定</button>
-    </div>
-  </div>
-</div>
 
-<!-- 运动记录 -->
-<div class="mask" id="maskExerciseAdd">
-  <div class="modal">
-    <h3 id="exerciseAddTitle">添加运动</h3>
-    <div class="form-item"><label>运动名称<span class="error-tip" id="errExerciseName"></span></label>
-      <input type="text" id="inpExerciseName" placeholder="例如：跑步 30 分钟">
-    </div>
-    <div class="form-item"><label>消耗（千卡）<span class="error-tip" id="errExerciseKcal"></span></label>
-      <input type="number" step="1" id="inpExerciseKcal" placeholder="0">
-    </div>
-    <div class="modal-footer">
-      <button class="modal-btn danger" id="deleteExerciseBtn">删除</button>
-      <button class="modal-btn cancel" id="cancelExerciseAdd">取消</button>
-      <button class="modal-btn confirm" id="saveExerciseAdd">确定</button>
-    </div>
-  </div>
-</div>
+
+
 
 <!-- 创建用户 -->
 <div class="mask" id="maskCreate">
@@ -1342,19 +1674,29 @@ h1{font-size:26px;font-weight:500}
 <!-- 修改用户 -->
 <div class="mask" id="maskModify">
   <div class="modal">
-    <h3>修改用户信息</h3>
-    <div class="form-item"><label>用户名<span class="error-tip" id="errModName"></span></label><input type="text" id="inpModifyName"></div>
+    <h3>个人信息</h3>
     <div class="form-item"><label>头像</label><button type="button" class="avatar-select-btn" id="btnModAvatar">自定义头像</button></div>
+    <div class="form-item"><label>用户名<span class="error-tip" id="errModName"></span></label><input type="text" id="inpModifyName"></div>
     <div class="form-item"><label>性别</label>
       <select id="inpModifyGender"><option value="">请选择</option><option value="male">男</option><option value="female">女</option></select>
     </div>
     <div class="form-item"><label>出生年月日</label><input type="date" id="inpModifyBirth"></div>
-    <div class="form-item"><label>身高（厘米）<span class="error-tip" id="errModHeight"></span></label><input type="number" step="0.1" id="inpModifyHeight"></div>
-    <div class="form-item"><label>初始体重（<span id="modUnitLabel">公斤</span>）<span class="error-tip" id="errModStartW"></span></label><input type="number" step="0.1" id="inpModifyStartWeight"></div>
-    <div class="form-item"><label>初始体重日期<span class="error-tip" id="errModStartD"></span></label><input type="date" id="inpModifyStartDate"></div>
-    <div class="form-item"><label>目标体重（<span id="modUnitLabel2">公斤</span>）<span class="error-tip" id="errModTargetW"></span></label><input type="number" step="0.1" id="inpModifyTargetWeight"></div>
-    <div class="form-item"><label>目标达成日期<span class="error-tip" id="errModTargetD"></span></label><input type="date" id="inpModifyTargetDate"></div>
-    <div class="form-item"><label>需要减重</label><div class="calc-value" id="modNeedLose">--</div></div>
+
+    <!-- 体重历史（迁移自综合页） -->
+    <div class="form-item">
+      <label>体重历史</label>
+      <div class="record-list modal-record-list" id="recordList"></div>
+      <div style="text-align:right;margin-top:6px;"><button class="small-ghost-btn" id="showAllRecordsBtn">更多记录</button></div>
+    </div>
+
+    <!-- 围度历史（迁移自身体围度模块） -->
+    <div class="form-item">
+      <label>围度历史</label>
+      <select id="metricHistorySelect" class="metric-select" style="margin-bottom:10px;"><option value="neck">颈围</option><option value="shoulder">肩宽</option><option value="chest">胸围</option><option value="waist">腰围</option><option value="hip">臀围</option><option value="arm">臂围</option><option value="thigh">大腿围</option><option value="calf">小腿围</option></select>
+      <div class="metric-history-scroll modal-record-list" id="metricHistoryList"></div>
+      <div style="text-align:right;margin-top:6px;"><button class="small-ghost-btn" id="showAllMetricRecordsBtn" style="display:none;">更多记录</button></div>
+    </div>
+    
     <div class="modal-footer">
       <button class="modal-btn cancel" id="cancelModify">取消</button>
       <button class="modal-btn confirm" id="saveModify">保存</button>
@@ -1415,19 +1757,39 @@ h1{font-size:26px;font-weight:500}
   </div>
 </div>
 
-<!-- 体重记录 -->
+<!-- 添加记录（体重/围度） -->
 <div class="mask" id="maskRecord">
   <div class="modal">
-    <h3 id="recordModalTitle">添加体重记录</h3>
-    <div class="form-item"><label>体重<span class="error-tip" id="errRecWeight"></span></label>
-      <div class="weight-input-wrap"><input type="number" step="0.1" id="inpRecWeight" placeholder="请输入体重"><span class="weight-unit-tag" id="recUnitTag">公斤</span></div>
+    <div style="display:flex; border-bottom:1px solid var(--border); margin-bottom:15px; gap:20px;" id="recordTypeTabs">
+      <button class="ghost-btn" data-rtype="weight" style="font-size:15px; font-weight:700; border-bottom:2px solid var(--primary); border-radius:0; padding:0 0 8px 0; color:var(--primary);">体重记录</button>
+      <button class="ghost-btn" data-rtype="metric" style="font-size:15px; font-weight:700; border-bottom:2px solid transparent; border-radius:0; padding:0 0 8px 0; color:var(--gray-text);">围度记录</button>
     </div>
-    <div class="form-item"><label>日期<span class="error-tip" id="errRecDate"></span></label><input type="date" id="inpRecDate"></div>
-    <div class="form-item"><label>时间<span class="error-tip" id="errRecTime"></span></label><input type="time" id="inpRecTime"></div>
+    
+    <div id="formWeightArea">
+      <h3 id="recordModalTitle" style="font-size:16px; margin-bottom:14px;">添加体重记录</h3>
+      <div class="form-item"><label>体重<span class="error-tip" id="errRecWeight"></span></label>
+        <div class="weight-input-wrap"><input type="number" step="0.1" id="inpRecWeight" placeholder="请输入体重"><span class="weight-unit-tag" id="recUnitTag">公斤</span></div>
+      </div>
+      <div class="form-item"><label>日期<span class="error-tip" id="errRecDate"></span></label><input type="date" id="inpRecDate"></div>
+      <div class="form-item"><label>时间<span class="error-tip" id="errRecTime"></span></label><input type="time" id="inpRecTime"></div>
+    </div>
+    
+    <div id="formMetricArea" style="display:none;">
+      <h3 style="font-size:16px; margin-bottom:14px;">添加围度记录</h3>
+      <div class="form-item"><label>部位</label>
+        <div style="display:flex;gap:6px;">
+          <select id="recPartSelect" class="metric-select" style="flex:1;"><option value="neck">颈围</option><option value="shoulder">肩宽</option><option value="chest">胸围</option><option value="waist">腰围</option><option value="hip">臀围</option><option value="arm">臂围</option><option value="thigh">大腿围</option><option value="calf">小腿围</option></select>
+          <select id="recSideSelect" style="display:none; flex:0 0 60px;"><option value="L">左</option><option value="R">右</option><option value="N">/</option></select>
+        </div>
+      </div>
+      <div class="form-item"><label>数值（厘米）</label><input type="number" step="0.1" id="inpRecMetricValue" placeholder="请输入数值"></div>
+      <div class="form-item"><label>日期</label><input type="date" id="inpRecMetricDate"></div>
+    </div>
+
     <div class="modal-footer">
       <button class="modal-btn danger" id="deleteRecordBtn">删除</button>
       <button class="modal-btn cancel" id="cancelRecord">取消</button>
-      <button class="modal-btn confirm" id="saveRecord">确定</button>
+      <button class="modal-btn confirm" id="saveRecord">保存</button>
     </div>
   </div>
 </div>
@@ -1519,33 +1881,60 @@ h1{font-size:26px;font-weight:500}
   </div>
 </div>
 
-<!-- 数据传输弹窗 -->
+    <!-- 基础信息独立编辑弹窗 -->
+    <div class="mask" id="maskBasicEdit">
+      <div class="modal">
+        <h3 id="basicEditTitle">编辑</h3>
+        <div class="form-item" id="basicEditRowInput" style="display:none;">
+          <input type="text" id="inpBasicEditValue">
+        </div>
+        <div class="form-item" id="basicEditRowSelect" style="display:none;">
+          <select id="inpBasicEditSelect">
+            <option value="">请选择</option>
+            <option value="male">男</option>
+            <option value="female">女</option>
+          </select>
+        </div>
+        <div class="form-item" id="basicEditRowDate" style="display:none;">
+          <input type="date" id="inpBasicEditDate">
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn cancel" id="cancelBasicEdit">取消</button>
+          <button class="modal-btn confirm" id="saveBasicEdit">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据传输弹窗 -->
 <div class="mask" id="maskDataTransfer">
   <div class="modal">
     <h3>数据传输</h3>
-    
-    <!-- 导出区域 -->
-    <div id="transferExportView">
-      <div class="form-item" style="margin-bottom: 20px;">
+
+    <!-- 上半区：导入数据 -->
+    <div class="transfer-section">
+      <div class="transfer-section-title">导入数据</div>
+      <div class="import-file-row">
+        <input type="file" id="importDataFile" accept="application/json,.json" style="display:none;">
+        <button class="import-select-btn" id="btnSelectImportFile">选择文件</button>
+        <span class="import-file-name" id="importFileNameLabel">JSON 格式</span>
+      </div>
+    </div>
+
+    <!-- 下半区：导出数据 -->
+    <div class="transfer-section">
+      <div class="transfer-section-title">导出数据</div>
+      <div class="form-item" style="margin-bottom:0;">
         <select id="inpExportUser">
           <option value="">选择要导出的用户</option>
         </select>
       </div>
-      <div class="modal-footer">
-        <button class="modal-btn cancel" id="cancelTransfer">取消</button>
-        <button class="modal-btn confirm" id="btnImportData">导入数据</button>
-        <button class="modal-btn confirm" id="btnExportData">导出数据</button>
-      </div>
     </div>
 
-    <!-- 导入区域（默认隐藏） -->
-    <div id="transferImportView" style="display:none; text-align:center;">
-      <p style="margin-bottom:20px; font-size:14px; color:var(--gray-text);">请选择之前导出的 JSON 备份文件</p>
-      <input type="file" id="importDataFile" class="hidden-file" accept="application/json,.json">
-      <button class="pk-start-btn" id="btnSelectImportFile" style="margin-bottom:20px;">选择文件</button>
-      <div class="modal-footer" style="justify-content:center;">
-        <button class="modal-btn cancel" id="cancelImport">返回</button>
-      </div>
+    <!-- 按钮区 -->
+    <div class="modal-footer">
+      <button class="modal-btn cancel" id="cancelTransfer">取消</button>
+      <button class="modal-btn confirm" id="btnImportData" disabled>导入</button>
+      <button class="modal-btn confirm" id="btnExportData" disabled>导出</button>
     </div>
 
     <!-- 导入中/结果状态 -->
@@ -1557,6 +1946,17 @@ h1{font-size:26px;font-weight:500}
   </div>
 </div>
 
+<!-- 设置弹窗（由顶部图标打开） -->
+<div class="mask" id="maskSettings">
+  <div class="modal" style="width:min(94%,480px)">
+    <h3 style="margin-bottom:14px;">设置</h3>
+    <div id="settingsModalBody"></div>
+    <div class="modal-footer">
+      <button class="modal-btn confirm" id="closeSettingsModal">关闭</button>
+    </div>
+  </div>
+</div>
+
 <!-- 用户选择弹窗 -->
 <div class="mask" id="maskUserSelect">
   <div class="modal">
@@ -1565,12 +1965,17 @@ h1{font-size:26px;font-weight:500}
     
     <div class="user-select-list" id="userSelectList"></div>
     
-    <div class="user-select-actions">
+    <!-- 默认状态的操作按钮 -->
+    <div class="user-select-actions" id="userSelectDefaultActions">
       <button class="sidebar-action-btn" id="openCreate">创建用户</button>
       <button class="sidebar-action-btn" id="openEdit">编辑用户</button>
-      <button class="sidebar-action-btn" id="openDataTransfer">数据传输</button>
-      <!-- 统一使用 sidebar-action-btn 样式，去掉强制换行的 flex 和 min-width -->
       <button class="sidebar-action-btn" id="closeUserSelect">关闭</button>
+    </div>
+    
+    <!-- 编辑模式下的操作按钮（默认隐藏） -->
+    <div class="user-select-actions" id="userSelectEditActions" style="display:none;">
+      <button class="sidebar-action-btn" id="btnUserSelectDelete">删除</button>
+      <button class="sidebar-action-btn" id="btnUserSelectDone">完成</button>
     </div>
   </div>
 </div>
@@ -1621,37 +2026,53 @@ const PRIMARY_PRESETS=[
   {id:'red',   name:'红色', light:'#e05252', dark:'#ff7878'},
   {id:'indigo',name:'靛蓝', light:'#4a5fd6', dark:'#8a9bff'}
 ];
-let themeConfig={ primaryColorLight:'#4080ff', primaryColorDark:'#6699ff', up:'#f0932b', down:'#27ae60' };
+let themeConfig={ primaryColor:'#4080ff', up:'#f0932b', down:'#27ae60' };
 try{
   const rawT=localStorage.getItem(THEME_KEY);
   if(rawT){
     const t=JSON.parse(rawT);
     if(t&&typeof t==='object'){
-      if(t.primaryColorLight) themeConfig.primaryColorLight=t.primaryColorLight;
-      if(t.primaryColorDark) themeConfig.primaryColorDark=t.primaryColorDark;
+      if(t.primaryColor) themeConfig.primaryColor=t.primaryColor;
+      // 兼容旧版本数据
+      else if(t.primaryColorLight) themeConfig.primaryColor=t.primaryColorLight;
+      
       if(t.up) themeConfig.up=t.up;
       if(t.down) themeConfig.down=t.down;
-      
-      // 兼容旧版本存下的 primaryId
-      if(t.primaryId){
-        const p = PRIMARY_PRESETS.find(x=>x.id===t.primaryId);
-        if(p){
-          themeConfig.primaryColorLight = p.light;
-          themeConfig.primaryColorDark = p.dark;
-        }
-      }
     }
   }
 }catch(e){}
 function saveTheme(){ try{ localStorage.setItem(THEME_KEY, JSON.stringify(themeConfig)); }catch(e){} }
 function applyTheme(){
-  const isDark=document.body.classList.contains('dark');
   const b=document.body;
-  const currentPrimary = isDark ? (themeConfig.primaryColorDark || '#6699ff') : (themeConfig.primaryColorLight || '#4080ff');
+  const currentPrimary = themeConfig.primaryColor || '#4080ff';
   
   b.style.setProperty('--primary', currentPrimary);
   b.style.setProperty('--up-color', themeConfig.up);
   b.style.setProperty('--down-color', themeConfig.down);
+
+  // 动态计算并注入四个状态色
+  function mixColor(hex1, hex2, weight) {
+    let h1 = hex1.replace('#', ''); let h2 = hex2.replace('#', '');
+    if (h1.length === 3) h1 = h1.split('').map(c => c + c).join('');
+    if (h2.length === 3) h2 = h2.split('').map(c => c + c).join('');
+    let r1 = parseInt(h1.substr(0,2),16), g1 = parseInt(h1.substr(2,2),16), b1 = parseInt(h1.substr(4,2),16);
+    let r2 = parseInt(h2.substr(0,2),16), g2 = parseInt(h2.substr(2,2),16), b2 = parseInt(h2.substr(4,2),16);
+    let r = Math.round(r1 * weight + r2 * (1 - weight));
+    let g = Math.round(g1 * weight + g2 * (1 - weight));
+    let b = Math.round(b1 * weight + b2 * (1 - weight));
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+  
+  // 偏低/偏高 使用 40% 的自身颜色 + 60% 白色，形成浅色
+  const statusLow = mixColor(themeConfig.down, '#ffffff', 0.4);
+  const statusNormal = themeConfig.down;
+  const statusHigh = mixColor(themeConfig.up, '#ffffff', 0.4);
+  const statusVhigh = themeConfig.up;
+
+  b.style.setProperty('--status-color-low', statusLow);
+  b.style.setProperty('--status-color-normal', statusNormal);
+  b.style.setProperty('--status-color-high', statusHigh);
+  b.style.setProperty('--status-color-vhigh', statusVhigh);
 
   // 同步更新 SVG 渐变颜色
   const stops = document.querySelectorAll('#progGrad stop');
@@ -1670,10 +2091,38 @@ const STORAGE_KEY='weightRecordUsers';
 const GLOBAL_UNIT_KEY='weightRecordGlobalUnit';
 const DARK_MODE_KEY='weightRecordDarkMode';
 let userList=[];
+
 try{
   const raw=localStorage.getItem(STORAGE_KEY);
-  if(raw){ const p=JSON.parse(raw); if(Array.isArray(p)) userList=p; }
-}catch(e){ console.warn('读取本地数据失败：',e); userList=[]; }
+
+  if(raw){
+    const p=JSON.parse(raw);
+
+    let savedUsers=[];
+
+    if(Array.isArray(p)){
+      savedUsers=p;
+    }else if(p && typeof p==='object' && Array.isArray(p.users)){
+      savedUsers=p.users;
+    }
+
+    userList=savedUsers.filter(u=>
+      u && typeof u==='object' && !Array.isArray(u)
+    );
+
+    if(userList.length>0 && !Array.isArray(p)){
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(userList));
+    }
+  }
+
+}catch(e){
+  console.error('读取本地数据失败：',e);
+
+  alert('本地数据读取失败，请先不要新建或修改数据。');
+
+  userList=[];
+}
+
 
 let globalUnit='kg';
 try{
@@ -1700,16 +2149,26 @@ function applyGlobalUnit(u){
   if(globalUnit===u) return;
   globalUnit=u;
   try{ localStorage.setItem(GLOBAL_UNIT_KEY,u); }catch(e){}
+  
+  // 更新顶栏所有单位按钮状态
+  document.querySelectorAll('.segment-btn[data-unit]').forEach(el=>{
+    el.classList.toggle('active', el.dataset.unit===globalUnit);
+  });
+  
   if(currentViewUserIndex!==null){
     const tab=getActiveTab();
     if(tab==='combined') renderCombinedTab();
-    else if(tab==='diet') renderDietTab();
-    else if(tab==='settings') renderSettingsTab();
+    if(getActiveSettingsVisible()) renderSettingsTab(true);
+    // 四张折线图的体重数值会随单位变化，重新渲染当前体重 Tab
+    if(tab==='combined' || tab==='weight') renderWeightTab();
   }
 }
 function getActiveTab(){
   const el=document.querySelector('.sidebar-nav-btn.active[data-tab]');
   return el?el.dataset.tab:'combined';
+}
+function getActiveSettingsVisible(){
+  return maskSettings && maskSettings.classList.contains('show');
 }
 
 let currentModifyIndex=null, currentViewUserIndex=null, avatarTarget=null, editMode='view';
@@ -1721,13 +2180,19 @@ let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
 let currentMetricKey='neck';
 let editingMetricKey=null, editingMetricId=null;
 let editingWeightType=null;
-let dietDate=getTodayStr();
-let editingDietId=null;
-let editingExerciseId=null;
+
 
 const OLD_KEY_MAP={ armL:'arm_L', armR:'arm_R', thighL:'thigh_L', thighR:'thigh_R', calfL:'calf_L', calfR:'calf_R' };
 userList.forEach(u=>{
   if(!Array.isArray(u.records)) u.records=[];
+  u.records=u.records.filter(r=>r&&typeof r==='object');
+  u.records.forEach(r=>{
+    if(!r.id) r.id=genId();
+    const rw=Number(r.weight);
+    r.weight=(isFinite(rw)&&rw>0)?rw:0;
+    if(!r.date) r.date=u.startDate||getTodayStr();
+    if(!r.time) r.time='00:00';
+  });
   const sw=Number(u.startWeight); u.startWeight=isNaN(sw)?0:sw;
   const tw=Number(u.targetWeight); u.targetWeight=isNaN(tw)?0:tw;
   if(u.height!==undefined && u.height!==null && u.height!==''){
@@ -1737,8 +2202,7 @@ userList.forEach(u=>{
   if(!u.gender) u.gender='';
   if(!u.birthDate) u.birthDate='';
   if(!Array.isArray(u.bodyFatRecords)) u.bodyFatRecords=[];
-  if(!Array.isArray(u.dietRecords)) u.dietRecords=[];
-  if(!Array.isArray(u.exerciseRecords)) u.exerciseRecords=[];
+
   if(!u.bodyMetrics){
     u.bodyMetrics=emptyBodyMetrics();
     (u.dimensionRecords||[]).forEach(r=>{
@@ -1814,7 +2278,7 @@ function getTodayStr(){ return dateToStr(new Date()); }
 function getNowTimeStr(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function addDays(dateStr,n){ const d=parseDate(dateStr); d.setDate(d.getDate()+n); return dateToStr(d); }
-function saveUsers(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(userList)); }catch(e){ console.error(e); alert('保存失败，可能是浏览器存储空间已满。'); } }
+function saveUsers(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(userList)); return true; }catch(e){ console.error(e); alert('保存失败：浏览器存储空间已满或被禁用，本次修改尚未写入，请先导出备份并清理空间。'); return false; } }
 
 // 用户名唯一性检查
 function isNameTaken(name, excludeIdx){
@@ -1829,8 +2293,11 @@ const maskAvatarSelect=$('maskAvatarSelect'), maskEmojiFull=$('maskEmojiFull');
 const maskRecord=$('maskRecord'), maskAllRecords=$('maskAllRecords');
 const maskJumpDate=$('maskJumpDate'), maskMetricEdit=$('maskMetricEdit'), maskHealthInfo=$('maskHealthInfo');
 const maskWeightEdit=$('maskWeightEdit'), maskDataTransfer=$('maskDataTransfer');
-const maskPK=$('maskPK'), maskDietAdd=$('maskDietAdd'), maskExerciseAdd=$('maskExerciseAdd');
+const maskPK=$('maskPK'), maskSettings=$('maskSettings');
 const detailPage=$('detailPage');
+// maskBodyMetricAdd 延迟获取，因为该元素在 script 标签之后
+let maskBodyMetricAdd = null;
+// 延迟获取，等 DOM 加载完再赋值
 const mainEmpty=$('mainEmpty');
 const sidebarUsers=$('sidebarUsers'); // 侧边栏用户列表已移除，可能为 null，勿直接使用
 const sidebarNavBtns=document.querySelectorAll('.sidebar-nav-btn[data-tab]');
@@ -1848,57 +2315,116 @@ sidebarNavBtns.forEach(b=>{
   });
 });
 
-/* 设置面板交互 */
-document.querySelectorAll('.segment-btn[data-unit]').forEach(el=>{
-  el.onclick=()=>{
-    if (el.classList.contains('active')) return;
-    applyGlobalUnit(el.dataset.unit);
-    renderSettingsTab();
-  };
-});
-document.querySelectorAll('.segment-btn[data-theme]').forEach(el=>{
-  el.onclick=()=>{
-    if (el.classList.contains('active')) return;
-    setDarkMode(el.dataset.theme==='dark');
-    renderSettingsTab();
-  };
-});
-
-/* 数据传输（导出/导入） */
-$('openDataTransfer').onclick=()=>{
-  maskUserSelect.classList.remove('show'); // 关闭底部的用户选择弹窗
-  $('transferExportView').style.display='block';
-  $('transferImportView').style.display='none';
-  $('transferResultView').style.display='none';
+/* 设置面板交互：统一处理设置面板内的事件（原面板与弹窗克隆共用） */
+function rebindSettingsEvents(root){
+  const scope = root || document;
   
-  // 填充导出下拉框
+  // 绑定切换用户按钮
+  const uSelectBtn = scope.querySelector('#openUserSelect');
+  if(uSelectBtn) {
+    uSelectBtn.onclick = () => {
+      renderUserSelectList(); 
+      maskUserSelect.classList.add('show');
+      // 不再关闭设置弹窗，让其保留在下方
+    };
+  }
+
+  // 绑定数据传输按钮
+  const dataTransferBtn = scope.querySelector('#openDataTransfer');
+  if(dataTransferBtn) {
+    dataTransferBtn.onclick = () => {
+      openDataTransferModal();
+    };
+  }
+
+  scope.querySelectorAll('.segment-btn[data-unit]').forEach(el=>{
+    el.onclick=()=>{
+      if (el.classList.contains('active')) return;
+      applyGlobalUnit(el.dataset.unit);
+      renderSettingsTab(getActiveSettingsVisible());
+    };
+  });
+  scope.querySelectorAll('.segment-btn[data-theme]').forEach(el=>{
+    el.onclick=()=>{
+      if (el.classList.contains('active')) return;
+      setDarkMode(el.dataset.theme==='dark');
+      renderSettingsTab(getActiveSettingsVisible());
+    };
+  });
+  const pColor = scope.querySelector('#primaryColorInput');
+  if(pColor) pColor.oninput=()=>{
+    themeConfig.primaryColor = pColor.value;
+    saveTheme(); applyTheme();
+  };
+  const upColor = scope.querySelector('#upColorInput');
+  if(upColor) upColor.oninput=()=>{
+    themeConfig.up=upColor.value;
+    saveTheme(); applyTheme();
+  };
+  const downColor = scope.querySelector('#downColorInput');
+  if(downColor) downColor.oninput=()=>{
+    themeConfig.down=downColor.value;
+    saveTheme(); applyTheme();
+  };
+}
+rebindSettingsEvents(document);
+
+/* 顶部图标列事件 */
+
+/* 点击主页的头像/名字区域，直接打开“个人信息”修改弹窗 */
+$('topUserInfoClickArea').onclick = () => {
+  if(currentViewUserIndex!==null && currentViewUserIndex!==undefined){
+    openModifyModal(currentViewUserIndex);
+  }
+};
+// 修复：将原本绑定到顶部齿轮的事件，转移到左侧边栏底部的设置按钮
+const sidebarSetBtn = $('sidebarSettingsBtn');
+if(sidebarSetBtn) {
+  sidebarSetBtn.onclick = () => {
+    renderSettingsTab(true);
+    maskSettings.classList.add('show');
+  };
+}
+$('closeSettingsModal').onclick=()=>maskSettings.classList.remove('show');
+maskSettings.onclick=e=>{ if(e.target===maskSettings) maskSettings.classList.remove('show'); };
+
+
+// 统一打开数据传输弹窗：重置导入/导出状态
+function openDataTransferModal(){
+  $('transferResultView').style.display='none';
+  // 清空文件选择
+  $('importDataFile').value = '';
+  $('importFileNameLabel').textContent = 'JSON 格式';
+  // 填充导出用户下拉框
   const sel = $('inpExportUser');
-  sel.innerHTML = '<option value="">选择要导出的用户</option>'; // 重置为默认提示
+  sel.innerHTML = '<option value="">选择要导出的用户</option>';
   userList.forEach((u, i) => {
     const opt = document.createElement('option');
     opt.value = i;
     opt.textContent = u.name;
     sel.appendChild(opt);
   });
-  
+  sel.value = '';
+  // 两个按钮默认置灰
+  $('btnImportData').disabled = true;
+  $('btnExportData').disabled = true;
   maskDataTransfer.classList.add('show');
-};
-// 点击导入按钮，切换到导入界面并触发选择文件
-$('btnImportData').onclick=()=>{
-  $('importDataFile').click();
-};
+}
 
-// 👇 新增这两行，让取消按钮和点击遮罩层起作用 👇
+// 外部空状态触发的导入（同样打开完整弹窗）
+function triggerStandaloneImport() {
+  openDataTransferModal();
+}
+
+// 👇 让取消按钮和点击遮罩层起作用 👇
 $('cancelTransfer').onclick = () => maskDataTransfer.classList.remove('show');
 maskDataTransfer.onclick = e => { if(e.target === maskDataTransfer) maskDataTransfer.classList.remove('show'); };
-// 👆 新增结束 👆
-
-$('cancelImport').onclick=()=>{
-  $('transferImportView').style.display='none';
-  $('transferExportView').style.display='block';
-};
 $('closeTransferResult').onclick=()=>maskDataTransfer.classList.remove('show');
-$('btnSelectImportFile').onclick=()=>$('importDataFile').click();
+
+// 选择导出用户后激活导出按钮
+$('inpExportUser').onchange=()=>{
+  $('btnExportData').disabled = !$('inpExportUser').value;
+};
 
 // 导出逻辑
 $('btnExportData').onclick=()=>{
@@ -1944,11 +2470,32 @@ $('btnExportData').onclick=()=>{
   }
 };
 
-// 导入逻辑（追加合并模式）
+
+// 修复点击无反应：在此处统一绑定点击和变更事件
+$('btnSelectImportFile').onclick=()=>{
+  $('importDataFile').click();
+};
+
+// 选中文件后，更新右侧的文字为文件名，并激活导入按钮
 $('importDataFile').onchange=(e)=>{
   const f=e.target.files[0];
-  e.target.value='';
-  if(!f) return;
+  if(f){
+    $('importFileNameLabel').textContent = f.name;
+    $('btnImportData').disabled = false;
+  } else {
+    $('importFileNameLabel').textContent = 'JSON 格式';
+    $('btnImportData').disabled = true;
+  }
+};
+
+// 点击【导入】按钮时，读取并解析已选择的 JSON 文件
+$('btnImportData').onclick=()=>{
+  const f = $('importDataFile').files[0];
+  if(!f){
+    alert('请先点击上方【选择文件】按钮选择 JSON 备份文件！');
+    return;
+  }
+  
   const reader=new FileReader();
   reader.onload=ev=>{
     let data;
@@ -1970,7 +2517,7 @@ $('importDataFile').onchange=(e)=>{
     
     let addedCount = 0;
     let renamedCount = 0;
-    let firstImportedIndex = userList.length; // 记录第一个导入的用户索引
+    let firstImportedIndex = userList.length;
     
     importUsers.forEach(u=>{
       if(!Array.isArray(u.records)) u.records=[];
@@ -1983,8 +2530,7 @@ $('importDataFile').onchange=(e)=>{
       if(!u.gender) u.gender='';
       if(!u.birthDate) u.birthDate='';
       if(!Array.isArray(u.bodyFatRecords)) u.bodyFatRecords=[];
-      if(!Array.isArray(u.dietRecords)) u.dietRecords=[];
-      if(!Array.isArray(u.exerciseRecords)) u.exerciseRecords=[];
+
       if(!u.bodyMetrics) u.bodyMetrics=emptyBodyMetrics();
       const empty=emptyBodyMetrics();
       for(const k in empty){
@@ -2010,16 +2556,16 @@ $('importDataFile').onchange=(e)=>{
     
     // 强制关闭所有弹窗
     maskDataTransfer.classList.remove('show');
+    // 清理文件状态
+    $('importDataFile').value = '';
+    $('importFileNameLabel').textContent = 'JSON 格式';
+    // 导入按钮复位为禁用
+    $('btnImportData').disabled = true;
     
-    // 重新渲染侧边栏
     renderSidebarUsers();
     
-    // 如果有导入，直接选中第一个导入的用户并完整重绘
     if (addedCount > 0) {
-      // 统一走 openUserDetail：内部会重置偏移量、日历、饮食日期，清空图表并重绘，同时关闭用户选择弹窗
       openUserDetail(firstImportedIndex);
-      
-      // 5. 延迟提示
       setTimeout(() => {
         let msg = `成功导入了 ${addedCount} 个用户及其全部数据。`;
         if(renamedCount > 0) msg += `\n检测到有 ${renamedCount} 个重名用户，已自动添加后缀区分。`;
@@ -2030,7 +2576,7 @@ $('importDataFile').onchange=(e)=>{
   reader.readAsText(f,'utf-8');
 };
 
-function renderSettingsTab(){
+function renderSettingsTab(intoModal){
   // 更新单位分段按钮的选中状态
   document.querySelectorAll('.segment-btn[data-unit]').forEach(el=>{
     el.classList.toggle('active', el.dataset.unit===globalUnit);
@@ -2043,29 +2589,27 @@ function renderSettingsTab(){
   });
 
   // 更新颜色选择器的值
-  const isDark=document.body.classList.contains('dark');
-  $('primaryColorInput').value = isDark ? (themeConfig.primaryColorDark || '#6699ff') : (themeConfig.primaryColorLight || '#4080ff');
+  $('primaryColorInput').value = themeConfig.primaryColor || '#4080ff';
   $('upColorInput').value=themeConfig.up;
   $('downColorInput').value=themeConfig.down;
-}
-$('primaryColorInput').oninput=()=>{
-  const colorVal = $('primaryColorInput').value;
-  const isDark=document.body.classList.contains('dark');
-  if(isDark){
-    themeConfig.primaryColorDark = colorVal;
-  } else {
-    themeConfig.primaryColorLight = colorVal;
+
+  if(intoModal){
+    // 将设置面板整体复制到弹窗中（只复制内容，不复制外层 trend-block 容器样式）
+    const src=document.getElementById('tab-settings');
+    const dst=$('settingsModalBody');
+    dst.innerHTML='';
+    if(src){
+      const clone=src.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.className='';
+      clone.style.display='block';
+      dst.appendChild(clone);
+      // 重新绑定 clone 内的事件
+      rebindSettingsEvents(dst);
+    }
   }
-  saveTheme(); applyTheme();
-};
-$('upColorInput').oninput=()=>{
-  themeConfig.up=$('upColorInput').value;
-  saveTheme(); applyTheme();
-};
-$('downColorInput').oninput=()=>{
-  themeConfig.down=$('downColorInput').value;
-  saveTheme(); applyTheme();
-};
+}
+/* 颜色输入事件已由 rebindSettingsEvents() 统一绑定 */
 
 /* =========================================================
    头像
@@ -2117,7 +2661,15 @@ function buildEmojiFullGrid(){
 }
 $('closeEmojiFull').onclick=()=>maskEmojiFull.classList.remove('show');
 maskEmojiFull.onclick=e=>{ if(e.target===maskEmojiFull) maskEmojiFull.classList.remove('show'); };
-$('openColorPicker').onclick=()=>colorPicker.click();
+$('openColorPicker').onclick=(e) => {
+  e.preventDefault();
+  // 移动端兼容写法
+  if (colorPicker.showPicker) {
+    colorPicker.showPicker();
+  } else {
+    colorPicker.click();
+  }
+};
 colorPicker.oninput=()=>{ tempAvatar.bg=colorPicker.value; renderAvatarPreviewBig(); };
 $('clearEmoji').onclick=()=>{ tempAvatar.emoji=null; buildAvatarPanel(); renderAvatarPreviewBig(); };
 $('uploadAvatarBtn').onclick=()=>$('avatarFileInput').click();
@@ -2147,20 +2699,73 @@ function renderUserSelectList(){
     box.innerHTML='<div class="empty-tip" style="padding:16px 0;font-size:13px;">暂无用户，请点击下方「创建用户」</div>';
     return;
   }
+  
+  // 根据 editMode 来控制底部按钮组的显示
+  const defaultActions = $('userSelectDefaultActions');
+  const editActions = $('userSelectEditActions');
+  if (defaultActions && editActions) {
+    if (editMode === 'view') {
+      defaultActions.style.display = 'flex';
+      editActions.style.display = 'none';
+      box.style.maxHeight = '50vh';
+    } else {
+      defaultActions.style.display = 'none';
+      editActions.style.display = 'flex';
+      box.style.maxHeight = '45vh';
+    }
+  }
+
   userList.forEach((u,idx)=>{
     const row=document.createElement('div');
-    row.className='user-select-item'+(currentViewUserIndex===idx?' current':'');
+    // 如果是编辑/排序模式，去掉点击选中当前用户的高亮
+    const isCurrent = (currentViewUserIndex===idx && editMode==='view');
+    row.className='user-select-item'+(isCurrent?' current':'');
+    
+    const left = document.createElement('div');
+    left.style.cssText = 'display:flex; align-items:center; gap:10px; flex:1; min-width:0;';
     const av=document.createElement('div'); av.className='avatar';
     renderAvatarVisual(av,u.avatarEmoji,u.avatarBg,34,u.avatarImage);
     const nm=document.createElement('span'); nm.className='user-select-name'; nm.textContent=u.name;
-    row.appendChild(av); row.appendChild(nm);
-    if(currentViewUserIndex===idx){
-      const tag=document.createElement('span'); tag.className='user-select-tag'; tag.textContent='当前用户';
-      row.appendChild(tag);
+    left.appendChild(av); left.appendChild(nm);
+    
+    if (editMode === 'delete') {
+      const delBtn = document.createElement('button'); 
+      delBtn.className='del-inline-btn'; 
+      delBtn.textContent='删除';
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        if(confirm(`确认删除用户[${u.name}]？删除后所有记录会全部清除！`)){
+          userList.splice(idx,1); saveUsers();
+          if (userList.length === 0) {
+            currentViewUserIndex = null;
+            try{ localStorage.removeItem('weightRecordLastUser'); }catch(e){}
+            closeUserSelectAndReset();
+            renderCombinedTab();
+          } else {
+            if(currentViewUserIndex === idx){
+              openUserDetail(0);
+            } else if(currentViewUserIndex !== null && currentViewUserIndex > idx){
+              openUserDetail(currentViewUserIndex - 1);
+            }
+            renderUserSelectList();
+          }
+        }
+      };
+      row.appendChild(left);
+      row.appendChild(delBtn);
+    } else {
+      // 正常模式
+      if(isCurrent){
+        const tag=document.createElement('span'); tag.className='user-select-tag'; tag.textContent='当前用户';
+        row.appendChild(left); row.appendChild(tag);
+      } else {
+        row.appendChild(left);
+      }
+      row.onclick=()=>{
+        openUserDetail(idx);
+        maskUserSelect.classList.remove('show'); 
+      };
     }
-    row.onclick=()=>{
-      openUserDetail(idx);
-    };
     box.appendChild(row);
   });
 }
@@ -2182,11 +2787,11 @@ function openUserDetail(idx){
   // 4. 重置各类时间偏移和状态
   weekOffset=0; monthOffset=0; yearOffset=0;
   calYear=new Date().getFullYear(); calMonth=new Date().getMonth();
-  dietDate=getTodayStr();
+
   
   // 5. 确定当前应该激活的 Tab
   let activeTab=getActiveTab();
-  if(!activeTab || !['combined','diet','settings'].includes(activeTab)) activeTab='combined';
+  if(!activeTab || activeTab!=='combined') activeTab='combined';
   
   sidebarNavBtns.forEach(b=>{
     b.classList.toggle('active', b.dataset.tab===activeTab);
@@ -2203,9 +2808,24 @@ function openUserDetail(idx){
   
   // 更新顶部用户卡片信息
   const tAvatar=$('topUserAvatar');
-  if(tAvatar) renderAvatarVisual(tAvatar,u.avatarEmoji,u.avatarBg,52,u.avatarImage);
+  if(tAvatar){
+    renderAvatarVisual(tAvatar,u.avatarEmoji,u.avatarBg,52,u.avatarImage);
+    tAvatar.style.cursor='pointer';
+    tAvatar.onclick=(e)=>{
+      e.stopPropagation();
+      openModifyModal(idx);
+    };
+  }
   const tName=$('topUserName');
-  if(tName) tName.textContent=u.name;
+  if(tName){
+    tName.textContent=u.name;
+    tName.style.cursor='pointer';
+    tName.onclick=(e)=>{
+      e.stopPropagation();
+      openModifyModal(idx);
+    };
+  }
+  if ($('calendarSingle')) $('calendarSingle').style.display = 'block';
 
   // 确保PK按钮显示且层级靠前
   $('openPKBtn').style.display = 'flex';
@@ -2224,8 +2844,6 @@ function openUserDetail(idx){
     tabContents.forEach(c=>{
       c.classList.toggle('show', c.id===`tab-${activeTab}`);
     });
-    if(activeTab === 'diet') renderDietTab();
-    else if(activeTab === 'settings') renderSettingsTab();
   }
   
   // 7. 关闭弹窗并刷新列表
@@ -2243,8 +2861,6 @@ function switchTab(k){
 
   // 强制渲染对应内容
   if(k==='combined') renderCombinedTab();
-  else if(k==='diet') renderDietTab();
-  else if(k==='settings') renderSettingsTab();
 }
 
 /* =========================================================
@@ -2261,7 +2877,11 @@ function getSortedRecords(user){
 }
 function getCurrentWeight(user){
   const r=getSortedRecords(user);
-  return r.length===0 ? (Number(user.startWeight)||0) : (Number(r[r.length-1].weight)||0);
+  for(let i=r.length-1;i>=0;i--){
+    const w=Number(r[i].weight);
+    if(isFinite(w)&&w>0) return w;
+  }
+  return Number(user.startWeight)||0;
 }
 function getRecordDiffMap(user){
   const recs=getSortedRecords(user);
@@ -2293,6 +2913,11 @@ function calcBMR(user){
   const base=10*w+6.25*h-5*age;
   return g==='male'? base+5 : base-161;
 }
+function getBMRLevel(bmr) {
+  if (bmr === null) return null;
+  // BMR 的正常范围是 ±10%，我们以此为基准设定档位
+  return { level: '标准', cls: 'bf-normal' }; 
+}
 function calcBodyFatFromBMI(user){
   const h=Number(user.height)||0;
   const w=getCurrentWeight(user)||0;
@@ -2315,17 +2940,24 @@ function getBodyFatInfo(user){
   }
   return null;
 }
-function bodyFatLevel(v){
-  if(v<18) return { level:'偏低', cls:'bf-low' };
-  if(v<25) return { level:'标准', cls:'bf-normal' };
-  if(v<30) return { level:'偏高', cls:'bf-high' };
-  return { level:'过高', cls:'bf-vhigh' };
+function bodyFatLevel(v, gender){
+  if(gender === 'female'){
+    if(v < 20) return { level:'偏低', cls:'bf-low' };
+    if(v <= 30) return { level:'标准', cls:'bf-normal' };
+    if(v <= 35) return { level:'偏高', cls:'bf-high' };
+    return { level:'过高', cls:'bf-vhigh' };
+  } else {
+    if(v < 10) return { level:'偏低', cls:'bf-low' };
+    if(v <= 20) return { level:'标准', cls:'bf-normal' };
+    if(v <= 25) return { level:'偏高', cls:'bf-high' };
+    return { level:'过高', cls:'bf-vhigh' };
+  }
 }
 function bmiLevel(bmi){
-  if(bmi<18.5) return { level:'偏瘦', cls:'bf-low' };
-  if(bmi<24) return { level:'标准', cls:'whr-excellent' };
-  if(bmi<28) return { level:'超重', cls:'whr-normal' };
-  return { level:'肥胖', cls:'bf-vhigh' };
+  if(bmi<18.5) return { level:'偏低', cls:'bf-low' };
+  if(bmi<24) return { level:'标准', cls:'bf-normal' };
+  if(bmi<28) return { level:'偏高', cls:'bf-high' };
+  return { level:'过高', cls:'bf-vhigh' };
 }
 
 /* =========================================================
@@ -2355,7 +2987,7 @@ function renderWeightTab(){
   const endD=lastRec?parseDate(lastRec.date):startD;
   const weeks=(!isNaN(startD.getTime())&&!isNaN(endD.getTime()))?(endD-startD)/(7*86400000):0;
   const lost=startW-currentW;
-  const remain=currentW-targetW;
+  const remain=Math.abs(currentW-targetW);
   let speed=null;
   if(weeks>0.02) speed=lost/weeks;
 
@@ -2401,32 +3033,63 @@ function renderCombinedTab(){
     
     // 2. 清空减重进展环和文字
     $('vizProgressPct').textContent = '0%';
-    $('vizProgressRing').setAttribute('stroke-dashoffset', '263.9');
+    $('vizProgressRing').setAttribute('stroke-dashoffset', '245.0');
     $('vizSpeedInner').innerHTML = '';
+    $('ovStart').textContent = '--'; $('ovStartUnit').textContent = '';
+    $('ovCurrent').textContent = '--'; $('ovCurrentUnit').textContent = '';
+    $('ovTarget').textContent = '--'; $('ovTargetUnit').textContent = '';
     $('statDays').textContent = '减重第 0 天';
     $('statBodyChange').textContent = '--';
     $('statRemain').textContent = '--';
     $('vizETA').textContent = '--';
 
-    // 3. 清空日历
-    $('calTitle').textContent = '暂无数据';
-    $('calDaysSingle').innerHTML = '';
+    // 3. 重置日历为当前月并正常显示（无体重数据）
+    const now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    
+    $('calTitle').textContent = `${calYear}年${calMonth + 1}月`;
+    if ($('calendarSingle')) $('calendarSingle').style.display = 'block';
+    
+    // 构造一个没有任何记录的假用户对象，复用现有日历渲染逻辑
+    const emptyUser = {
+      startDate: '2000-01-01',
+      targetDate: '2000-01-01',
+      records: []
+    };
+    renderCalendarSingle(emptyUser, globalUnit, unitLabel(globalUnit));
     
     // 4. 清空体重历史
     $('recordList').innerHTML = '<div class="empty-tip">暂无体重记录</div>';
     
-    // 5. 清空右侧 4 张图表及分析标签
+    // 5. 清空右侧 4 张图表及分析标签，并隐藏外框
     $('overallRange').textContent = '';
-    $('chartOverall').innerHTML = ''; $('stageOverall').innerHTML = '';
-    $('chartWeek').innerHTML = '';    $('stageWeek').innerHTML = '';
-    $('chartMonth').innerHTML = '';   $('stageMonth').innerHTML = '';
-    $('chartYear').innerHTML = '';    $('stageYear').innerHTML = '';
+    $('chartOverall').innerHTML = '<div class="empty-tip" style="padding:20px 0;">暂无数据</div>'; 
+    $('stageOverall').innerHTML = '';
+    $('chartWeek').innerHTML = '<div class="empty-tip" style="padding:20px 0;">暂无数据</div>';
+    $('stageWeek').innerHTML = '';
+    $('chartMonth').innerHTML = '<div class="empty-tip" style="padding:20px 0;">暂无数据</div>'; 
+    $('stageMonth').innerHTML = '';
+    $('chartYear').innerHTML = '<div class="empty-tip" style="padding:20px 0;">暂无数据</div>'; 
+    $('stageYear').innerHTML = '';
     
     // 6. 清空身体围度与指数
-    $('bodyFigure').innerHTML = '';
-    $('bodyInfo').innerHTML = '';
-    $('metricTrendChart').innerHTML = '';
-    $('metricHistoryList').innerHTML = '';
+    $('bodyFigure').innerHTML = '<svg viewBox="0 0 100 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="opacity:0.15;width:100%;height:100%;"><circle cx="50" cy="22" r="11" fill="var(--text)"/><rect x="46" y="33" width="8" height="9" fill="var(--text)" rx="2"/><path d="M 50 42 C 30 50 30 70 32 90 C 34 110 30 128 30 140 L 70 140 C 70 128 66 110 68 90 C 70 70 70 50 50 42 Z" fill="var(--text)"/></svg>';
+    $('topInfoCol3').innerHTML = `
+      <div class="top-info-item"><span class="top-info-label">性别</span><span class="top-info-value">--</span></div>
+      <div class="top-info-item"><span class="top-info-label">年龄</span><span class="top-info-value">--</span></div>
+      <div class="top-info-item"><span class="top-info-label">身高</span><span class="top-info-value">--</span></div>
+      <div class="top-info-item"><span class="top-info-label">体重</span><span class="top-info-value">--</span></div>
+    `;
+    $('topInfoCol1').innerHTML = `
+      <div class="top-info-item"><span class="top-info-label">基础代谢</span><span class="top-info-value">--</span></div>
+      <div class="top-info-item"><span class="top-info-label">BMI</span><span class="top-info-value">--</span></div>
+      <div class="top-info-item"><span class="top-info-label">体脂率</span><span class="top-info-value">--</span></div>
+      <div class="top-info-item"><span class="top-info-label">腰臀比</span><span class="top-info-value">--</span></div>
+    `;
+
+    $('bodyShapeLabel').textContent = '';
+    if($('metricHistoryList')) $('metricHistoryList').innerHTML = '';
     
     return; // 终止执行
   }
@@ -2445,12 +3108,18 @@ function renderCombinedTab(){
   const tName=$('topUserName');
   if(tName) {
     tName.textContent=user.name;
-    // 加上鼠标指针的样式
     tName.style.cursor='pointer';
-    // 点击名字打开修改个人信息弹窗
-    tName.onclick = (e) => {
+    tName.onclick=(e)=>{
       e.stopPropagation();
-      if(currentViewUserIndex!==null) openModifyModal(currentViewUserIndex);
+      openModifyModal(currentViewUserIndex);
+    };
+  }
+  const tAvatarClick=$('topUserAvatar');
+  if(tAvatarClick){
+    tAvatarClick.style.cursor='pointer';
+    tAvatarClick.onclick=(e)=>{
+      e.stopPropagation();
+      openModifyModal(currentViewUserIndex);
     };
   }
 
@@ -2471,26 +3140,26 @@ function renderStatViz(user, unit, ul, speed, remain){
   const startW=Number(user.startWeight)||0, targetW=Number(user.targetWeight)||0;
   const currentW=getCurrentWeight(user);
   const total=startW-targetW, done=startW-currentW;
-  let pct= total>0 ? (done/total)*100 : 0;
+  let pct= total!==0 ? (done/total)*100 : 0;
   pct=Math.max(0, Math.min(100, pct));
 
-  const ringR=42;
-  const ringC=2*Math.PI*ringR;
-  const offset=ringC*(1-pct/100);
-  const ring=$('vizProgressRing');
-  ring.setAttribute('stroke-dasharray', ringC.toFixed(2));
-  ring.setAttribute('stroke-dashoffset', offset.toFixed(2));
+  const ringLength = 245.0; // 78半径半圆弧长
+  const offset = ringLength * (1 - pct / 100);
+  const ring = $('vizProgressRing');
+  ring.setAttribute('stroke-dasharray', ringLength);
+  ring.setAttribute('stroke-dashoffset', offset);
   $('vizProgressPct').textContent=pct.toFixed(0)+'%';
 
   const speedEl=$('vizSpeedInner');
+  
   if(speed!==null && isFinite(speed)){
-    let tag, color;
-    if(speed>1){ tag='偏快'; color='var(--up-color)'; }
-    else if(speed>=0.5){ tag='正常'; color='var(--down-color)'; }
-    else { tag='偏慢'; color='var(--same-color)'; }
-    speedEl.innerHTML = `减重速度<span class="speed-tag" style="color:${color}">${tag}</span>`;
+    let tag;
+    if(speed>1){ tag='快'; }
+    else if(speed>=0.5){ tag='正常'; }
+    else { tag='慢'; }
+    speedEl.innerHTML = `减重速度：<span data-no-hover-color="1" style="font-weight:400; font-size:14px; color:var(--text);">${tag}</span>`;
   } else {
-    speedEl.innerHTML = `减重速度<span class="speed-tag" style="color:var(--gray-text)">--</span>`;
+    speedEl.innerHTML = `减重速度：<span style="font-weight:400; font-size:14px; color:var(--text)">--</span>`;
   }
 
   const etaEl=$('vizETA');
@@ -2529,7 +3198,7 @@ function makeDiffEl(info, unit, ul){
 function renderRecordList(user, unit, ul){
   recordList.innerHTML='';
   const recs=getSortedRecords(user);
-  const recent=recs.slice(-5).reverse();
+  const recent=recs.slice(-3).reverse();
   if(recent.length===0){
     recordList.innerHTML='<div class="empty-tip">暂无体重记录，点击上方体重卡片添加</div>';
     return;
@@ -2544,7 +3213,7 @@ function renderRecordList(user, unit, ul){
     metaEl.textContent=`${rec.date} ${rec.time||''}`.trim();
     left.appendChild(wEl); left.appendChild(metaEl);
     item.appendChild(left); item.appendChild(makeDiffEl(diffMap[rec.id], unit, ul));
-    item.onclick=()=>openRecordModal(rec.id);
+    item.onclick=()=>openRecordModal(rec.id, null, true);
     recordList.appendChild(item);
   });
 }
@@ -2565,7 +3234,7 @@ function refreshAllRecords(filterMonth){
     metaEl.textContent=`${rec.date} ${rec.time||''}`.trim();
     left.appendChild(wEl); left.appendChild(metaEl);
     item.appendChild(left); item.appendChild(makeDiffEl(diffMap[rec.id], unit, ul));
-    item.onclick=()=>{ maskAllRecords.classList.remove('show'); openRecordModal(rec.id); };
+    item.onclick=()=>{ maskAllRecords.classList.remove('show'); openRecordModal(rec.id, null, true); };
     allRecordsList.appendChild(item);
   });
 }
@@ -2584,17 +3253,36 @@ $('showAllRecordsBtn').onclick=()=>{
 $('closeAllRecords').onclick=()=>maskAllRecords.classList.remove('show');
 maskAllRecords.onclick=e=>{ if(e.target===maskAllRecords) maskAllRecords.classList.remove('show'); };
 
-function openRecordModal(id, presetDate){
+function openRecordModal(id, presetDate, hideTabs = false){
+  if(currentViewUserIndex === null || !userList[currentViewUserIndex]){
+    alert('请先在右上角“切换用户”中创建或导入一个用户哦！');
+    return;
+  }
   const user=userList[currentViewUserIndex]; if(!user) return;
   const unit=globalUnit; const ul=unitLabel(unit);
   editingRecordId=id;
   $('recUnitTag').textContent=ul;
+  
+  // 控制 Tab 的显示与隐藏
+  const tabsEl = $('recordTypeTabs');
+  if (tabsEl) {
+    tabsEl.style.display = hideTabs ? 'none' : 'flex';
+  }
+  
+  // 切换到体重 Tab
+  switchRecordTab('weight');
+
   if(id===null){
     $('recordModalTitle').textContent='添加体重记录';
     $('deleteRecordBtn').style.display='none';
     $('inpRecWeight').value='';
     $('inpRecDate').value=presetDate||getTodayStr();
     $('inpRecTime').value=getNowTimeStr();
+    $('inpRecMetricValue').value='';
+    $('inpRecMetricDate').value=getTodayStr();
+    $('recPartSelect').value='waist';
+    $('recSideSelect').value='N';
+    $('recSideSelect').style.display='none';
   } else {
     const rec=user.records.find(r=>r.id===id); if(!rec) return;
     $('recordModalTitle').textContent='编辑体重记录';
@@ -2606,10 +3294,55 @@ function openRecordModal(id, presetDate){
   $('errRecWeight').textContent=''; $('errRecDate').textContent=''; $('errRecTime').textContent='';
   maskRecord.classList.add('show');
 }
+
+function switchRecordTab(type) {
+  document.querySelectorAll('#recordTypeTabs button').forEach(btn => {
+    const isActive = btn.dataset.rtype === type;
+    btn.style.borderBottomColor = isActive ? 'var(--primary)' : 'transparent';
+    btn.style.color = isActive ? 'var(--primary)' : 'var(--gray-text)';
+  });
+  $('formWeightArea').style.display = type === 'weight' ? 'block' : 'none';
+  $('formMetricArea').style.display = type === 'metric' ? 'block' : 'none';
+  $('deleteRecordBtn').style.display = 'none'; // 添加围度不支持删除
+}
+
+// 绑定 Tab 切换事件
+document.querySelectorAll('#recordTypeTabs button').forEach(btn => {
+  btn.onclick = () => switchRecordTab(btn.dataset.rtype);
+});
+
+// 绑定围度部分的左右下拉
+$('recPartSelect').onchange = function() {
+  const part = this.value;
+  $('recSideSelect').style.display = BODY_PARTS[part]?.hasSide ? 'block' : 'none';
+};
 $('cancelRecord').onclick=()=>maskRecord.classList.remove('show');
 maskRecord.onclick=e=>{ if(e.target===maskRecord) maskRecord.classList.remove('show'); };
 $('saveRecord').onclick=()=>{
   const user=userList[currentViewUserIndex]; if(!user) return;
+  
+  // 判断当前处于哪个 Tab
+  const isMetricTab = $('formMetricArea').style.display !== 'none';
+  if (isMetricTab) {
+    const part = $('recPartSelect').value;
+    const side = $('recSideSelect').value;
+    const key = getBodyMetricKey(part, side);
+    const valStr = $('inpRecMetricValue').value.trim();
+    const dateStr = $('inpRecMetricDate').value;
+    const v = parseFloat(valStr);
+    if(!valStr || isNaN(v) || v <= 0 || v > 300){ alert('请输入有效的围度数值（厘米）'); return; }
+    if(!dateStr){ alert('请选择日期'); return; }
+    
+    if(!user.bodyMetrics[key]) user.bodyMetrics[key] = [];
+    user.bodyMetrics[key].push({ id: genId(), date: fixDate(dateStr), value: v });
+    if(!saveUsers()) return;
+    maskRecord.classList.remove('show');
+    if(getActiveTab()==='combined') renderCombinedTab();
+    else renderWeightTab();
+    return;
+  }
+
+  // 否则是保存体重
   const unit=globalUnit;
   const wStr=$('inpRecWeight').value.trim();
   const dateStr=$('inpRecDate').value;
@@ -2621,25 +3354,40 @@ $('saveRecord').onclick=()=>{
   const wKg=!isNaN(wVal)?toKg(wVal,unit):0;
   if(wKg>500){ $('errRecWeight').textContent='数值过大，请检查单位或输入！'; ok=false; }
   if(!dateStr){ $('errRecDate').textContent='请选择日期！'; ok=false; }
+  else if(dateStr>getTodayStr()){ $('errRecDate').textContent='不能记录未来的日期！'; ok=false; }
   if(!timeStr){ $('errRecTime').textContent='请选择时间！'; ok=false; }
   if(!ok) return;
   const date=fixDate(dateStr);
+  let undo=null;
   if(editingRecordId===null){
-    user.records.push({ id:genId(), weight:wKg, date, time:timeStr });
+    const nr={ id:genId(), weight:Math.round(wKg*100)/100, date, time:timeStr };
+    user.records.push(nr);
+    undo=()=>{ user.records=user.records.filter(r=>r!==nr); };
   } else {
     const rec=user.records.find(r=>r.id===editingRecordId);
-    if(rec){ rec.weight=wKg; rec.date=date; rec.time=timeStr; }
+    if(rec){
+      const old={ weight:rec.weight, date:rec.date, time:rec.time };
+      // 输入框显示值没变，就保留原始体重，避免按显示精度反复四舍五入导致漂移
+      if(wStr!==fmtInput(toDisplay(Number(rec.weight),unit))) rec.weight=Math.round(wKg*100)/100;
+      rec.date=date; rec.time=timeStr;
+      undo=()=>{ rec.weight=old.weight; rec.date=old.date; rec.time=old.time; };
+    }
   }
-  saveUsers(); maskRecord.classList.remove('show');
+  if(!saveUsers()){ if(undo) undo(); return; }
+  maskRecord.classList.remove('show');
   if(getActiveTab()==='combined') renderCombinedTab();
   else renderWeightTab();
 };
 $('deleteRecordBtn').onclick=()=>{
   const user=userList[currentViewUserIndex];
-  if(!user||editingRecordId===null) return;
+  if(!user||!editingRecordId) return;
+  const target=user.records.find(r=>r&&r.id===editingRecordId);
+  if(!target) return;
   if(!confirm('确认删除这条体重记录吗？')) return;
-  user.records=user.records.filter(r=>r.id!==editingRecordId);
-  saveUsers(); maskRecord.classList.remove('show');
+  const backup=user.records.slice();
+  user.records=user.records.filter(r=>r!==target);
+  if(!saveUsers()){ user.records=backup; return; }
+  maskRecord.classList.remove('show');
   if(getActiveTab()==='combined') renderCombinedTab();
   else renderWeightTab();
 };
@@ -2655,30 +3403,95 @@ function openWeightEditModal(type){
   $('errWeightEditValue').textContent=''; $('errWeightEditDate').textContent='';
 
   if(type==='start'){
-    $('weightEditTitle').textContent='修改初始体重';
+    $('weightEditTitle').textContent='初始体重';
     $('inpWeightEditValue').value=fmtInput(toDisplay(Number(user.startWeight),unit));
     $('inpWeightEditDate').value=user.startDate||getTodayStr();
     $('weightEditTimeRow').style.display='none';
   } else if(type==='target'){
-    $('weightEditTitle').textContent='修改目标体重';
+    $('weightEditTitle').textContent='目标体重';
     $('inpWeightEditValue').value=fmtInput(toDisplay(Number(user.targetWeight),unit));
     $('inpWeightEditDate').value=user.targetDate||getTodayStr();
     $('weightEditTimeRow').style.display='none';
   }
   maskWeightEdit.classList.add('show');
 }
-document.getElementById('weightOverview')?.addEventListener('click', (e)=>{
-  const item=e.target.closest('.ov-item[data-edit]');
-  if(!item) return;
+document.body.addEventListener('click', (e)=>{
+  // 1. 处理减重速度点击
+  if (e.target.closest('#vizSpeedInner')) {
+    openHealthInfo('speed');
+    return;
+  }
+
+  // 2. 处理体重数字点击
+  const item = e.target.closest('.ov-item[data-edit]');
+  if (!item) return;
+
   const type=item.dataset.edit;
   if(type==='current'){
-    openRecordModal(null);
+    openRecordModal(null, null, true); // 点击体重数字只弹体重记录，隐藏 Tab
   } else {
     openWeightEditModal(type);
   }
 });
 $('cancelWeightEdit').onclick=()=>maskWeightEdit.classList.remove('show');
 maskWeightEdit.onclick=e=>{ if(e.target===maskWeightEdit) maskWeightEdit.classList.remove('show'); };
+
+/* =========================================================
+   基础信息独立编辑（性别/年龄/身高）
+   ========================================================= */
+let editingBasicType = null;
+function openBasicEditModal(type) {
+  const user = userList[currentViewUserIndex];
+  if (!user) return;
+  editingBasicType = type;
+  
+  $('basicEditRowInput').style.display = 'none';
+  $('basicEditRowSelect').style.display = 'none';
+  $('basicEditRowDate').style.display = 'none';
+
+  if (type === 'gender') {
+    $('basicEditTitle').textContent = '编辑性别';
+    $('basicEditRowSelect').style.display = 'block';
+    $('inpBasicEditSelect').value = user.gender || '';
+  } else if (type === 'birth') {
+    $('basicEditTitle').textContent = '编辑出生年月日';
+    $('basicEditRowDate').style.display = 'block';
+    $('inpBasicEditDate').value = user.birthDate || '';
+  } else if (type === 'height') {
+    $('basicEditTitle').textContent = '编辑身高（厘米）';
+    $('basicEditRowInput').style.display = 'block';
+    $('inpBasicEditValue').type = 'number';
+    $('inpBasicEditValue').step = '0.1';
+    $('inpBasicEditValue').value = user.height || '';
+  }
+  
+  maskBasicEdit.classList.add('show');
+}
+
+const maskBasicEdit = $('maskBasicEdit');
+$('cancelBasicEdit').onclick = () => maskBasicEdit.classList.remove('show');
+maskBasicEdit.onclick = e => { if(e.target === maskBasicEdit) maskBasicEdit.classList.remove('show'); };
+
+$('saveBasicEdit').onclick = () => {
+  const user = userList[currentViewUserIndex];
+  if (!user || !editingBasicType) return;
+
+  if (editingBasicType === 'gender') {
+    user.gender = $('inpBasicEditSelect').value;
+  } else if (editingBasicType === 'birth') {
+    user.birthDate = $('inpBasicEditDate').value;
+  } else if (editingBasicType === 'height') {
+    const val = parseFloat($('inpBasicEditValue').value);
+    if (isNaN(val) || val <= 0) { alert('请输入有效身高'); return; }
+    user.height = val;
+  }
+  
+  saveUsers();
+  maskBasicEdit.classList.remove('show');
+  if (getActiveTab() === 'combined') renderCombinedTab();
+  else renderWeightTab();
+};
+bindEnter(maskBasicEdit, $('saveBasicEdit'));
 $('saveWeightEdit').onclick=()=>{
   const user=userList[currentViewUserIndex];
   if(!user||!editingWeightType) return;
@@ -2712,26 +3525,7 @@ function getLatestMetric(user, key){
   if(arr.length===0) return null;
   return [...arr].sort((a,b)=> a.date<b.date?-1 : a.date>b.date?1:0).pop();
 }
-$('bodyMetricDate').value=getTodayStr();
-$('bodyPartSelect').onchange=function(){
-  const part=this.value;
-  $('bodySideSelect').style.display = BODY_PARTS[part]?.hasSide?'':'none';
-};
-$('bodyMetricSave').onclick=()=>{
-  const user=userList[currentViewUserIndex]; if(!user) return;
-  const part=$('bodyPartSelect').value;
-  const side=$('bodySideSelect').value;
-  const key=getBodyMetricKey(part, side);
-  const valStr=$('bodyMetricValue').value.trim();
-  const dateStr=$('bodyMetricDate').value;
-  const v=parseFloat(valStr);
-  if(!valStr||isNaN(v)||v<=0||v>300){ alert('请输入有效的围度数值（厘米）'); return; }
-  if(!dateStr){ alert('请选择日期'); return; }
-  user.bodyMetrics[key].push({ id:genId(), date:fixDate(dateStr), value:v });
-  saveUsers();
-  $('bodyMetricValue').value=''; $('bodyMetricDate').value=getTodayStr();
-  renderBodyMetricsSection(user, globalUnit, unitLabel(globalUnit));
-};
+
 function renderBodyMetricsSection(user, unit, ul){
   renderBodyFigureAndInfo(user);
   renderMetricTrendChart(user);
@@ -2741,33 +3535,73 @@ function renderBodyFigureAndInfo(user){
   const get=k=>{ const r=getLatestMetric(user,k); return r?Number(r.value):null; };
   const shoulder=get('shoulder'), chest=get('chest'), waist=get('waist'), hip=get('hip');
 
+  // 如果全都没填，展示默认轮廓
+  const isAllEmpty = !shoulder && !chest && !waist && !hip;
+  
+  // 人体图 SVG 生成（完全保留原逻辑）
   const W=100,H=200,cx=50;
-  const s1=shoulder||40, s2=(chest||85)/2, s3=(waist||75)/2, s4=(hip||90)/2;
-  const vals=[s1,s2,s3,s4];
-  const maxV=Math.max(...vals), minV=Math.min(...vals);
+  
+  // 为了防止数据不全导致小人变畸形，缺失的部位统一使用合理的默认值。
+  // 默认值参考：肩宽40，胸围85，腰围75，臀围90
+  const sh=shoulder||40, ch=chest||85, wa=waist||75, hi=hip||90;
+  const maxV=Math.max(sh||100, ch||100, wa||100, hi||100), minV=Math.min(sh||50, ch||50, wa||50, hi||50);
   const rng=Math.max(maxV-minV,1);
-  const scale=v=> 18 + ((v-minV)/rng)*20;
-  const shHW=scale(s1), chHW=scale(s2), waHW=scale(s3), hiHW=scale(s4);
+  // 将真实数值映射为屏幕宽度
+  const scale=v=> 16 + ((v-minV)/rng)*24;
+  const shHW=scale(sh||100), chHW=scale(ch||100)/2, waHW=scale(wa||100)/2, hiHW=scale(hi||100)/2;
+  
   const yHead=22,rHead=11,yNeckTop=33,yNeckBot=42,yShoulder=48,yChest=72,yWaist=100,yHip=128;
-  const path=`M ${cx-shHW} ${yShoulder} Q ${cx-shHW-2} ${yShoulder+4}, ${cx-chHW} ${yChest} Q ${cx-chHW+1} ${yChest+6}, ${cx-waHW} ${yWaist} Q ${cx-waHW-1} ${yWaist+6}, ${cx-hiHW} ${yHip} Q ${cx-hiHW+1} ${yHip+12}, ${cx-hiHW+3} ${yHip+14} L ${cx+hiHW-3} ${yHip+14} Q ${cx+hiHW-1} ${yHip+12}, ${cx+hiHW} ${yHip} Q ${cx+waHW+1} ${yWaist+6}, ${cx+waHW} ${yWaist} Q ${cx+chHW-1} ${yChest+6}, ${cx+chHW} ${yChest} Q ${cx+shHW+2} ${yShoulder+4}, ${cx+shHW} ${yShoulder} Z`;
+  
   const color='var(--primary)';
-  let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="${cx}" cy="${yHead}" r="${rHead}" fill="${color}" opacity="0.28"/>
-    <rect x="${cx-4}" y="${yNeckTop}" width="8" height="${yNeckBot-yNeckTop}" fill="${color}" opacity="0.28" rx="2"/>
-    <path d="${path}" fill="${color}" opacity="0.22" stroke="${color}" stroke-width="1.2" stroke-linejoin="round"/>`;
-  const armW=6,armLen=60,armX=shHW+1;
-  svg+=`<rect x="${cx-armX-armW}" y="${yShoulder+2}" width="${armW}" height="${armLen}" rx="3" fill="${color}" opacity="0.2"/>`;
-  svg+=`<rect x="${cx+armX}" y="${yShoulder+2}" width="${armW}" height="${armLen}" rx="3" fill="${color}" opacity="0.2"/>`;
-  const legGap=4,legW=12;
-  svg+=`<rect x="${cx-legGap-legW}" y="${yHip+14}" width="${legW}" height="55" rx="4" fill="${color}" opacity="0.2"/>`;
-  svg+=`<rect x="${cx+legGap}" y="${yHip+14}" width="${legW}" height="55" rx="4" fill="${color}" opacity="0.2"/>`;
-  svg+=`<rect x="${cx-legGap-10}" y="${yHip+70}" width="10" height="40" rx="3" fill="${color}" opacity="0.18"/>`;
-  svg+=`<rect x="${cx+legGap}" y="${yHip+70}" width="10" height="40" rx="3" fill="${color}" opacity="0.18"/>`;
-  svg+=`</svg>`;
-  $('bodyFigure').innerHTML=svg;
-
+  let svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">`;
+  
+  // 如果完全没有数据，显示提示文字，并绘制最基础的轮廓（图1效果）
+  if (isAllEmpty) {
+    svg += `<circle cx="${cx}" cy="40" r="18" fill="var(--text)" opacity="0.1"/>`;
+    svg += `<rect x="${cx-6}" y="60" width="12" height="15" fill="var(--text)" opacity="0.1" rx="2"/>`;
+    svg += `<path d="M ${cx-25} 85 Q ${cx} 75 ${cx+25} 85 L ${cx+30} 160 Q ${cx} 170 ${cx-30} 160 Z" fill="var(--text)" opacity="0.1"/>`;
+    svg += `<rect x="${cx-20}" y="165" width="14" height="50" rx="4" fill="var(--text)" opacity="0.1"/>`;
+    svg += `<rect x="${cx+6}" y="165" width="14" height="50" rx="4" fill="var(--text)" opacity="0.1"/>`;
+    svg += `<text x="${cx}" y="110" text-anchor="middle" font-size="11" fill="var(--gray-text)">请添先加身体数据</text>`;
+    svg += `</svg>`;
+    $('bodyFigure').innerHTML = svg;
+  } else {
+    // 头部
+    svg += `<circle cx="${cx}" cy="${yHead}" r="${rHead}" fill="${color}" opacity="0.28"/>`;
+  // 脖子
+  svg += `<rect x="${cx-4}" y="${yNeckTop}" width="8" height="${yNeckBot-yNeckTop}" fill="${color}" opacity="0.28" rx="2"/>`;
+  
   const shapeInfo=getBodyShape(chest, waist, hip);
-  const whrInfo=getWaistHipRatioInfo(waist, hip);
+  const whrInfo=getWaistHipRatioInfo(waist, hip, user.gender);
+
+  // 根据体型比例，绘制真实躯干轮廓
+  const path=`M ${cx-shHW} ${yShoulder} Q ${cx-shHW-2} ${yShoulder+4}, ${cx-chHW} ${yChest} Q ${cx-chHW+1} ${yChest+6}, ${cx-waHW} ${yWaist} Q ${cx-waHW-1} ${yWaist+6}, ${cx-hiHW} ${yHip} Q ${cx-hiHW+1} ${yHip+12}, ${cx-hiHW+3} ${yHip+14} L ${cx+hiHW-3} ${yHip+14} Q ${cx+hiHW-1} ${yHip+12}, ${cx+hiHW} ${yHip} Q ${cx+waHW+1} ${yWaist+6}, ${cx+waHW} ${yWaist} Q ${cx+chHW-1} ${yChest+6}, ${cx+chHW} ${yChest} Q ${cx+shHW+2} ${yShoulder+4}, ${cx+shHW} ${yShoulder} Z`;
+  svg += `<path d="${path}" fill="${color}" opacity="0.15" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
+
+  // 四肢
+  const armW=6, armLen=50, armX=shHW+1;
+  svg += `<rect x="${cx-armX-armW}" y="${yShoulder+2}" width="${armW}" height="${armLen}" rx="3" fill="${color}" opacity="0.2"/>`;
+  svg += `<rect x="${cx+armX}" y="${yShoulder+2}" width="${armW}" height="${armLen}" rx="3" fill="${color}" opacity="0.2"/>`;
+  const legGap=4, legW=12;
+  svg += `<rect x="${cx-legGap-legW}" y="${yHip+14}" width="${legW}" height="55" rx="4" fill="${color}" opacity="0.2"/>`;
+  svg += `<rect x="${cx+legGap}" y="${yHip+14}" width="${legW}" height="55" rx="4" fill="${color}" opacity="0.2"/>`;
+  svg += `<rect x="${cx-legGap-10}" y="${yHip+70}" width="10" height="40" rx="3" fill="${color}" opacity="0.18"/>`;
+  svg += `<rect x="${cx+legGap}" y="${yHip+70}" width="10" height="40" rx="3" fill="${color}" opacity="0.18"/>`;
+
+  // 竖向虚线参考线
+  svg += `<line x1="${cx}" y1="${yNeckBot}" x2="${cx}" y2="${yHip+20}" stroke="${color}" stroke-width="1" opacity="0.4" stroke-dasharray="2,2"/>`;
+
+    // 数据标签排版（内部居中偏上）
+    if (shapeInfo) {
+      svg += `<text x="${cx}" y="${yChest - 4}" text-anchor="middle" font-size="10" fill="var(--text)" font-weight="600" style="cursor:pointer" onclick="openHealthInfo('shape')">体型 ${shapeInfo.label}</text>`;
+    }
+
+    svg+=`</svg>`;
+    $('bodyFigure').innerHTML=svg;
+    // 强制让外层容器可点击
+    $('bodyFigure').style.cursor='pointer';
+    $('bodyFigure').onclick = () => openHealthInfo('shape');
+  }
   const h=Number(user.height);
   const cw=getCurrentWeight(user);
   let bmiVal=null, bmiInfo=null;
@@ -2775,59 +3609,127 @@ function renderBodyFigureAndInfo(user){
   const bfInfo=getBodyFatInfo(user);
   let bfTxt='--', bfCls='';
   if(bfInfo){
-    const bfLv=bodyFatLevel(bfInfo.value);
+    const bfLv=bodyFatLevel(bfInfo.value, user.gender);
     bfTxt=`${bfInfo.value.toFixed(1)}% ${bfLv.level}`;
     bfCls=bfLv.cls;
   }
   const bmr=calcBMR(user);
 
-  // 按照顺序，第一排 3 个，第二排 3 个
-  $('bodyInfo').innerHTML=`
-    <div class="body-info-item" data-type="shape">
-      <span class="info-label">体型</span>
-      <span class="info-value">${shapeInfo?shapeInfo.label:'--'}</span>
-    </div>
-    <div class="body-info-item" data-type="whr">
-      <span class="info-label">腰臀比</span>
-      <span class="info-value">${whrInfo?`<span class="${whrInfo.cls}">${whrInfo.ratio.toFixed(2)} ${whrInfo.level}</span>`:'--'}</span>
-    </div>
-    <div class="body-info-item" data-type="bmi">
-      <span class="info-label">BMI</span>
-      <span class="info-value">${bmiVal?`<span class="${bmiInfo.cls}">${bmiVal.toFixed(1)} ${bmiInfo.level}</span>`:'--'}</span>
-    </div>
-    <div class="body-info-item" data-type="bodyfat">
-      <span class="info-label">体脂率</span>
-      <span class="info-value ${bfCls}">${bfTxt}</span>
-    </div>
-    <div class="body-info-item" data-type="bmr">
-      <span class="info-label">基础代谢</span>
-      <span class="info-value">${bmr!==null?Math.round(bmr)+' kcal':'--'}</span>
-    </div>
-    <div class="body-info-item" data-type="height">
-      <span class="info-label">身高</span>
-      <span class="info-value">${h>0?h+' cm':'--'}</span>
-    </div>
+  // 渲染第一列（性别、年龄、身高、体重）
+  const age = calcAge(user.birthDate);
+  const genderText = user.gender === 'male' ? '男' : (user.gender === 'female' ? '女' : '--');
+  const emptyTip = '<span class="top-info-empty">请先添加身体数据</span>';
+  
+  $('topInfoCol3').innerHTML = `
+    <div class="top-info-item" onclick="openBasicEditModal('gender')"><span class="top-info-label">性别</span><span class="top-info-value">${genderText !== '--' ? genderText : emptyTip}</span></div>
+    <div class="top-info-item" onclick="openBasicEditModal('birth')"><span class="top-info-label">年龄</span><span class="top-info-value">${age !== null ? age + ' 岁' : emptyTip}</span></div>
+    <div class="top-info-item" onclick="openBasicEditModal('height')"><span class="top-info-label">身高</span><span class="top-info-value" id="topInfoHeightVal">${h > 0 ? h + ' 厘米' : emptyTip}</span></div>
+    <div class="top-info-item" onclick="openRecordModal(null, null, true)"><span class="top-info-label">体重</span><span class="top-info-value">${cw ? `<span class="val-only">${fmt(toDisplay(cw, globalUnit))}</span> <span class="status-txt" style="color:var(--text)">${unitLabel(globalUnit)}</span>` : emptyTip}</span></div>
   `;
-  document.querySelectorAll('.body-info-item').forEach(el=>{
-    el.onclick=()=>openHealthInfo(el.dataset.type);
-  });
+
+  // 渲染第二列（基础代谢、BMI、体脂率、腰臀比）
+  const whrInfo = getWaistHipRatioInfo(waist, hip, user.gender);
+  let whrHtml = emptyTip;
+  if (whrInfo) {
+    whrHtml = `<span class="val-only">${whrInfo.ratio.toFixed(2)}</span> <span class="${whrInfo.cls} status-txt">${whrInfo.level}</span>`;
+  }
+
+  $('topInfoCol1').innerHTML = `
+    <div class="top-info-item" onclick="openHealthInfo('bmr')"><span class="top-info-label">基础代谢</span><span class="top-info-value">${bmr !== null ? `<span class="val-only">${Math.round(bmr)}</span> <span class="status-txt" style="color:var(--text)">标准</span>` : emptyTip}</span></div>
+    <div class="top-info-item" onclick="openHealthInfo('bmi')"><span class="top-info-label">BMI</span><span class="top-info-value">${bmiVal ? `<span class="val-only">${bmiVal.toFixed(1)}</span> <span class="${bmiInfo.cls} status-txt">${bmiInfo.level}</span>` : emptyTip}</span></div>
+    <div class="top-info-item" onclick="openHealthInfo('bodyfat')"><span class="top-info-label">体脂率</span><span class="top-info-value">${bfInfo ? `<span class="val-only">${bfInfo.value.toFixed(1)}%</span> <span class="${bfCls} status-txt">${bodyFatLevel(bfInfo.value, user.gender).level}</span>` : emptyTip}</span></div>
+    <div class="top-info-item" onclick="openHealthInfo('whr')"><span class="top-info-label">腰臀比</span><span class="top-info-value">${whrHtml}</span></div>
+  `;
+  
+
+
+  // 第 5 列体型文字已移除，保留空元素给人体图使用
+  $('bodyShapeLabel').textContent = '';
+
 }
-function getBodyShape(chest, waist, hip){
-  if(!chest||!waist||!hip) return null;
-  const whr=waist/hip, chr=chest/hip;
-  if(whr>=0.85) return { label:'苹果形' };
-  if(chr>=1.05 && whr<0.85) return { label:'倒三角' };
-  if(chr<=0.9 && whr<0.85) return { label:'梨形' };
-  if(whr<0.75 && chr>=0.9 && chr<1.05) return { label:'沙漏形' };
-  return { label:'H形' };
+
+// 点击"+"号打开围度记录弹窗
+document.addEventListener('DOMContentLoaded', function() {
+  maskBodyMetricAdd = document.getElementById('maskBodyMetricAdd');
+  const addBtn = document.getElementById('addFigureBtn');
+  if (addBtn) {
+    addBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const user = userList[currentViewUserIndex];
+      if(!user) return;
+      
+      $('popupBodyMetricDate').value = getTodayStr();
+      $('popupBodyMetricValue').value = '';
+      
+      const sel = $('popupBodyPartSelect');
+      if (sel) {
+        sel.value = 'waist';
+        const part = sel.value;
+        $('popupBodySideSelect').style.display = BODY_PARTS[part]?.hasSide ? 'block' : 'none';
+      }
+      
+      if (maskBodyMetricAdd) maskBodyMetricAdd.classList.add('show');
+    });
+  }
+});
+function getBodyShape(shoulder, chest, waist, hip){
+  if(!shoulder||!chest||!waist||!hip) return null;
+  
+  // 四维测量法：根据肩围、胸围、腰围、臀围的差值计算
+  const shHip = shoulder - hip;
+  const chWaist = chest - waist;
+  const hiWaist = hip - waist;
+  const chHip = chest - hip;
+
+  // 按照表格规则从下往上进行判断匹配
+  // 1. 长方形
+  if (Math.abs(shHip) <= 5 && Math.abs(chHip) <= 10 && Math.abs(hiWaist) <= 10 && Math.abs(chWaist) <= 15) {
+    return { label: '长方形' };
+  }
+  // 2. 苹果型
+  if (Math.abs(shHip) <= 5 && Math.abs(chHip) <= 10 && Math.abs(hiWaist) <= 15 && Math.abs(chWaist) <= 15) {
+     // 苹果形：腰围大，臀腰差极小甚至为负，胸腰差小
+     if (chWaist < 15 && hiWaist <= 15) return { label: '苹果形' };
+  }
+  // 3. 倒三角
+  if (shHip > 5 && shHip >= -5) {
+    return { label: '倒三角' };
+  }
+  // 4. 梨型
+  if (shHip >= -5 && shHip <= 5 && chWaist > 5) {
+    return { label: '梨形' };
+  }
+  // 5. 沙漏型
+  if (Math.abs(shHip) <= 5 && chWaist > 5 && hiWaist > 5) {
+    return { label: '沙漏型' };
+  }
+  // 6. H型
+  if (Math.abs(shHip) <= 5 && chWaist < 10 && hiWaist < 10) {
+    return { label: 'H型' };
+  }
+
+  // 兜底匹配（如果数据刚好在边界上）
+  if (shHip > 5 && chWaist <= 7.6) return { label: '倒三角' };
+  if (shHip < -5 && chWaist >= 7.6) return { label: '梨形' };
+  if (chWaist > 15 && hiWaist <= 10) return { label: '沙漏型' };
+  if (chWaist < 10 && hiWaist < 10) return { label: 'H型' };
+  
+  return { label: 'H型' }; // 默认
 }
-function getWaistHipRatioInfo(waist, hip){
+function getWaistHipRatioInfo(waist, hip, gender){
   if(!waist||!hip) return null;
   const r=waist/hip;
   let level, cls;
-  if(r<0.75){ level='优秀'; cls='whr-excellent'; }
-  else if(r<0.8){ level='正常'; cls='whr-good'; }
-  else { level='一般'; cls='whr-normal'; }
+  if(gender === 'female'){
+    if(r < 0.80){ level='标准'; cls='bf-normal'; }
+    else if(r <= 0.85){ level='偏高'; cls='bf-high'; }
+    else { level='过高'; cls='bf-vhigh'; }
+  } else {
+    if(r < 0.90){ level='标准'; cls='bf-normal'; }
+    else if(r <= 0.95){ level='偏高'; cls='bf-high'; }
+    else { level='过高'; cls='bf-vhigh'; }
+  }
   return { ratio:r, level, cls };
 }
 
@@ -2847,68 +3749,114 @@ function openHealthInfo(type){
 
   if(type==='shape'){
     title='体型';
-    const shape=getBodyShape(chest,waist,hip);
+    const shoulder=get('shoulder');
+    const shape=getBodyShape(shoulder,chest,waist,hip);
     currentVal=shape?shape.label:'--';
     currentLbl='当前体型';
     const rows=[
-      ['梨形','肩胸较窄，臀腿较宽','梨形'],
-      ['倒三角','肩胸较宽，臀腿较窄','倒三角'],
-      ['沙漏形','肩臀接近，腰细','沙漏形'],
-      ['H形','肩腰臀接近','H形'],
-      ['苹果形','腰腹偏大','苹果形']
+      ['H型','肩围-臀围≈0，胸围-腰围<10，臀围-腰围<10','H型'],
+      ['沙漏型','肩围-臀围≈0，胸围-腰围>15，臀围-腰围>15','沙漏型'],
+      ['梨型','肩围-臀围<5，胸围-腰围<10，臀围-腰围>15','梨形'],
+      ['倒三角','肩围-臀围>5，胸围-腰围<7.6，臀围-腰围<5','倒三角'],
+      ['苹果型','肩围-臀围≈0，胸围-腰围<15，臀围-腰围<-15','苹果形'],
+      ['长方型','肩围-臀围≈0，胸围-腰围<10，臀围-腰围<10','长方形']
     ];
     table=rows.map(([n,d,k])=>`<div class="hi-row ${shape?.label===k?'active':''}"><span class="hi-level">${n}</span><span>${d}</span></div>`).join('');
-    desc='体型是根据胸围、腰围、臀围的相对比例判断的参考结果，实际以专业测量为准。';
+    desc='根据“四维测量法”（肩围、胸围、腰围、臀围的差值比对）计算得出参考体型，实际以专业测量为准。';
   } else if(type==='whr'){
     title='腰臀比';
     const whr=(waist&&hip)?waist/hip:null;
-    const info=whr?getWaistHipRatioInfo(waist,hip):null;
+    const info=whr?getWaistHipRatioInfo(waist,hip,user.gender):null;
     currentVal=whr?whr.toFixed(2):'--';
     currentLbl=info?`当前腰臀比（${info.level}）`:'当前腰臀比';
-    table=`
-      <div class="hi-row ${whr&&whr<0.75?'active':''}"><span class="hi-level">优秀</span><span>&lt; 0.75</span></div>
-      <div class="hi-row ${whr&&whr>=0.75&&whr<0.8?'active':''}"><span class="hi-level">正常</span><span>0.75 - 0.79</span></div>
-      <div class="hi-row ${whr&&whr>=0.8?'active':''}"><span class="hi-level">一般</span><span>≥ 0.80</span></div>
-    `;
-    desc='腰臀比 = 腰围 ÷ 臀围，反映腹部脂肪堆积程度。数值越低越好，0.8 以上建议关注。';
+    if(user.gender === 'female'){
+      table=`
+        <div class="hi-row ${whr&&whr<0.8?'active':''}"><span class="hi-level bf-normal">标准</span><span class="val-only">&lt; 0.80</span></div>
+        <div class="hi-row ${whr&&whr>=0.8&&whr<=0.85?'active':''}"><span class="hi-level bf-high">偏高</span><span class="val-only">0.80 - 0.85</span></div>
+        <div class="hi-row ${whr&&whr>0.85?'active':''}"><span class="hi-level bf-vhigh">过高</span><span class="val-only">&gt; 0.85</span></div>
+      `;
+    } else {
+      table=`
+        <div class="hi-row ${whr&&whr<0.9?'active':''}"><span class="hi-level bf-normal">标准</span><span class="val-only">&lt; 0.90</span></div>
+        <div class="hi-row ${whr&&whr>=0.9&&whr<=0.95?'active':''}"><span class="hi-level bf-high">偏高</span><span class="val-only">0.90 - 0.95</span></div>
+        <div class="hi-row ${whr&&whr>0.95?'active':''}"><span class="hi-level bf-vhigh">过高</span><span class="val-only">&gt; 0.95</span></div>
+      `;
+    }
+    desc='腰臀比 = 腰围 ÷ 臀围，反映腹部脂肪堆积程度。数值越低越好。';
   } else if(type==='bmi'){
     title='BMI（身体质量指数）';
     const lv=bmi?bmiLevel(bmi):null;
     currentVal=bmi?bmi.toFixed(1):'--';
     currentLbl=lv?`当前 BMI（${lv.level}）`:'当前 BMI';
     table=`
-      <div class="hi-row ${bmi&&bmi<18.5?'active':''}"><span class="hi-level">偏瘦</span><span>&lt; 18.5</span></div>
-      <div class="hi-row ${bmi&&bmi>=18.5&&bmi<24?'active':''}"><span class="hi-level">标准</span><span>18.5 - 23.9</span></div>
-      <div class="hi-row ${bmi&&bmi>=24&&bmi<28?'active':''}"><span class="hi-level">超重</span><span>24 - 27.9</span></div>
-      <div class="hi-row ${bmi&&bmi>=28?'active':''}"><span class="hi-level">肥胖</span><span>≥ 28</span></div>
+      <div class="hi-row ${bmi&&bmi<18.5?'active':''}"><span class="hi-level bf-low">偏低</span><span class="val-only">&lt; 18.5</span></div>
+      <div class="hi-row ${bmi&&bmi>=18.5&&bmi<24?'active':''}"><span class="hi-level bf-normal">标准</span><span class="val-only">18.5 - 23.9</span></div>
+      <div class="hi-row ${bmi&&bmi>=24&&bmi<28?'active':''}"><span class="hi-level bf-high">偏高</span><span class="val-only">24.0 - 27.9</span></div>
+      <div class="hi-row ${bmi&&bmi>=28?'active':''}"><span class="hi-level bf-vhigh">过高</span><span class="val-only">≥ 28.0</span></div>
     `;
     desc='BMI = 体重(kg) ÷ 身高(m)²。只反映体重与身高的关系，不区分肌肉与脂肪。';
   } else if(type==='bodyfat'){
     title='体脂率';
-    const lv=bfInfo?bodyFatLevel(bfInfo.value):null;
+    const lv=bfInfo?bodyFatLevel(bfInfo.value, user.gender):null;
     currentVal=bfInfo?bfInfo.value.toFixed(1)+'%':'--';
     currentLbl=lv?`当前体脂率（${lv.level}）`:'当前体脂率';
-    table=`
-      <div class="hi-row ${bfInfo&&bfInfo.value<18?'active':''}"><span class="hi-level">偏低</span><span>&lt; 18%</span></div>
-      <div class="hi-row ${bfInfo&&bfInfo.value>=18&&bfInfo.value<25?'active':''}"><span class="hi-level">标准</span><span>18% - 24.9%</span></div>
-      <div class="hi-row ${bfInfo&&bfInfo.value>=25&&bfInfo.value<30?'active':''}"><span class="hi-level">偏高</span><span>25% - 29.9%</span></div>
-      <div class="hi-row ${bfInfo&&bfInfo.value>=30?'active':''}"><span class="hi-level">过高</span><span>≥ 30%</span></div>
-    `;
+    if(user.gender === 'female'){
+      table=`
+        <div class="hi-row ${bfInfo&&bfInfo.value<20?'active':''}"><span class="hi-level bf-low">偏低</span><span class="val-only">&lt; 20%</span></div>
+        <div class="hi-row ${bfInfo&&bfInfo.value>=20&&bfInfo.value<=30?'active':''}"><span class="hi-level bf-normal">标准</span><span class="val-only">20% - 30%</span></div>
+        <div class="hi-row ${bfInfo&&bfInfo.value>30&&bfInfo.value<=35?'active':''}"><span class="hi-level bf-high">偏高</span><span class="val-only">30% - 35%</span></div>
+        <div class="hi-row ${bfInfo&&bfInfo.value>35?'active':''}"><span class="hi-level bf-vhigh">过高</span><span class="val-only">&gt; 35%</span></div>
+      `;
+    } else {
+      table=`
+        <div class="hi-row ${bfInfo&&bfInfo.value<10?'active':''}"><span class="hi-level bf-low">偏低</span><span class="val-only">&lt; 10%</span></div>
+        <div class="hi-row ${bfInfo&&bfInfo.value>=10&&bfInfo.value<=20?'active':''}"><span class="hi-level bf-normal">标准</span><span class="val-only">10% - 20%</span></div>
+        <div class="hi-row ${bfInfo&&bfInfo.value>20&&bfInfo.value<=25?'active':''}"><span class="hi-level bf-high">偏高</span><span class="val-only">20% - 25%</span></div>
+        <div class="hi-row ${bfInfo&&bfInfo.value>25?'active':''}"><span class="hi-level bf-vhigh">过高</span><span class="val-only">&gt; 25%</span></div>
+      `;
+    }
     if(bfInfo && bfInfo.auto){
       desc='体脂率依据 Deurenberg 公式自动估算：体脂率 = 1.2×BMI + 0.23×年龄 - 10.8×性别 - 5.4（男=1，女=0）。如需精准数据，请使用体脂秤或专业测量。';
     } else {
       desc='体脂率来自手动记录。填写性别、出生年月日与身高后，系统可自动估算体脂率。';
     }
-  } else if(type==='bmr'){
+    } else if(type==='bmr'){
     title='基础代谢（BMR）';
     currentVal=bmr!==null?Math.round(bmr):'--';
     currentLbl='当前估算（kcal/天）';
+    // ... 中间省略 ...
+    desc='基础代谢是指身体在静息状态下维持生命所需的最低能量，用 Mifflin-St Jeor 公式估算：男 = 10×体重 + 6.25×身高 - 5×年龄 + 5；女 = 同式 - 161。正常范围通常为计算值的 ±10%。';
+  } else if(type==='speed'){
+    title='减重速度标准';
+    // 获取当前减重速度
+    const user=userList[currentViewUserIndex];
+    let speedText='--';
+    let currentLevel='--';
+    if(user){
+       const startW=Number(user.startWeight)||0;
+       const currentW=getCurrentWeight(user);
+       const startD=parseDate(user.startDate);
+       const recs=getSortedRecords(user);
+       const lastRec=recs.length?recs[recs.length-1]:null;
+       const endD=lastRec?parseDate(lastRec.date):startD;
+       const weeks=(!isNaN(startD.getTime())&&!isNaN(endD.getTime()))?(endD-startD)/(7*86400000):0;
+       const lost=startW-currentW;
+       if(weeks>0.02) {
+           const speed = lost/weeks;
+           if(speed>1) currentLevel='快';
+           else if(speed>=0.5) currentLevel='正常';
+           else currentLevel='慢';
+           speedText = speed.toFixed(2) + ' kg/周';
+       }
+    }
+    currentVal=speedText;
+    currentLbl=`当前减重速度（${currentLevel}）`;
     table=`
-      <div class="hi-row"><span class="hi-level">成年男性</span><span>约 1400 - 1800 kcal</span></div>
-      <div class="hi-row"><span class="hi-level">成年女性</span><span>约 1100 - 1500 kcal</span></div>
-      <div class="hi-row"><span class="hi-level">个体差异</span><span>± 10% 属正常波动</span></div>
+      <div class="hi-row"><span class="hi-level" style="color:var(--down-color)">快</span><span class="val-only">&gt; 1.0 kg / 周</span></div>
+      <div class="hi-row"><span class="hi-level" style="color:var(--primary)">正常</span><span class="val-only">0.5 - 1.0 kg / 周</span></div>
+      <div class="hi-row"><span class="hi-level bf-vhigh">慢</span><span class="val-only">&lt; 0.5 kg / 周</span></div>
     `;
-    desc='基础代谢是指身体在静息状态下维持生命所需的最低能量，用 Mifflin-St Jeor 公式估算：男 = 10×体重 + 6.25×身高 - 5×年龄 + 5；女 = 同式 - 161。数值受肌肉量、作息、激素等影响，仅供参考。';
+    desc='科学建议：每周减重 0.5 - 1.0 公斤是比较健康且不易反弹的速度。过慢可能进展不足，过快可能影响身体基础代谢。';
   }
   titleEl.textContent=title;
   bodyEl.innerHTML=`
@@ -2924,17 +3872,10 @@ function openHealthInfo(type){
 $('closeHealthInfo').onclick=()=>maskHealthInfo.classList.remove('show');
 maskHealthInfo.onclick=e=>{ if(e.target===maskHealthInfo) maskHealthInfo.classList.remove('show'); };
 
-$('metricTrendSelect').onchange=function(){
-  currentMetricKey=this.value;
-  $('metricHistorySelect').value=this.value;
-  const u=userList[currentViewUserIndex]; if(!u) return;
-  renderMetricTrendChart(u); renderMetricHistoryList(u);
-};
 $('metricHistorySelect').onchange=function(){
   currentMetricKey=this.value;
-  $('metricTrendSelect').value=this.value;
   const u=userList[currentViewUserIndex]; if(!u) return;
-  renderMetricTrendChart(u); renderMetricHistoryList(u);
+  renderMetricHistoryList(u);
 };
 function getSeriesForPart(user, part){
   const bm=user.bodyMetrics||emptyBodyMetrics();
@@ -2963,8 +3904,11 @@ function getSeriesForPart(user, part){
   }];
 }
 function renderMetricTrendChart(user){
+  // 页面改版后已无独立围度趋势图容器，保留空函数以兼容旧调用
+  const box = $('metricTrendChart');
+  if(!box) return;
   const series=getSeriesForPart(user, currentMetricKey).filter(s=>s.points.length>0);
-  renderMultiLineChart($('metricTrendChart'), series, '厘米');
+  renderMultiLineChart(box, series, '厘米');
 }
 function collectMetricItems(user, part){
   const bm=user.bodyMetrics||emptyBodyMetrics();
@@ -3008,7 +3952,7 @@ function renderMetricHistoryList(user){
   }
   const show=items.slice(0,3);
   show.forEach(it=>{ list.appendChild(buildMetricHistoryItem(it, items)); });
-  moreBtn.style.display = items.length>3 ? '' : 'none';
+  moreBtn.style.display = items.length>3 ? 'inline-block' : 'none';
 }
 $('showAllMetricRecordsBtn').onclick=()=>{
   const user=userList[currentViewUserIndex]; if(!user) return;
@@ -3146,7 +4090,9 @@ function attachSortEvents(item){
    创建/修改用户
    ========================================================= */
 function clearCreateError(){ ['errName','errHeight','errStartW','errStartD','errTargetW','errTargetD'].forEach(i=>$(i).textContent=''); }
-function clearModifyError(){ ['errModName','errModHeight','errModStartW','errModStartD','errModTargetW','errModTargetD'].forEach(i=>$(i).textContent=''); }
+function clearModifyError(){ 
+  if($('errModName')) $('errModName').textContent='';
+}
 function updateCreateNeedLose(){
   const sw=parseFloat($('inpStartWeight').value), tw=parseFloat($('inpTargetWeight').value);
   const el=$('createNeedLose');
@@ -3161,28 +4107,30 @@ function updateModNeedLose(){
 }
 $('inpStartWeight').addEventListener('input',updateCreateNeedLose);
 $('inpTargetWeight').addEventListener('input',updateCreateNeedLose);
-$('inpModifyStartWeight').addEventListener('input',updateModNeedLose);
-$('inpModifyTargetWeight').addEventListener('input',updateModNeedLose);
+
 
 function openModifyModal(idx){
   currentModifyIndex=idx; const user=userList[idx];
-  const unit=globalUnit;
-  $('modUnitLabel').textContent=unitLabel(unit);
-  $('modUnitLabel2').textContent=unitLabel(unit);
+    $('maskModify').querySelector('h3').textContent='个人信息';
+  if(!user) return;
+  
   $('inpModifyName').value=user.name;
   $('inpModifyGender').value=user.gender||'';
   $('inpModifyBirth').value=user.birthDate||'';
-  $('inpModifyHeight').value=user.height?fmtInput(user.height):'';
-  $('inpModifyStartWeight').value=fmtInput(toDisplay(Number(user.startWeight),unit));
-  $('inpModifyStartDate').value=user.startDate;
-  $('inpModifyTargetWeight').value=fmtInput(toDisplay(Number(user.targetWeight),unit));
-  $('inpModifyTargetDate').value=user.targetDate;
   selectedAvatar={ emoji:user.avatarEmoji||null, bg:user.avatarBg||'#8899aa', image:user.avatarImage||null };
   tempAvatar={...selectedAvatar}; renderFormAvatarPreview();
-  updateModNeedLose(); clearModifyError();
+  
+  // 把以前的清空报错代码去掉，直接显示
+  if($('errModName')) $('errModName').textContent='';
   maskModify.classList.add('show');
+
+  // 刷新迁移到弹窗内的历史区域
+  renderRecordList(user, globalUnit, unitLabel(globalUnit));
+  const mhSel = $('metricHistorySelect');
+  if(mhSel){ mhSel.value = currentMetricKey; }
+  if($('metricHistoryList')) renderMetricHistoryList(user);
 }
-console.log('主页创建按钮:', $('openCreate'));
+
 $('openCreate').onclick=()=>{
   const unit=globalUnit;
   $('createUnitLabel').textContent=unitLabel(unit);
@@ -3212,37 +4160,21 @@ $('saveModify').onclick=()=>{
   const idx=currentModifyIndex; if(idx===null) return;
   const u=userList[idx];
   const nn=$('inpModifyName').value.trim();
-  const nh=$('inpModifyHeight').value.trim();
-  const nsw=$('inpModifyStartWeight').value.trim();
-  const nsd=$('inpModifyStartDate').value;
-  const ntw=$('inpModifyTargetWeight').value.trim();
-  const ntd=$('inpModifyTargetDate').value;
   clearModifyError();
   let valid=true;
+  
   if(!nn){ $('errModName').textContent='输入内容！'; valid=false; }
   else if(isNameTaken(nn, idx)){ $('errModName').textContent='该用户名已被使用'; valid=false; }
-  const hv=parseFloat(nh); if(!nh||isNaN(hv)||hv<=0){ $('errModHeight').textContent='输入有效身高！'; valid=false; }
-  const swv=parseFloat(nsw); if(!nsw||isNaN(swv)||swv<=0){ $('errModStartW').textContent='输入有效体重！'; valid=false; }
-  if(!nsd){ $('errModStartD').textContent='输入内容！'; valid=false; }
-  const twv=parseFloat(ntw); if(!ntw||isNaN(twv)||twv<=0){ $('errModTargetW').textContent='输入有效体重！'; valid=false; }
-  if(!ntd){ $('errModTargetD').textContent='输入内容！'; valid=false; }
+  
   if(!valid) return;
 
-  if(nsd && ntd && ntd <= nsd){
-    $('errModTargetD').textContent='目标日期需晚于初始日期';
-    return;
-  }
-  if(swv && twv && twv > swv){
-    const unit=globalUnit;
-    if(!confirm(`目标体重（${twv}${unitLabel(unit)}）高于初始体重（${swv}${unitLabel(unit)}），确认要增重吗？`)) return;
-  }
-
-  u.name=nn; u.height=hv;
+  // 仅保存留下的四个字段
+  u.name=nn;
   u.gender=$('inpModifyGender').value;
   u.birthDate=$('inpModifyBirth').value;
-  u.startWeight=toKg(swv,globalUnit); u.targetWeight=toKg(twv,globalUnit);
-  u.startDate=fixDate(nsd); u.targetDate=fixDate(ntd);
-  u.avatarEmoji=selectedAvatar.emoji; u.avatarBg=selectedAvatar.bg; u.avatarImage=selectedAvatar.image;
+  u.avatarEmoji=selectedAvatar.emoji; 
+  u.avatarBg=selectedAvatar.bg; 
+  u.avatarImage=selectedAvatar.image;
 
   saveUsers(); renderSidebarUsers(); renderEditList();
   maskModify.classList.remove('show');
@@ -3287,7 +4219,7 @@ $('submitCreate').onclick=()=>{
     height:hv,
     startWeight:toKg(swv,unit), startDate:fixDate(sd),
     targetWeight:toKg(twv,unit), targetDate:fixDate(td),
-    records:[], bodyFatRecords:[], dietRecords:[], exerciseRecords:[],
+    records:[], bodyFatRecords:[],
     bodyMetrics:emptyBodyMetrics()
   };
 userList.push(nu); saveUsers(); renderSidebarUsers();
@@ -3337,7 +4269,11 @@ function renderCalendarSingle(user, unit, ul){
   const diffMap=getRecordDiffMap(user);
   const todayStr=getTodayStr();
   const recByDate={};
-  recs.forEach(r=>{ if(!recByDate[r.date]) recByDate[r.date]=[]; recByDate[r.date].push(r); });
+  recs.forEach(r=>{ 
+    const d = r.date || todayStr; // 防止没有日期的脏数据报错
+    if(!recByDate[d]) recByDate[d]=[]; 
+    recByDate[d].push(r); 
+  });
   const firstDay=new Date(year,month,1);
   const daysInMonth=new Date(year,month+1,0).getDate();
   let startWeekday=firstDay.getDay();
@@ -3383,8 +4319,8 @@ function renderCalendarSingle(user, unit, ul){
     el.innerHTML=buildHtml(d, ds);
     el.onclick=()=>{
       const list=recByDate[ds];
-      if(list && list.length) openRecordModal(list[list.length-1].id);
-      else openRecordModal(null, ds);
+      if(list && list.length) openRecordModal(list[list.length-1].id, null, true);
+      else openRecordModal(null, ds, true);
     };
     daysEl.appendChild(el);
   }
@@ -3694,7 +4630,7 @@ function renderLineChart(container, allPoints, opts={}){
     txt.setAttribute('x',padL-5); txt.setAttribute('y',y+3);
     txt.setAttribute('text-anchor','end'); txt.setAttribute('font-size','10');
     txt.setAttribute('fill','var(--gray-text)');
-    txt.textContent=val.toFixed(1);
+    txt.textContent=toDisplay(val,globalUnit).toFixed(1);
     svg.appendChild(txt);
   }
 
@@ -3705,7 +4641,7 @@ function renderLineChart(container, allPoints, opts={}){
     txt.setAttribute('x',x); txt.setAttribute('y',H-8);
     txt.setAttribute('text-anchor','middle'); txt.setAttribute('font-size','10');
     txt.setAttribute('fill','var(--gray-text)');
-    txt.textContent=allPoints[i].date.slice(5);
+    txt.textContent=String(allPoints[i].date || '').slice(5);
     svg.appendChild(txt);
   });
 
@@ -3740,7 +4676,7 @@ function renderLineChart(container, allPoints, opts={}){
     tv.setAttribute('x',padL-5); tv.setAttribute('y',l.y+3);
     tv.setAttribute('text-anchor','end'); tv.setAttribute('font-size','10');
     tv.setAttribute('font-weight','700'); tv.setAttribute('fill',l.color);
-    tv.textContent=l.value.toFixed(1);
+    tv.textContent=toDisplay(l.value,globalUnit).toFixed(1);
     svg.appendChild(tv);
 
     const t2=document.createElementNS(svgNS,'text');
@@ -3805,6 +4741,7 @@ function renderLineChart(container, allPoints, opts={}){
       const r=svg.getBoundingClientRect();
       const scaleX=r.width/W, scaleY=r.height/H;
       tip.textContent=`${formatDateCn(date)} ${fmt(toDisplay(Number(weight),globalUnit))}${unitLabel(globalUnit)}`;
+      tip.textContent=tip.textContent.replace(/\s+/g,' ').trim();
       tip.style.left=(cx*scaleX)+'px';
       tip.style.top=(cy*scaleY-10)+'px';
       tip.classList.add('show');
@@ -3871,7 +4808,7 @@ function renderMultiLineChart(container, series, unitSuffix){
     txt.setAttribute('text-anchor', anchor);
     txt.setAttribute('font-size', '9');
     txt.setAttribute('fill', 'var(--gray-text)');
-    txt.textContent = baseSeries.points[i].date.slice(5);
+    txt.textContent = String(baseSeries.points[i].date || '').slice(5);
     svg.appendChild(txt);
   });
   valid.forEach(s=>{
@@ -4036,256 +4973,7 @@ function renderYearChart(user, unit, ul){
 $('yearPrevBtn').onclick=()=>{ yearOffset--; renderCombinedTab(); };
 $('yearNextBtn').onclick=()=>{ yearOffset++; renderCombinedTab(); };
 
-/* =========================================================
-   饮食与运动
-   ========================================================= */
-const MEAL_LABELS={ breakfast:'早餐', lunch:'午餐', dinner:'晚餐', snack:'加餐' };
-const MEAL_ORDER=['breakfast','lunch','dinner','snack'];
 
-function getDietBudget(user){
-  const bmr=calcBMR(user);
-  return (bmr!==null && isFinite(bmr)) ? Math.round(bmr) : 1800;
-}
-
-function renderDietTab(){
-  const idx=currentViewUserIndex; if(idx===null||!userList[idx]) return;
-  const user=userList[idx];
-  if(!Array.isArray(user.dietRecords)) user.dietRecords=[];
-  if(!Array.isArray(user.exerciseRecords)) user.exerciseRecords=[];
-
-  $('dietDateLabel').textContent=formatDateCn(dietDate)+(dietDate===getTodayStr()?'（今天）':'');
-
-  const dayDiets=user.dietRecords.filter(r=>r.date===dietDate);
-  const dayEx=user.exerciseRecords.filter(r=>r.date===dietDate);
-
-  const intake=dayDiets.reduce((s,r)=>s+(Number(r.kcal)||0),0);
-  const burn=dayEx.reduce((s,r)=>s+(Number(r.kcal)||0),0);
-  const budget=getDietBudget(user);
-  const remain=budget+burn-intake;
-
-  const remainEl=$('dietRemain');
-  remainEl.textContent=Math.round(remain);
-  remainEl.style.color = remain<0 ? 'var(--up-color)' : 'var(--primary)';
-
-  $('dietIntake').textContent=Math.round(intake);
-  $('dietBurn').textContent=Math.round(burn);
-  $('dietBudget').textContent=Math.round(budget);
-
-  const totalAllow=budget+burn;
-  const pct=totalAllow>0 ? Math.min(100, (intake/totalAllow)*100) : 0;
-  $('dietBarFill').style.width=pct+'%';
-
-  const bmr=calcBMR(user);
-  $('dietHint').textContent = bmr!==null
-    ? '热量预算基于基础代谢（BMR）估算，运动消耗可额外增加可摄入额度。'
-    : '尚未完善性别 / 出生日期 / 身高信息，暂以 1800 千卡作为默认预算。完善个人资料后可获得更准确的估算。';
-
-  // 三大营养素
-  const protein=dayDiets.reduce((s,r)=>s+(Number(r.protein)||0),0);
-  const fat=dayDiets.reduce((s,r)=>s+(Number(r.fat)||0),0);
-  const carb=dayDiets.reduce((s,r)=>s+(Number(r.carb)||0),0);
-
-  const w=getCurrentWeight(user)||60;
-  const proteinGoal=Math.max(1, Math.round(w*1.5));
-  const fatGoal=Math.max(1, Math.round(budget*0.25/9));
-  const carbGoal=Math.max(1, Math.round(Math.max(0, budget-proteinGoal*4-fatGoal*9)/4));
-
-  const macroBox=$('macroList');
-  macroBox.innerHTML='';
-  [
-    {name:'蛋白质', val:protein, goal:proteinGoal, color:'var(--primary)'},
-    {name:'脂肪',   val:fat,     goal:fatGoal,     color:'var(--up-color)'},
-    {name:'碳水化合物', val:carb, goal:carbGoal,   color:'var(--down-color)'}
-  ].forEach(m=>{
-    const p=m.goal>0?Math.min(100, m.val/m.goal*100):0;
-    const row=document.createElement('div');
-    row.innerHTML=`
-      <div class="macro-head">
-        <span class="macro-name">${m.name}</span>
-        <span class="macro-val">${fmtNum(m.val,1)} / ${m.goal} 克</span>
-      </div>
-      <div class="macro-track"><div class="macro-fill" style="width:${p}%;background:${m.color}"></div></div>
-    `;
-    macroBox.appendChild(row);
-  });
-
-  // 餐次
-  const mealBox=$('mealList'); mealBox.innerHTML='';
-  MEAL_ORDER.forEach(m=>{
-    const items=dayDiets.filter(r=>r.meal===m);
-    const total=items.reduce((s,r)=>s+(Number(r.kcal)||0),0);
-    const block=document.createElement('div'); block.className='meal-block';
-    const header=document.createElement('div'); header.className='meal-header';
-    const nm=document.createElement('span'); nm.className='meal-name'; nm.textContent=MEAL_LABELS[m];
-    const kc=document.createElement('span'); kc.className='meal-kcal'; kc.textContent=Math.round(total)+' 千卡';
-    const addBtn=document.createElement('button'); addBtn.className='meal-add-btn'; addBtn.textContent='+ 添加';
-    addBtn.onclick=(e)=>{ e.stopPropagation(); openDietModal(null, m); };
-    header.appendChild(nm); header.appendChild(kc); header.appendChild(addBtn);
-    block.appendChild(header);
-
-    const list=document.createElement('div'); list.className='meal-items';
-    if(items.length===0){
-      list.innerHTML='<div class="meal-empty">暂无记录</div>';
-    } else {
-      items.forEach(it=>{
-        const row=document.createElement('div'); row.className='meal-item';
-        const main=document.createElement('div'); main.className='meal-item-main';
-        const nmEl=document.createElement('div'); nmEl.className='meal-item-name'; nmEl.textContent=it.name||'未命名';
-        const mEl=document.createElement('div'); mEl.className='meal-item-macro';
-        mEl.textContent=`蛋白 ${fmtNum(it.protein,1)}g · 脂肪 ${fmtNum(it.fat,1)}g · 碳水 ${fmtNum(it.carb,1)}g`;
-        main.appendChild(nmEl); main.appendChild(mEl);
-        const kcalEl=document.createElement('div'); kcalEl.className='meal-item-kcal';
-        kcalEl.textContent=Math.round(Number(it.kcal)||0)+' kcal';
-        row.appendChild(main); row.appendChild(kcalEl);
-        row.onclick=()=>openDietModal(it.id);
-        list.appendChild(row);
-      });
-    }
-    block.appendChild(list);
-    mealBox.appendChild(block);
-  });
-
-  // 运动
-  const exBox=$('exerciseList'); exBox.innerHTML='';
-  if(dayEx.length===0){
-    exBox.innerHTML='<div class="empty-tip" style="padding:10px 0;font-size:13px;">今天还没有运动记录</div>';
-  } else {
-    dayEx.forEach(it=>{
-      const row=document.createElement('div'); row.className='record-item';
-      const left=document.createElement('div');
-      const nmEl=document.createElement('div'); nmEl.className='rec-weight';
-      nmEl.style.fontSize='14px'; nmEl.style.marginBottom='2px';
-      nmEl.textContent=it.name||'运动';
-      const metaEl=document.createElement('div'); metaEl.className='rec-meta'; metaEl.textContent='运动消耗';
-      left.appendChild(nmEl); left.appendChild(metaEl);
-      const right=document.createElement('div'); right.className='rec-diff';
-      right.style.color='var(--down-color)';
-      right.textContent=Math.round(Number(it.kcal)||0)+' 千卡';
-      row.appendChild(left); row.appendChild(right);
-      row.onclick=()=>openExerciseModal(it.id);
-      exBox.appendChild(row);
-    });
-  }
-}
-
-/* 日期导航 */
-$('dietPrevDay').onclick=()=>{ dietDate=addDays(dietDate,-1); renderDietTab(); };
-$('dietNextDay').onclick=()=>{ dietDate=addDays(dietDate,1); renderDietTab(); };
-$('dietDateLabel').onclick=()=>{ dietDate=getTodayStr(); renderDietTab(); };
-
-/* 饮食弹窗 */
-function openDietModal(id, presetMeal){
-  const user=userList[currentViewUserIndex]; if(!user) return;
-  editingDietId=id;
-  $('errDietName').textContent='';
-  if(id){
-    const it=user.dietRecords.find(r=>r.id===id); if(!it) return;
-    $('dietAddTitle').textContent='编辑饮食记录';
-    $('deleteDietBtn').style.display='';
-    $('inpDietMeal').value=it.meal||'breakfast';
-    $('inpDietName').value=it.name||'';
-    $('inpDietKcal').value=fmtNum(it.kcal,0);
-    $('inpDietProtein').value=fmtNum(it.protein,1);
-    $('inpDietFat').value=fmtNum(it.fat,1);
-    $('inpDietCarb').value=fmtNum(it.carb,1);
-  } else {
-    $('dietAddTitle').textContent='添加饮食记录';
-    $('deleteDietBtn').style.display='none';
-    $('inpDietMeal').value=presetMeal||'breakfast';
-    $('inpDietName').value='';
-    $('inpDietKcal').value='';
-    $('inpDietProtein').value='';
-    $('inpDietFat').value='';
-    $('inpDietCarb').value='';
-  }
-  maskDietAdd.classList.add('show');
-}
-$('cancelDietAdd').onclick=()=>maskDietAdd.classList.remove('show');
-maskDietAdd.onclick=e=>{ if(e.target===maskDietAdd) maskDietAdd.classList.remove('show'); };
-$('saveDietAdd').onclick=()=>{
-  const user=userList[currentViewUserIndex]; if(!user) return;
-  const name=$('inpDietName').value.trim();
-  if(!name){ $('errDietName').textContent='请输入食物名称'; return; }
-  const rec={
-    id: editingDietId || genId(),
-    date: dietDate,
-    meal: $('inpDietMeal').value,
-    name,
-    kcal: parseFloat($('inpDietKcal').value)||0,
-    protein: parseFloat($('inpDietProtein').value)||0,
-    fat: parseFloat($('inpDietFat').value)||0,
-    carb: parseFloat($('inpDietCarb').value)||0
-  };
-  if(editingDietId){
-    const i=user.dietRecords.findIndex(r=>r.id===editingDietId);
-    if(i>=0) user.dietRecords[i]=rec; else user.dietRecords.push(rec);
-  } else {
-    user.dietRecords.push(rec);
-  }
-  saveUsers();
-  maskDietAdd.classList.remove('show');
-  renderDietTab();
-};
-$('deleteDietBtn').onclick=()=>{
-  const user=userList[currentViewUserIndex];
-  if(!user||!editingDietId) return;
-  if(!confirm('确认删除这条饮食记录吗？')) return;
-  user.dietRecords=user.dietRecords.filter(r=>r.id!==editingDietId);
-  saveUsers(); maskDietAdd.classList.remove('show');
-  renderDietTab();
-};
-
-/* 运动弹窗 */
-$('addExerciseBtn').onclick=()=>openExerciseModal(null);
-function openExerciseModal(id){
-  const user=userList[currentViewUserIndex]; if(!user) return;
-  editingExerciseId=id;
-  $('errExerciseName').textContent=''; $('errExerciseKcal').textContent='';
-  if(id){
-    const it=user.exerciseRecords.find(r=>r.id===id); if(!it) return;
-    $('exerciseAddTitle').textContent='编辑运动记录';
-    $('deleteExerciseBtn').style.display='';
-    $('inpExerciseName').value=it.name||'';
-    $('inpExerciseKcal').value=fmtNum(it.kcal,0);
-  } else {
-    $('exerciseAddTitle').textContent='添加运动';
-    $('deleteExerciseBtn').style.display='none';
-    $('inpExerciseName').value='';
-    $('inpExerciseKcal').value='';
-  }
-  maskExerciseAdd.classList.add('show');
-}
-$('cancelExerciseAdd').onclick=()=>maskExerciseAdd.classList.remove('show');
-maskExerciseAdd.onclick=e=>{ if(e.target===maskExerciseAdd) maskExerciseAdd.classList.remove('show'); };
-$('saveExerciseAdd').onclick=()=>{
-  const user=userList[currentViewUserIndex]; if(!user) return;
-  const name=$('inpExerciseName').value.trim();
-  const kcalStr=$('inpExerciseKcal').value.trim();
-  $('errExerciseName').textContent=''; $('errExerciseKcal').textContent='';
-  let ok=true;
-  if(!name){ $('errExerciseName').textContent='请输入运动名称'; ok=false; }
-  const kcal=parseFloat(kcalStr);
-  if(!kcalStr||isNaN(kcal)||kcal<0){ $('errExerciseKcal').textContent='请输入有效消耗'; ok=false; }
-  if(!ok) return;
-  const rec={ id: editingExerciseId || genId(), date: dietDate, name, kcal };
-  if(editingExerciseId){
-    const i=user.exerciseRecords.findIndex(r=>r.id===editingExerciseId);
-    if(i>=0) user.exerciseRecords[i]=rec; else user.exerciseRecords.push(rec);
-  } else {
-    user.exerciseRecords.push(rec);
-  }
-  saveUsers();
-  maskExerciseAdd.classList.remove('show');
-  renderDietTab();
-};
-$('deleteExerciseBtn').onclick=()=>{
-  const user=userList[currentViewUserIndex];
-  if(!user||!editingExerciseId) return;
-  if(!confirm('确认删除这条运动记录吗？')) return;
-  user.exerciseRecords=user.exerciseRecords.filter(r=>r.id!==editingExerciseId);
-  saveUsers(); maskExerciseAdd.classList.remove('show');
-  renderDietTab();
-};
 
 /* =========================================================
    PK（弹窗）
@@ -4491,8 +5179,7 @@ bindEnter(maskMetricEdit, $('saveMetricEdit'));
 bindEnter(maskHealthInfo, $('closeHealthInfo'));
 bindEnter(maskWeightEdit, $('saveWeightEdit'));
 bindEnter(maskMetricHistoryFull, $('closeMetricHistoryFull'));
-bindEnter(maskDietAdd, $('saveDietAdd'));
-bindEnter(maskExerciseAdd, $('saveExerciseAdd'));
+
 
 let chartResizeTimer=null;
 function handleChartResize(){
@@ -4513,37 +5200,161 @@ $('emptyCreateBtn').onclick = () => {
   $('openCreate').click();
 };
 $('emptyImportBtn').onclick = () => {
-  $('openDataTransfer').click();
+  triggerStandaloneImport();
 };
-const maskUserSelect=$('maskUserSelect');
-$('openUserSelect').onclick=()=>{ renderUserSelectList(); maskUserSelect.classList.add('show'); };
-$('closeUserSelect').onclick=()=>maskUserSelect.classList.remove('show');
-maskUserSelect.onclick=e=>{ if(e.target===maskUserSelect) maskUserSelect.classList.remove('show'); };
+
+window.showUserSelectModal = function(){
+  editMode='view';
+  renderUserSelectList();
+  maskUserSelect.classList.add('show');
+};
+
+$('openUserSelect').onclick= showUserSelectModal;
+
+function closeUserSelectAndReset() {
+  maskUserSelect.classList.remove('show');
+  editMode='view';
+  // 如果是从设置里进来的，关闭用户选择后重新打开设置
+  if(!maskSettings.classList.contains('show') && document.getElementById('tab-settings').classList.contains('show')) {
+    renderSettingsTab(true);
+    maskSettings.classList.add('show');
+  }
+}
+
+$('closeUserSelect').onclick = closeUserSelectAndReset;
+$('btnUserSelectDone').onclick = closeUserSelectAndReset;
+
+// 绑定编辑模式内的按钮
+$('openEdit').onclick = () => {
+  editMode = 'delete'; // 进入编辑状态（展示删除按钮）
+  renderUserSelectList();
+};
+
+$('btnUserSelectDelete').onclick = () => {
+  // 切换回普通编辑状态
+  editMode = 'delete'; 
+  renderUserSelectList();
+};
+maskUserSelect.onclick=e=>{ 
+  if(e.target===maskUserSelect) {
+    maskUserSelect.classList.remove('show');
+    if(!maskSettings.classList.contains('show') && document.getElementById('tab-settings').classList.contains('show')) {
+      renderSettingsTab(true);
+      maskSettings.classList.add('show');
+    }
+  } 
+};
+
+// =========================================================
+// 围度弹窗事件绑定
+// =========================================================
+document.addEventListener('DOMContentLoaded', () => {
+  $('popupBodyPartSelect').onchange = function(){
+    const part = this.value;
+    $('popupBodySideSelect').style.display = BODY_PARTS[part]?.hasSide ? 'block' : 'none';
+  };
+  maskBodyMetricAdd = $('maskBodyMetricAdd');
+  $('cancelPopupBodyMetric').onclick = () => {
+    if (maskBodyMetricAdd) maskBodyMetricAdd.classList.remove('show');
+  };
+  if (maskBodyMetricAdd) {
+    maskBodyMetricAdd.onclick = e => { if(e.target === maskBodyMetricAdd) maskBodyMetricAdd.classList.remove('show'); };
+  }
+  $('savePopupBodyMetric').onclick = () => {
+    const user = userList[currentViewUserIndex]; if(!user) return;
+    const part = $('popupBodyPartSelect').value;
+    const side = $('popupBodySideSelect').value;
+    const key = getBodyMetricKey(part, side);
+    const valStr = $('popupBodyMetricValue').value.trim();
+    const dateStr = $('popupBodyMetricDate').value;
+    const v = parseFloat(valStr);
+    if(!valStr || isNaN(v) || v <= 0 || v > 300){ alert('请输入有效的围度数值（厘米）'); return; }
+    if(!dateStr){ alert('请选择日期'); return; }
+    
+    user.bodyMetrics[key].push({ id: genId(), date: fixDate(dateStr), value: v });
+    saveUsers();
+    if (maskBodyMetricAdd) maskBodyMetricAdd.classList.remove('show');
+    renderBodyMetricsSection(user, globalUnit, unitLabel(globalUnit));
+  };
+});
+/* 顶部上升下降自定义颜色 */
+const topUpBtn = $('topUpColorBtn');
+const topDownBtn = $('topDownColorBtn');
+const topUpPicker = $('topUpColorPicker');
+const topDownPicker = $('topDownColorPicker');
+
+if(topUpBtn && topDownBtn){
+  topUpBtn.onclick = () => {
+    topUpPicker.value = themeConfig.up;
+    topUpPicker.click();
+  };
+  topDownBtn.onclick = () => {
+    topDownPicker.value = themeConfig.down;
+    topDownPicker.click();
+  };
+  topUpPicker.oninput = (e) => {
+    themeConfig.up = e.target.value;
+    saveTheme(); applyTheme();
+  };
+  topDownPicker.oninput = (e) => {
+    themeConfig.down = e.target.value;
+    saveTheme(); applyTheme();
+  };
+}
+
+/* 监听所有弹窗的显示状态，彻底解决滚动穿透 */
+const modalObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.target.classList.contains('mask')) {
+      const hasShow = document.querySelector('.mask.show');
+      document.body.style.overflow = hasShow ? 'hidden' : '';
+    }
+  });
+});
+document.querySelectorAll('.mask').forEach(m => {
+  modalObserver.observe(m, { attributes: true, attributeFilter: ['class'] });
+});
 
 /* 初始化 */
 applyTheme();
 buildAvatarPanel();
-$('bodyMetricDate').value=getTodayStr();
 renderSidebarUsers();
+document.querySelectorAll('.segment-btn[data-unit]').forEach(el=>{
+  el.classList.toggle('active', el.dataset.unit===globalUnit);
+});
 
-// 恢复上次选中的用户（新 key，不影响旧数据）
+// 确保主题色在 DOM 完全加载后再次应用（防止 CSS 变量被覆盖）
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme();
+});
+
 const LAST_USER_KEY='weightRecordLastUser';
-let lastIdx=null;
-try{ lastIdx=Number(localStorage.getItem(LAST_USER_KEY)); }catch(e){}
-if(userList.length>0 && lastIdx!==null && !isNaN(lastIdx) && lastIdx>=0 && lastIdx<userList.length){
-  openUserDetail(lastIdx);
-}else{
-  // 没有历史用户时，默认展示“体重”页面，但数据为空
-  currentViewUserIndex=null;  // 必须保证这里是 null
-  localStorage.removeItem('weightRecordLastUser'); // 顺手清除可能残留的本地记录
-  detailPage.classList.add('show'); // 保持页面可见
+let lastIdxRaw = null;
+try{ lastIdxRaw = localStorage.getItem(LAST_USER_KEY); }catch(e){}
+let lastIdx = (lastIdxRaw !== null && lastIdxRaw !== '') ? Number(lastIdxRaw) : null;
+
+// maskUserSelect 已在文件前部统一声明
+
+if(userList.length > 0){
+  // 【核心修复】检查上次保存的索引是否有效，有效就打开上次的，无效才默认打开第一个
+  if(lastIdx !== null && userList[lastIdx]){
+    openUserDetail(lastIdx);
+  } else {
+    openUserDetail(0);
+  }
+} else {
+  // 没有历史用户时，默认展示"体重"页面，但数据为空
+  currentViewUserIndex=null;
+  try{ localStorage.removeItem(LAST_USER_KEY); }catch(e){}
+  detailPage.classList.add('show');
   
-  // 激活“体重”Tab并移除置灰
+  // 激活"体重"Tab并移除置灰
   sidebarNavBtns.forEach(b=>{ 
     b.disabled = false; 
     if(b.dataset.tab === 'combined') b.classList.add('active');
   });
-  switchTab('combined'); // 触发空页面渲染
+  switchTab('combined');
+  maskSettings.classList.remove('show');
 }
 // 监听年份下拉框，滚到底部时自动追加更早的年份
 $('jumpYearSelect').addEventListener('scroll', function() {
@@ -4566,5 +5377,23 @@ $('jumpYearSelect').addEventListener('scroll', function() {
   }
 });
 </script>
+    <!-- 围度记录弹窗，由点击人体图触发 -->
+    <div class="mask" id="maskBodyMetricAdd">
+      <div class="modal">
+        <h3>添加围度记录</h3>
+        <div class="form-item"><label>部位</label>
+          <div style="display:flex;gap:6px;">
+            <select id="popupBodyPartSelect" class="metric-select" style="flex:1;"><option value="neck">颈围</option><option value="shoulder">肩宽</option><option value="chest">胸围</option><option value="waist">腰围</option><option value="hip">臀围</option><option value="arm">臂围</option><option value="thigh">大腿围</option><option value="calf">小腿围</option></select>
+            <select id="popupBodySideSelect" style="display:none; flex:0 0 60px;"><option value="L">左</option><option value="R">右</option><option value="N">/</option></select>
+          </div>
+        </div>
+        <div class="form-item"><label>数值（厘米）</label><input type="number" step="0.1" id="popupBodyMetricValue" placeholder="请输入数值"></div>
+        <div class="form-item"><label>日期</label><input type="date" id="popupBodyMetricDate"></div>
+        <div class="modal-footer">
+          <button class="modal-btn cancel" id="cancelPopupBodyMetric">取消</button>
+          <button class="modal-btn confirm" id="savePopupBodyMetric">保存</button>
+        </div>
+      </div>
+    </div>
 </body>
 </html>

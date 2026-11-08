@@ -2576,6 +2576,25 @@ function imgHydrate(){
   return imgHydrating;
 }
 
+/* 旧版本（封面还没搬家的那一版）会把云端封面行 __nini_img__:xxx 整条写进 localStorage，
+   每条约 18KB、169 条就是 3MB，直接吃光手机配额，而且它们没有应用前缀，靠别的逻辑清不掉。
+   这里在启动和同步前都扫一遍，把这些残留键删干净。 */
+function cleanLocalJunk(){
+  let removed = 0, freed = 0;
+  for(let i = localStorage.length - 1; i >= 0; i--){
+    const key = localStorage.key(i);
+    if(!key || key.indexOf(IMG_CLOUD_PREFIX) !== 0) continue;
+    const val = localStorage.getItem(key) || '';
+    try{
+      localStorage.removeItem(key);
+      removed++;
+      freed += key.length + val.length;
+    }catch(e){}
+  }
+  if(removed) console.log('[存储] 清理旧版封面残留键 ' + removed + ' 个，释放 ' + Math.round(freed / 1024) + 'KB');
+  return removed;
+}
+
 /* 历史版本键清理：只保留当前版本，其余同族旧键删除（可省 700KB+） */
 function pruneLegacyKeys(){
   const rules = [
@@ -2597,8 +2616,20 @@ function pruneLegacyKeys(){
   return removed;
 }
 
+/* 应急入口：地址栏加 ?reset=1 打开，可清空本机缓存并从云端重新下载（数据以云端为准） */
+(function(){
+  try{
+    if(!/[?&]reset=1/.test(location.search)) return;
+    if(!confirm('将清空本机缓存（含本机封面库）并从云端重新下载数据，确定吗？')) return;
+    try{ localStorage.clear(); }catch(e){}
+    try{ indexedDB.deleteDatabase(IMG_DB_NAME); }catch(e){}
+    location.replace(location.pathname + (location.hash || ''));
+  }catch(e){}
+})();
+
 window.__NINI_MEDIA__ = {
   ready: () => imgDbReady,
+  clean: cleanLocalJunk,
   hydrate: imgHydrate,
   all: () => Array.from(imgCache.entries()),
   has: id => imgCache.has(String(id)),
@@ -5958,6 +5989,7 @@ updateViewToggleBtn();
 updateFilterBtnState();
 updateSortBtnState();
 pruneLegacyKeys();
+cleanLocalJunk();
 render();
 imgHydrate();
 </script>
@@ -6746,6 +6778,7 @@ window.openHistoryDatePicker = function(el){
     </form>
     <button id="niniCloudSwitch" type="button">没有账号？注册一个账号</button>
     <div id="niniCloudMessage" aria-live="polite">请使用 Supabase Auth 注册的邮箱和密码。</div>
+    <div id="niniCloudBuild" style="margin-top:10px;text-align:center;font-size:11px;color:#b3b9c4">build 2026-11-08 17:40 · v2 封面独立存储</div>
   </div>
 </div>
 <div id="niniCloudStatus" data-state="busy" aria-live="polite">
@@ -6806,6 +6839,26 @@ window.openHistoryDatePicker = function(el){
       keys.forEach(k => { if(k !== rule.keep && rule.re.test(k) && drop.indexOf(k) < 0) drop.push(k); });
     });
     return drop;
+  }
+  /* 本机 localStorage 当前占用（字符数 → 近似 MB） */
+  function localUsageMB(){
+    let chars = 0;
+    try{
+      for(let i = 0; i < localStorage.length; i++){
+        const k = localStorage.key(i);
+        if(!k) continue;
+        chars += k.length + (localStorage.getItem(k) || '').length;
+      }
+    }catch(e){}
+    return chars * 2 / 1048576;
+  }
+  /* 把浏览器的原始英文异常翻成能看懂的话 */
+  function friendlyError(error){
+    const raw = (error && error.message) || '';
+    if(/quota/i.test(raw) || (error && error.name === 'QuotaExceededError')){
+      return '本机存储空间不足（已占用 ' + localUsageMB().toFixed(1) + 'MB，上限约 5MB）。请先刷新页面重试；若仍失败，说明本机残留了旧版本数据，我可以帮你清。';
+    }
+    return raw || '操作失败，请检查网络、邮箱验证设置和 Supabase 配置。';
   }
   function setMessage(text, type){
     message.textContent = text || '';
@@ -6877,6 +6930,13 @@ window.openHistoryDatePicker = function(el){
       raw.setItem.call(localStorage, key, value);
       return true;
     }catch(err){
+      /* 先清一次旧版本残留的封面键，腾出空间后重试同一个值 */
+      if(cleanLocalJunk()){
+        try{
+          raw.setItem.call(localStorage, key, value);
+          return true;
+        }catch(e2){ err = e2; }
+      }
       if(key !== 'tingkan.records.v9') throw err;
       /* 极端情况仍写不下：整份记录退化为纯文字，避免整页打不开 */
       const norm = await normalizeRecordValue(value);
@@ -7012,6 +7072,7 @@ window.openHistoryDatePicker = function(el){
 
   async function initialCloudSync(user){
     currentUser = user;
+    if(window.__NINI_MEDIA__ && typeof window.__NINI_MEDIA__.clean === 'function') window.__NINI_MEDIA__.clean();
     setStatus('正在读取云端数据…','busy');
     const raw = getRawStorage();
     const boundUser = localStorage.getItem(BOUND_USER_KEY);
@@ -7277,7 +7338,7 @@ window.openHistoryDatePicker = function(el){
       }
     }catch(error){
       console.error('[NINI 登录/同步错误]',error);
-      setMessage(error.message || '操作失败，请检查网络、邮箱验证设置和 Supabase 配置。','error');
+      setMessage(friendlyError(error),'error');
       setStatus('连接失败','error');
     }finally{
       submitButton.disabled = false;
@@ -7323,7 +7384,7 @@ window.openHistoryDatePicker = function(el){
       }
     }catch(error){
       console.error('[NINI 初始化错误]',error);
-      showGate('连接 Supabase 失败：'+(error.message || '请检查 Project URL、Publishable Key、数据表和 RLS 策略。'),'error');
+      showGate('连接 Supabase 失败：'+friendlyError(error),'error');
       setStatus('连接失败','error');
     }
   }

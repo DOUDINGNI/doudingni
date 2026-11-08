@@ -2411,9 +2411,215 @@ function loadRecords(){
   }catch(e){ console.warn('读取失败', e); }
   return [];
 }
-function saveRecords(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(records)); }catch(e){}
+/* ===================== 封面图外置存储（IndexedDB） ===================== */
+/* localStorage 单个源只有约 5MB（手机端），169 张 base64 封面就吃掉 3MB，
+   同步时整份写回必然撑爆配额。这里把 data: 图片从记录里剥离、改存 IndexedDB
+   （配额按 GB 计），内存中的 r.image 照旧保留，所有渲染代码不用改。 */
+const IMG_DB_NAME = 'nini_media_v1';
+const IMG_DB_STORE = 'covers';
+const IMG_CLOUD_PREFIX = '__nini_img__:';
+let imgDb = null, imgDbReady = false, imgFlushTimer = null, imgHydrating = null;
+const imgCache = new Map();   // recordId -> dataURL
+const imgQueue = new Map();   // recordId -> dataURL（待写入 IndexedDB）
+
+function imgIsInline(v){ return typeof v === 'string' && v.slice(0, 5) === 'data:'; }
+
+function imgOpenDb(){
+  if(imgDb) return Promise.resolve(imgDb);
+  return new Promise((resolve, reject) => {
+    if(!window.indexedDB) return reject(new Error('浏览器不支持 IndexedDB'));
+    const req = indexedDB.open(IMG_DB_NAME, 1);
+    const timer = setTimeout(() => reject(new Error('打开封面库超时')), 4000);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if(!db.objectStoreNames.contains(IMG_DB_STORE)) db.createObjectStore(IMG_DB_STORE, { keyPath:'id' });
+    };
+    req.onsuccess = () => { clearTimeout(timer); imgDb = req.result; resolve(imgDb); };
+    req.onerror = () => { clearTimeout(timer); reject(req.error || new Error('打开封面库失败')); };
+    req.onblocked = () => { clearTimeout(timer); reject(new Error('封面库被其他标签页占用')); };
+  });
 }
+function imgTxDone(tx){
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error || new Error('封面库写入中断'));
+  });
+}
+async function imgReadAll(){
+  const db = await imgOpenDb();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(IMG_DB_STORE, 'readonly').objectStore(IMG_DB_STORE).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function imgWriteMany(entries){
+  if(!entries || !entries.length) return;
+  const db = await imgOpenDb();
+  const store = db.transaction(IMG_DB_STORE, 'readwrite').objectStore(IMG_DB_STORE);
+  entries.forEach(([id, data]) => store.put({ id:String(id), data:String(data), updated_at:Date.now() }));
+  await imgTxDone(store.transaction);
+}
+async function imgRemoveMany(ids){
+  if(!ids || !ids.length) return;
+  const db = await imgOpenDb();
+  const store = db.transaction(IMG_DB_STORE, 'readwrite').objectStore(IMG_DB_STORE);
+  ids.forEach(id => store.delete(String(id)));
+  await imgTxDone(store.transaction);
+}
+
+function imgQueuePut(id, dataUrl){
+  if(!id || !imgIsInline(dataUrl)) return;
+  imgCache.set(id, dataUrl);
+  imgQueue.set(id, dataUrl);
+  if(imgFlushTimer) return;
+  imgFlushTimer = setTimeout(() => { imgFlushTimer = null; imgFlush(); }, 200);
+}
+async function imgFlush(){
+  if(!imgDbReady || !imgQueue.size) return false;
+  const batch = Array.from(imgQueue.entries());
+  batch.forEach(([id]) => imgQueue.delete(id));
+  try{
+    await imgWriteMany(batch);
+  }catch(err){
+    console.warn('[封面] 写入 IndexedDB 失败，图片暂时留在 localStorage', err);
+    batch.forEach(([id, data]) => { if(!imgQueue.has(id)) imgQueue.set(id, data); });
+    return false;
+  }
+  try{
+    if(window.__NINI_CLOUD__ && typeof window.__NINI_CLOUD__.queueImage === 'function'){
+      batch.forEach(([id, data]) => window.__NINI_CLOUD__.queueImage(id, data));
+    }
+  }catch(e){}
+  return true;
+}
+function imgPruneOrphans(aliveIds){
+  if(!imgDbReady || !aliveIds || !aliveIds.size) return;
+  const dead = Array.from(imgCache.keys()).filter(id => !aliveIds.has(id));
+  if(!dead.length) return;
+  dead.forEach(id => imgCache.delete(id));
+  imgRemoveMany(dead).catch(e => console.warn('[封面] 清理失效封面失败', e));
+  try{
+    if(window.__NINI_CLOUD__ && typeof window.__NINI_CLOUD__.queueImageDelete === 'function'){
+      dead.forEach(id => window.__NINI_CLOUD__.queueImageDelete(id));
+    }
+  }catch(e){}
+}
+
+function saveRecords(){
+  /* IndexedDB 就绪后：记录里的 data: 封面只存图片库，localStorage 里留空串 */
+  const strip = imgDbReady;
+  const ids = new Set();
+  const out = records.map(r => {
+    if(!r || typeof r !== 'object') return r;
+    if(r.id) ids.add(r.id);
+    if(strip && imgIsInline(r.image)){
+      if(imgCache.get(r.id) !== r.image) imgQueuePut(r.id, r.image);
+      return Object.assign({}, r, { image:'' });
+    }
+    return r;
+  });
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(out));
+  }catch(e){
+    /* 配额不足时兜底：把能剥离的封面全部剥离后再试一次 */
+    try{
+      const lean = records.map(r => {
+        if(!r || typeof r !== 'object') return r;
+        if(!imgIsInline(r.image)) return r;
+        imgQueuePut(r.id, r.image);
+        return Object.assign({}, r, { image:'' });
+      });
+      localStorage.setItem(STORE_KEY, JSON.stringify(lean));
+      console.warn('[存储] localStorage 空间不足，封面已转存图片库');
+    }catch(e2){
+      console.error('[存储] 记录保存失败', e2);
+      return false;
+    }
+  }
+  imgPruneOrphans(ids);
+  return true;
+}
+
+/* 启动时：把 IndexedDB 里的封面挂回内存记录，并把历史遗留的内联封面迁移过去 */
+function imgHydrate(){
+  if(imgHydrating) return imgHydrating;
+  imgHydrating = (async () => {
+    try{
+      await imgOpenDb();
+      imgDbReady = true;
+      const rows = await imgReadAll();
+      rows.forEach(row => {
+        if(row && row.id && typeof row.data === 'string' && !imgCache.has(row.id)) imgCache.set(row.id, row.data);
+      });
+      let migrated = false, attached = 0;
+      records.forEach(r => {
+        if(!r || !r.id) return;
+        if(imgIsInline(r.image)){
+          if(imgCache.get(r.id) !== r.image){ imgCache.set(r.id, r.image); imgQueue.set(r.id, r.image); }
+          migrated = true;                 /* localStorage 里还内联着图，需要瘦身 */
+        }else if(!r.image && imgCache.has(r.id)){
+          r.image = imgCache.get(r.id);    /* 从图片库回填，封面才显示 */
+          attached++;
+        }
+      });
+      if(imgQueue.size) await imgFlush();
+      if(migrated) saveRecords();
+      if(migrated || attached){ try{ render(); }catch(e){} }
+      window.dispatchEvent(new CustomEvent('nini-media-ready'));
+    }catch(err){
+      imgDbReady = false;
+      console.warn('[封面] IndexedDB 不可用，封面继续内联在 localStorage', err);
+    }
+  })();
+  return imgHydrating;
+}
+
+/* 历史版本键清理：只保留当前版本，其余同族旧键删除（可省 700KB+） */
+function pruneLegacyKeys(){
+  const rules = [
+    { keep:'ielts_desk_v32',     drop:/^ielts_desk_v\d+$/ },
+    { keep:'diaryDataV4',        drop:/^diaryDataV\d+$/ },
+    { keep:'tingkan.records.v9', drop:/^tingkan\.records\.v\d+$/ }
+  ];
+  let removed = 0;
+  rules.forEach(rule => {
+    if(!localStorage.getItem(rule.keep)) return;   /* 当前版本不存在就先不删 */
+    for(let i = localStorage.length - 1; i >= 0; i--){
+      const key = localStorage.key(i);
+      if(key && key !== rule.keep && rule.drop.test(key)){
+        try{ localStorage.removeItem(key); removed++; }catch(e){}
+      }
+    }
+  });
+  if(removed) console.log('[存储] 已清理历史版本键 ' + removed + ' 个');
+  return removed;
+}
+
+window.__NINI_MEDIA__ = {
+  ready: () => imgDbReady,
+  hydrate: imgHydrate,
+  all: () => Array.from(imgCache.entries()),
+  has: id => imgCache.has(String(id)),
+  /* 云端下载的封面：写库 + 挂回内存 + 重绘，不经过 localStorage */
+  putRemote: async (entries) => {
+    if(!entries || !entries.length) return 0;
+    const clean = entries.filter(pair => pair && pair[0] && imgIsInline(pair[1]));
+    if(!clean.length) return 0;
+    try{
+      await imgWriteMany(clean);
+      imgDbReady = true;
+      clean.forEach(([id, data]) => imgCache.set(String(id), String(data)));
+      records.forEach(r => { if(r && !r.image && imgCache.has(r.id)) r.image = imgCache.get(r.id); });
+      try{ render(); }catch(e){}
+      return clean.length;
+    }catch(err){
+      console.warn('[封面] 云端封面写入 IndexedDB 失败', err);
+      return 0;
+    }
+  }
+};
 
 /* ===================== 工具函数 ===================== */
 function esc(str){ return String(str ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
@@ -5751,7 +5957,9 @@ document.querySelectorAll('dialog').forEach(dialog => {
 updateViewToggleBtn();
 updateFilterBtnState();
 updateSortBtnState();
+pruneLegacyKeys();
 render();
+imgHydrate();
 </script>
 
 <!-- 全部打卡记录弹窗 -->
@@ -6287,12 +6495,21 @@ window.openHistoryDatePicker = function(el){
     flushModules();
     var all = readAll();
     if(!all.count){ xferWarn('当前还没有可导出的数据'); safeToast('没有可导出的数据'); return; }
+    /* 封面已经搬到 IndexedDB，备份里必须一并带上，否则换设备恢复会丢图 */
+    var images = {};
+    try{
+      if(window.__NINI_MEDIA__ && typeof window.__NINI_MEDIA__.all === 'function'){
+        window.__NINI_MEDIA__.all().forEach(function(pair){ images[pair[0]] = pair[1]; });
+      }
+    }catch(e){}
     var payload = {
       app: 'tingkan-workbench',
-      version: 1,
+      version: 2,
       exportedAt: new Date().toISOString(),
       count: all.count,
-      localStorage: all.data
+      imageCount: Object.keys(images).length,
+      localStorage: all.data,
+      images: images
     };
     var text;
     try{ text = JSON.stringify(payload); }
@@ -6342,7 +6559,7 @@ window.openHistoryDatePicker = function(el){
     list.forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
   }
 
-  function applyImport(data, keys){
+  function applyImport(data, keys, images){
     /* 1. 先留底，写入失败时原样回滚 */
     var rollback = {};
     try{
@@ -6382,6 +6599,18 @@ window.openHistoryDatePicker = function(el){
     safeToast('导入成功，正在同步云端…');
     (async function(){
       try{
+        /* 备份里的封面先写回 IndexedDB，再和文字数据一起等云端同步 */
+        if(images && typeof images === 'object' && window.__NINI_MEDIA__){
+          var pairs = Object.keys(images)
+            .filter(function(k){ return typeof images[k] === 'string' && images[k].indexOf('data:') === 0; })
+            .map(function(k){ return [k, images[k]]; });
+          if(pairs.length){
+            await window.__NINI_MEDIA__.putRemote(pairs);
+            if(window.__NINI_CLOUD__ && typeof window.__NINI_CLOUD__.queueImage === 'function'){
+              pairs.forEach(function(p){ window.__NINI_CLOUD__.queueImage(p[0], p[1]); });
+            }
+          }
+        }
         var syncApi = window.__NINI_CLOUD__;
         var synced = !syncApi || typeof syncApi.flushAndWait !== 'function' ? true : await syncApi.flushAndWait();
         if(synced){
@@ -6420,7 +6649,7 @@ window.openHistoryDatePicker = function(el){
         }
       }catch(e){}
       askConfirm('将用备份里的 ' + keys.length + ' 项数据' + when + '覆盖当前全部数据，覆盖后无法撤销。建议先导出一份当前数据。确定继续吗？', function(ok){
-        if(ok) applyImport(obj.localStorage, keys);
+        if(ok) applyImport(obj.localStorage, keys, obj.images);
       });
     };
     fr.onerror = function(){ xferWarn('文件读取失败'); };
@@ -6553,9 +6782,30 @@ window.openHistoryDatePicker = function(el){
   let flushTimer = null;
   let flushing = false;
   let rawStorage = null;
+  /* 封面图单独排队（每张约 18KB），不挤进 localStorage 的键队列 */
+  let pendingImages = new Map();
+  let imageFlushTimer = null;
+  let imageFlushing = false;
+  let cloudImageIds = new Set();
+  let needPushKeys = new Set();     /* 本地瘦身后需要回写云端的键 */
 
   function isAppKey(key){
     return typeof key === 'string' && APP_PREFIXES.some(prefix => key.indexOf(prefix) === 0);
+  }
+  /* 同族旧版本键：当前版本存在时，这些键永远不再需要 */
+  function legacyKeysOf(keys){
+    const set = new Set(keys);
+    const rules = [
+      { keep:'ielts_desk_v32',     re:/^ielts_desk_v\d+$/ },
+      { keep:'diaryDataV4',        re:/^diaryDataV\d+$/ },
+      { keep:'tingkan.records.v9', re:/^tingkan\.records\.v\d+$/ }
+    ];
+    const drop = [];
+    rules.forEach(rule => {
+      if(!set.has(rule.keep)) return;
+      keys.forEach(k => { if(k !== rule.keep && rule.re.test(k) && drop.indexOf(k) < 0) drop.push(k); });
+    });
+    return drop;
   }
   function setMessage(text, type){
     message.textContent = text || '';
@@ -6591,9 +6841,74 @@ window.openHistoryDatePicker = function(el){
     rawStorage = { setItem:p.setItem, removeItem:p.removeItem, clear:p.clear };
     return rawStorage;
   }
-  function applyLocalSnapshot(rows, manifestExists){
+  /* 记录主键永远不该内联封面：先把图转存图片库、把值瘦身，再写 localStorage */
+  async function normalizeRecordValue(value){
+    if(typeof value !== 'string' || value.indexOf('data:image') < 0) return { value:value, imgs:0 };
+    let arr;
+    try{ arr = JSON.parse(value); }catch(e){ return { value:value, imgs:0 }; }
+    if(!Array.isArray(arr)) return { value:value, imgs:0 };
+    const imgs = [];
+    const lean = arr.map(r => {
+      if(r && typeof r.image === 'string' && r.image.slice(0,5) === 'data:'){
+        if(r.id) imgs.push([r.id, r.image]);
+        return Object.assign({}, r, { image:'' });
+      }
+      return r;
+    });
+    if(!imgs.length) return { value:value, imgs:0 };
+    if(window.__NINI_MEDIA__){
+      await Promise.race([ window.__NINI_MEDIA__.putRemote(imgs), new Promise(r => setTimeout(r, 6000)) ]);
+    }
+    return { value:JSON.stringify(lean), imgs:imgs.length };
+  }
+
+  async function writeStorageRow(key, value){
+    const raw = getRawStorage();
+    if(key === 'tingkan.records.v9'){
+      const norm = await normalizeRecordValue(value);
+      if(norm.imgs){
+        value = norm.value;
+        needPushKeys.add(key);
+        console.warn('[NINI] 云端记录里带着 ' + norm.imgs + ' 张内联封面，已转存图片库');
+      }
+    }
+    if(localStorage.getItem(key) === value) return false;
+    try{
+      raw.setItem.call(localStorage, key, value);
+      return true;
+    }catch(err){
+      if(key !== 'tingkan.records.v9') throw err;
+      /* 极端情况仍写不下：整份记录退化为纯文字，避免整页打不开 */
+      const norm = await normalizeRecordValue(value);
+      raw.setItem.call(localStorage, key, norm.value);
+      console.warn('[NINI] 本地空间不足，记录已按纯文字写入');
+      return true;
+    }
+  }
+
+  /* 防止“刷新→再刷新”的循环：15 秒内只允许自动刷新一次 */
+  function guardedReload(){
+    const KEY = 'nini_sync_reloaded_at';
+    let last = 0;
+    try{ last = Number(sessionStorage.getItem(KEY) || 0); }catch(e){}
+    const now = Date.now();
+    if(last && now - last < 15000){
+      console.warn('[NINI] 短时间内已刷新过一次，跳过重复刷新');
+      return false;
+    }
+    try{ sessionStorage.setItem(KEY, String(now)); }catch(e){}
+    location.reload();
+    return true;
+  }
+
+  async function applyLocalSnapshot(rows, manifestExists){
     const remote = new Map();
-    rows.forEach(row => { if(row.storage_key !== MANIFEST_KEY) remote.set(row.storage_key, row.storage_value); });
+    rows.forEach(row => {
+      const key = String(row.storage_key || '');
+      if(!key || key === MANIFEST_KEY) return;
+      if(key.indexOf(IMG_CLOUD_PREFIX) === 0) return;   /* 封面行单独进 IndexedDB，不写 localStorage */
+      remote.set(key, row.storage_value);
+    });
     const raw = getRawStorage();
     let changed = false;
     if(manifestExists){
@@ -6605,21 +6920,36 @@ window.openHistoryDatePicker = function(el){
           changed = true;
         }
       });
-      remote.forEach((value,key) => {
-        if(localStorage.getItem(key) !== value){ raw.setItem.call(localStorage,key,value); changed = true; }
-      });
-    }else{
-      // 旧数据或首次初始化：云端优先处理同名键，保留本地独有键。
-      remote.forEach((value,key) => {
-        if(localStorage.getItem(key) !== value){ raw.setItem.call(localStorage,key,value); changed = true; }
-      });
+    }
+    /* 旧数据或首次初始化：云端优先处理同名键，保留本地独有键。 */
+    for(const [key, value] of remote.entries()){
+      try{
+        if(await writeStorageRow(key, value)) changed = true;
+      }catch(err){
+        console.error('[NINI] 本地写入失败：' + key, err);
+        setStatus('本地空间不足，部分数据未能写入','error');
+      }
     }
     return changed;
   }
+
+  function chunkRows(rows, maxChars){
+    const out = []; let cur = []; let size = 0;
+    rows.forEach(row => {
+      const len = String(row.storage_value || '').length;
+      if(cur.length && size + len > maxChars){ out.push(cur); cur = []; size = 0; }
+      cur.push(row); size += len;
+    });
+    if(cur.length) out.push(cur);
+    return out;
+  }
   async function writeRows(rows){
-    if(!rows.length) return;
-    const { error } = await client.from(TABLE).upsert(rows, { onConflict:'user_id,storage_key' });
-    if(error) throw error;
+    if(!rows || !rows.length) return;
+    /* 分片上传：整份记录或一批封面都可能上 MB，单请求太大会被网关掐断 */
+    for(const chunk of chunkRows(rows, 900 * 1024)){
+      const { error } = await client.from(TABLE).upsert(chunk, { onConflict:'user_id,storage_key' });
+      if(error) throw error;
+    }
   }
   async function writeManifest(keys){
     const row = {
@@ -6630,6 +6960,56 @@ window.openHistoryDatePicker = function(el){
     };
     await writeRows([row]);
   }
+  /* ===== 封面图同步：用 __nini_img__:<recordId> 行存，手机端只写 IndexedDB ===== */
+  function queueImage(id, dataUrl){
+    if(!cloudReady || !currentUser || !id || typeof dataUrl !== 'string') return;
+    pendingImages.set(String(id), dataUrl);
+    setStatus('有封面正在同步…','busy');
+    scheduleImageFlush();
+  }
+  function queueImageDelete(id){
+    if(!cloudReady || !currentUser || !id) return;
+    pendingImages.set(String(id), null);
+    scheduleImageFlush();
+  }
+  function scheduleImageFlush(delay){
+    if(imageFlushTimer) return;
+    imageFlushTimer = setTimeout(() => { imageFlushTimer = null; flushImages(); }, delay || 900);
+  }
+  async function flushImages(){
+    if(imageFlushing || !currentUser || !pendingImages.size) return;
+    imageFlushing = true;
+    const batch = new Map(pendingImages);
+    pendingImages.clear();
+    try{
+      const upserts = [], deletes = [];
+      batch.forEach((value, id) => {
+        if(value === null) deletes.push(IMG_CLOUD_PREFIX + id);
+        else upserts.push({ user_id:currentUser.id, storage_key:IMG_CLOUD_PREFIX + id, storage_value:value, updated_at:new Date().toISOString() });
+      });
+      for(const chunk of chunkRows(upserts, 600 * 1024)){
+        const { error } = await client.from(TABLE).upsert(chunk, { onConflict:'user_id,storage_key' });
+        if(error) throw error;
+      }
+      for(let i = 0; i < deletes.length; i += 60){
+        const { error } = await client.from(TABLE).delete().eq('user_id',currentUser.id).in('storage_key', deletes.slice(i, i + 60));
+        if(error) throw error;
+      }
+    }catch(error){
+      batch.forEach((value,id) => { if(!pendingImages.has(id)) pendingImages.set(id, value); });
+      console.error('[NINI 封面同步失败]', error);
+      setStatus('封面同步失败：'+(error.message || '请检查网络'),'error');
+    }finally{
+      imageFlushing = false;
+      if(pendingImages.size && cloudReady){
+        clearTimeout(imageFlushTimer);
+        imageFlushTimer = setTimeout(flushImages, 3000);
+      }else if(cloudReady && currentUser && !pendingChanges.size){
+        setStatus('云端已同步 · '+currentUser.email,'ok');
+      }
+    }
+  }
+
   async function initialCloudSync(user){
     currentUser = user;
     setStatus('正在读取云端数据…','busy');
@@ -6658,7 +7038,35 @@ window.openHistoryDatePicker = function(el){
       }catch(e){ throw new Error('云端数据清单损坏，未修改本地数据。请联系我检查数据库。'); }
     }
 
-    const changed = applyLocalSnapshot(rows || [], hasManifest) || removedPreviousUserCache;
+    /* 一次性清掉云端的历史版本键，之后任何设备都不会再拉下来占配额 */
+    let effectiveRows = rows || [];
+    try{
+      const allKeys = effectiveRows.map(row => String(row.storage_key || ''));
+      const dropKeys = legacyKeysOf(allKeys);
+      if(dropKeys.length){
+        const { error: delErr } = await client.from(TABLE).delete().eq('user_id', user.id).in('storage_key', dropKeys.slice(0, 100));
+        if(delErr) console.warn('[NINI] 清理云端历史键失败', delErr);
+        else {
+          effectiveRows = effectiveRows.filter(row => dropKeys.indexOf(String(row.storage_key || '')) < 0);
+          dropKeys.forEach(key => cloudKeys.delete(key));
+          await writeManifest(cloudKeys);
+          console.log('[NINI] 已清理云端历史版本键 ' + dropKeys.length + ' 个');
+        }
+      }
+    }catch(e){ console.warn('[NINI] 云端历史键清理异常', e); }
+
+    const changed = (await applyLocalSnapshot(effectiveRows, hasManifest)) || removedPreviousUserCache;
+
+    /* 封面行：直接写 IndexedDB，localStorage 一个字节都不占 */
+    const imgRows = effectiveRows.filter(row => String(row.storage_key || '').indexOf(IMG_CLOUD_PREFIX) === 0);
+    cloudImageIds = new Set(imgRows.map(row => String(row.storage_key).slice(IMG_CLOUD_PREFIX.length)));
+    if(imgRows.length && window.__NINI_MEDIA__){
+      setStatus('正在载入云端封面…','busy');
+      await Promise.race([
+        window.__NINI_MEDIA__.putRemote(imgRows.map(row => [String(row.storage_key).slice(IMG_CLOUD_PREFIX.length), row.storage_value])),
+        new Promise(r => setTimeout(r, 15000))
+      ]);
+    }
     if(!hasManifest){
       const local = getLocalAppData();
       Object.keys(local).forEach(key => cloudKeys.add(key));
@@ -6671,14 +7079,31 @@ window.openHistoryDatePicker = function(el){
     }
 
     raw.setItem.call(localStorage,BOUND_USER_KEY,user.id);
-    if(changed){
+    if(changed && guardedReload()){
       setStatus('已下载云端数据，正在刷新工作台…','busy');
-      location.reload();
       return;
     }
     enableStorageSync();
     // 子 iframe 可能在父页面同步前已经完成初始化，启动时补齐它们的数据。
     await uploadCurrentLocalSnapshot();
+    /* 云端那份记录还是「带图的大记录」时，把瘦身版推回去，手机端才不会再次爆配额 */
+    if(needPushKeys.size){
+      needPushKeys.forEach(key => {
+        const value = localStorage.getItem(key);
+        if(value !== null) queueChange(key, value);
+      });
+      needPushKeys.clear();
+    }
+    /* 本地封面库里、云端还没有的图，补传一次（首次迁移主要靠这一步） */
+    try{
+      if(window.__NINI_MEDIA__){
+        const missingImages = window.__NINI_MEDIA__.all().filter(pair => !cloudImageIds.has(String(pair[0])));
+        if(missingImages.length){
+          setStatus('正在上传封面（'+missingImages.length+' 张）…','busy');
+          missingImages.forEach(([id, data]) => queueImage(id, data));
+        }
+      }
+    }catch(e){ console.warn('[NINI] 封面补传失败', e); }
     showApp();
     setStatus('云端已连接 · '+user.email,'ok');
   }
@@ -6798,15 +7223,18 @@ window.openHistoryDatePicker = function(el){
     const deadline = Date.now() + 20000;
     while(Date.now() < deadline){
       if(!flushing && pendingChanges.size) await flushQueue();
-      if(!flushing && !pendingChanges.size) return true;
+      if(!imageFlushing && pendingImages.size) await flushImages();
+      if(!flushing && !imageFlushing && !pendingChanges.size && !pendingImages.size) return true;
       await new Promise(resolve => setTimeout(resolve,180));
     }
-    return !flushing && !pendingChanges.size;
+    return !flushing && !imageFlushing && !pendingChanges.size && !pendingImages.size;
   }
   window.__NINI_CLOUD__ = {
     ready:false,
     queueChange:queueChange,
     onChange:queueChange,
+    queueImage:queueImage,
+    queueImageDelete:queueImageDelete,
     flushAndWait:flushAndWait
   };
 
@@ -6866,6 +7294,7 @@ window.openHistoryDatePicker = function(el){
     cloudReady = false;
     currentUser = null;
     pendingChanges.clear();
+    pendingImages.clear();
     showGate('你已退出登录，请重新登录后使用工作台。');
   });
 
@@ -6879,6 +7308,10 @@ window.openHistoryDatePicker = function(el){
     });
     try{
       setStatus('正在检查登录状态…','busy');
+      /* 先把本地封面库读完、把内联封面迁移走，保证同步时数据已经是瘦身形态 */
+      try{
+        if(window.__NINI_MEDIA__ && typeof window.__NINI_MEDIA__.hydrate === 'function') await window.__NINI_MEDIA__.hydrate();
+      }catch(e){}
       const { data,error } = await client.auth.getSession();
       if(error) throw error;
       if(data.session && data.session.user){

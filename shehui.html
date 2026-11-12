@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f5f0">
+<title>道德与法治 七年级上册 · 跟学伙伴</title>
+<style>
+/* =========================================================
+   道德与法治 七年级上册 · 跟学伙伴
+   样式：单文件、移动优先、随屏幕自适应
+   ========================================================= */
+:root{
+  --bg:#f7f5f0;
+  --surface:#ffffff;
+  --surface2:#fbf9f4;
+  --ink:#1f2429;
+  --ink2:#454c55;
+  --muted:#7c838f;
+  --line:#e8e3d8;
+  --line2:#f1ede4;
+  --accent:#b4552d;
+  --good:#2c7a58;
+  --good-bg:#e8f4ed;
+  --bad:#b93b30;
+  --bad-bg:#fdeceb;
+  --warn-bg:#fdf6e6;
+  --warn-line:#efd9a3;
+  --r:16px;
+  --shadow:0 1px 2px rgba(31,36,41,.04), 0 10px 28px -16px rgba(31,36,41,.22);
+  --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --serif:"Songti SC","Noto Serif SC","Source Han Serif SC",Georgia,serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);
+  font-size:16px;line-height:1.72;letter-spacing:.01em;
+  padding-bottom:calc(72px + env(safe-area-inset-bottom));
+}
+h1,h2,h3,h4,p{margin:0}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+a{color:var(--accent)}
+::selection{background:#f6e2d3}
+
+/* ---------- 顶栏 ---------- */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(247,245,240,.86);
+  backdrop-filter:saturate(1.4) blur(14px);
+  -webkit-backdrop-filter:saturate(1.4) blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-in{
+  max-width:1040px;margin:0 auto;padding:10px 16px;
+  display:flex;align-items:center;gap:14px;
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.mark{
+  width:38px;height:38px;border-radius:11px;flex:0 0 auto;
+  background:linear-gradient(150deg,#c05e34,#8f3f21);
+  color:#fff;display:grid;place-items:center;
+  font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:.02em;
+  box-shadow:0 6px 14px -6px rgba(143,63,33,.7);
+}
+.brand-txt{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.brand-txt b{font-size:16px;font-family:var(--serif);letter-spacing:.04em}
+.brand-txt span{font-size:11.5px;color:var(--muted);letter-spacing:.06em}
+.tabs{margin-left:auto;display:none;gap:4px;background:#efece4;padding:4px;border-radius:12px}
+.tabs button{
+  padding:7px 16px;border-radius:9px;font-size:14px;color:var(--ink2);
+  transition:.18s;white-space:nowrap;
+}
+.tabs button.active{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(31,36,41,.1)}
+.hdr-progress{display:none;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.hdr-progress .bar{width:76px;height:6px;background:#e6e1d6;border-radius:99px;overflow:hidden}
+.hdr-progress .bar i{display:block;height:100%;background:linear-gradient(90deg,#3f9b76,#2c7a58);border-radius:99px;transition:width .4s}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 40px}
+.view{display:none;animation:fade .28s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.page-head{margin-bottom:16px}
+.page-head h1{
+  font-family:var(--serif);font-size:clamp(21px,5.2vw,27px);letter-spacing:.02em;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.page-head .sub{color:var(--muted);font-size:13.5px;margin-top:5px}
+.page-head .sub b{color:var(--accent);font-weight:600}
+
+.hint{
+  display:flex;gap:9px;align-items:flex-start;
+  background:var(--surface2);border:1px solid var(--line);border-radius:12px;
+  padding:11px 13px;font-size:13.5px;color:var(--ink2);margin-top:12px;
+}
+.hint .ic{flex:0 0 auto;font-size:15px;line-height:1.5}
+
+/* ---------- 单元切换 ---------- */
+.chips{
+  display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;padding:8px 14px;border-radius:99px;border:1px solid var(--line);
+  background:#fff;font-size:13.5px;color:var(--ink2);white-space:nowrap;
+  transition:.18s;display:flex;align-items:center;gap:7px;
+}
+.chip .dot{width:7px;height:7px;border-radius:99px;background:var(--c,#bbb)}
+.chip:hover{border-color:#d8d0c2}
+.chip.active{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:500}
+.chip.active .dot{background:#fff}
+.chip.sm{padding:6px 12px;font-size:12.5px}
+
+/* ---------- 思维导图 ---------- */
+.unit-banner{
+  border-radius:var(--r);padding:18px 18px 16px;margin-bottom:18px;
+  border:1px solid var(--line);position:relative;overflow:hidden;
+  background:var(--surface);
+}
+.unit-banner:before{
+  content:'';position:absolute;inset:0 0 auto 0;height:4px;background:var(--c);
+}
+.unit-banner h2{
+  font-family:var(--serif);font-size:19px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+}
+.unit-banner h2 span{color:var(--c)}
+.unit-banner p{color:var(--ink2);font-size:13.8px;margin-top:8px}
+.unit-goal{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.unit-goal i{
+  font-style:normal;font-size:12px;color:var(--ink2);
+  background:var(--tint);border:1px solid rgba(0,0,0,.045);
+  padding:3px 9px;border-radius:99px;
+}
+
+.lesson-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;
+}
+.lc-head{
+  display:flex;align-items:center;gap:10px;padding:14px 16px;width:100%;text-align:left;
+}
+.lc-head .no{
+  flex:0 0 auto;font-size:11.5px;letter-spacing:.06em;color:#fff;background:var(--c);
+  padding:3px 9px;border-radius:6px;font-weight:600;
+}
+.lc-head .tt{font-family:var(--serif);font-size:17px;font-weight:600;flex:1;min-width:0}
+.lc-head .cnt{font-size:12px;color:var(--muted);flex:0 0 auto}
+.chev{width:9px;height:9px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);
+  transform:rotate(45deg);transition:.22s;flex:0 0 auto;margin-right:2px}
+.closed > .lc-head .chev, .closed > .mm-node .chev{transform:rotate(-45deg)}
+.lc-tools{display:flex;gap:6px;padding:0 16px 12px}
+.tool{
+  font-size:12px;color:var(--ink2);border:1px solid var(--line);background:#fff;
+  padding:4px 10px;border-radius:99px;
+}
+.tool:active{background:#f3efe6}
+
+.mm{padding:2px 16px 18px}
+.mm-root{
+  display:inline-flex;align-items:center;gap:8px;background:var(--c);color:#fff;
+  padding:7px 14px;border-radius:10px;font-size:14px;font-weight:600;
+  box-shadow:0 6px 16px -10px rgba(0,0,0,.5);
+}
+.mm-branches{
+  margin:12px 0 0 12px;padding-left:16px;
+  border-left:2px dashed color-mix(in srgb,var(--c) 40%,#ddd);
+}
+.mm-branch{position:relative;margin-bottom:12px}
+.mm-branch:before{
+  content:'';position:absolute;left:-16px;top:19px;width:14px;height:2px;
+  background:color-mix(in srgb,var(--c) 40%,#ddd);
+}
+.mm-node{
+  display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:600;
+  background:var(--tint);border:1px solid color-mix(in srgb,var(--c) 26%,#fff);
+  color:var(--ink);padding:7px 13px;border-radius:9px;text-align:left;
+}
+.mm-node b{color:var(--c);font-size:12px;font-weight:600;opacity:.85}
+.mm-leaves{margin:9px 0 0 6px;padding-left:16px;border-left:1px solid var(--line2)}
+.mm-branch.closed .mm-leaves{display:none}
+
+.leaf{
+  border:1px solid var(--line2);border-radius:11px;background:var(--surface2);
+  margin-bottom:8px;overflow:hidden;transition:.18s;
+}
+.leaf.open{background:#fff;border-color:color-mix(in srgb,var(--c) 30%,#fff);
+  box-shadow:0 6px 18px -14px rgba(0,0,0,.4)}
+.leaf-head{display:flex;gap:9px;padding:10px 12px;width:100%;text-align:left;align-items:flex-start}
+.leaf-head .idx{
+  flex:0 0 auto;width:19px;height:19px;border-radius:6px;background:var(--c);color:#fff;
+  font-size:11px;display:grid;place-items:center;margin-top:3px;font-weight:600;
+}
+.leaf-head .lt{
+  flex:1;font-size:13.8px;line-height:1.68;color:var(--ink2);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.leaf.open .lt{-webkit-line-clamp:unset;display:block;color:var(--ink)}
+.leaf-more{display:none;padding:0 12px 12px 40px}
+.leaf.open .leaf-more{display:block}
+.kw{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+.kw i{
+  font-style:normal;font-size:11.5px;color:color-mix(in srgb,var(--c) 78%,#333);
+  background:#fff;border:1px solid color-mix(in srgb,var(--c) 28%,#fff);
+  padding:2px 8px;border-radius:99px;
+}
+.tip{
+  display:flex;gap:8px;font-size:12.8px;line-height:1.66;color:#7a5a1f;
+  background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:9px;padding:8px 10px;
+}
+.tip b{flex:0 0 auto;color:#a97417;font-weight:700}
+
+/* ---------- 跟学 ---------- */
+.stepper{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.sp-head{
+  display:flex;align-items:center;gap:10px;padding:14px 16px 10px;flex-wrap:wrap;
+}
+.sp-head .badge{
+  font-size:11.5px;padding:3px 9px;border-radius:6px;background:var(--c);color:#fff;font-weight:600;
+}
+.sp-head .title{font-family:var(--serif);font-size:16.5px;font-weight:600;flex:1;min-width:0}
+.sp-head .count{font-size:12.5px;color:var(--muted)}
+.sp-bar{height:5px;background:#efeae0;margin:0 16px;border-radius:99px;overflow:hidden}
+.sp-bar i{display:block;height:100%;background:linear-gradient(90deg,#4aa07e,#2c7a58);transition:width .35s;border-radius:99px}
+.sp-body{padding:18px 16px 6px;min-height:180px}
+.sp-nav{
+  display:flex;gap:9px;padding:14px 16px 16px;border-top:1px solid var(--line2);margin-top:14px;
+  align-items:center;
+}
+.btn{
+  padding:10px 16px;border-radius:10px;font-size:14px;font-weight:500;
+  background:var(--ink);color:#fff;transition:.16s;white-space:nowrap;
+}
+.btn:active{transform:scale(.985)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.good{background:var(--good)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.sm{padding:7px 12px;font-size:13px}
+.sp-nav .grow{flex:1}
+
+.step-tag{font-size:12.5px;color:var(--muted);letter-spacing:.04em;margin-bottom:8px}
+.step-h{font-family:var(--serif);font-size:clamp(18px,4.6vw,21px);margin-bottom:4px}
+.step-p{font-size:15px;line-height:1.85;color:var(--ink2)}
+.step-p.strong{color:var(--ink);font-size:15.5px}
+.scene-box{
+  background:linear-gradient(180deg,var(--tint),#fff);border:1px solid var(--line);
+  border-radius:13px;padding:16px;font-size:15px;line-height:1.85;color:var(--ink2);
+}
+.scene-box .qline{margin-top:12px;font-size:14px;color:var(--accent);font-weight:500}
+.contrast-table{display:grid;gap:10px;margin-top:6px}
+.crow{display:grid;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.crow>div{padding:10px 13px;font-size:14px;line-height:1.7}
+.crow .w{background:var(--bad-bg);color:#8c2f26}
+.crow .r{background:var(--good-bg);color:#1f5c42}
+.crow .k{font-size:11.5px;font-weight:700;letter-spacing:.08em;opacity:.75;display:block;margin-bottom:2px}
+.check-wrap .qcard{margin:0 0 12px;box-shadow:none}
+.lesson-goal{margin-top:12px;display:grid;gap:7px}
+.lesson-goal div{display:flex;gap:8px;font-size:14px;color:var(--ink2)}
+.lesson-goal div:before{content:'✓';color:var(--good);font-weight:700;flex:0 0 auto}
+.sum-list{display:grid;gap:10px;margin-top:10px}
+.sum-item{border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--surface2)}
+.sum-item h4{font-size:14px;font-family:var(--serif);display:flex;gap:8px;align-items:center}
+.sum-item h4 em{font-style:normal;font-size:11.5px;color:#fff;background:var(--c);padding:2px 7px;border-radius:5px}
+.sum-item .kw{margin:8px 0 0}
+
+.dots{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.dots button{
+  width:22px;height:6px;border-radius:99px;background:#ded8cb;transition:.2s;
+}
+.dots button.on{background:var(--ink)}
+.dots button.cur{background:var(--good);width:30px}
+
+/* ---------- 测试 ---------- */
+.method-grid{display:grid;gap:10px;margin:14px 0 6px}
+.method{
+  background:var(--surface);border:1px solid var(--line);border-radius:13px;overflow:hidden;
+}
+.method>button{display:flex;align-items:center;gap:9px;padding:12px 14px;width:100%;text-align:left}
+.method .mt{font-weight:600;font-size:14.5px;flex:1}
+.method .tag{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--c);color:#fff}
+.method .body{display:none;padding:0 14px 14px}
+.method.open .body{display:block}
+.method ol{margin:6px 0 0;padding-left:20px;font-size:13.8px;color:var(--ink2);line-height:1.78}
+.method ol li{margin-bottom:5px}
+.method .pf{
+  margin-top:10px;font-size:13px;color:#8c2f26;background:var(--bad-bg);
+  border-radius:9px;padding:9px 11px;line-height:1.7;
+}
+
+.test-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 12px}
+.test-head h3{font-family:var(--serif);font-size:17px;flex:1}
+.score-pill{
+  font-size:13px;padding:5px 12px;border-radius:99px;background:#fff;border:1px solid var(--line);
+}
+.score-pill b{color:var(--good)}
+
+.qcard{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:15px 16px;margin-bottom:12px;box-shadow:var(--shadow);
+}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.qno{
+  width:22px;height:22px;border-radius:7px;background:var(--ink);color:#fff;
+  display:grid;place-items:center;font-size:12.5px;font-weight:600;flex:0 0 auto;
+}
+.qtype{font-size:11.5px;padding:2px 8px;border-radius:5px;background:var(--tint,#f1ede4);color:var(--c,#6b6b6b);font-weight:600}
+.qmark{margin-left:auto;font-size:12px;color:var(--muted)}
+.qtext{font-size:15px;line-height:1.8;white-space:pre-line}
+.opts{display:grid;gap:8px;margin-top:12px}
+.opt{
+  display:flex;gap:10px;align-items:flex-start;text-align:left;
+  border:1px solid var(--line);border-radius:11px;padding:10px 12px;background:#fff;
+  font-size:14.2px;line-height:1.7;transition:.15s;width:100%;
+}
+.opt:hover{border-color:#d6cebf;background:var(--surface2)}
+.opt i{
+  flex:0 0 auto;width:21px;height:21px;border-radius:6px;background:#f1ede4;color:var(--ink2);
+  display:grid;place-items:center;font-size:12px;font-weight:700;font-style:normal;margin-top:2px;
+}
+.opt.right{border-color:#8fc4a9;background:var(--good-bg)}
+.opt.right i{background:var(--good);color:#fff}
+.opt.wrong{border-color:#e3a7a1;background:var(--bad-bg)}
+.opt.wrong i{background:var(--bad);color:#fff}
+.opt.dim{opacity:.6}
+.exp{
+  margin-top:11px;font-size:13.6px;line-height:1.78;color:var(--ink2);
+  background:var(--surface2);border-left:3px solid var(--good);border-radius:0 9px 9px 0;padding:10px 12px;
+}
+.exp b{color:var(--good);font-size:12.5px;letter-spacing:.06em;display:block;margin-bottom:3px}
+textarea{
+  width:100%;margin-top:11px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;
+  font:inherit;font-size:14.2px;line-height:1.75;background:var(--surface2);color:var(--ink);
+  resize:vertical;min-height:96px;
+}
+textarea:focus{outline:none;border-color:#b9ab94;background:#fff}
+.ref{
+  margin-top:11px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;
+}
+.ref-h{
+  display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--tint,#f4f1ea);
+  font-size:12.8px;font-weight:600;color:var(--c,#5a5a5a);
+}
+.ref-b{padding:11px 13px;font-size:14px;line-height:1.82;color:var(--ink2);white-space:pre-line}
+.keys{display:flex;flex-wrap:wrap;gap:6px;padding:0 13px 13px}
+.keys i{
+  font-style:normal;font-size:11.5px;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink2);padding:2px 8px;border-radius:99px;
+}
+.ref-note{padding:0 13px 13px;font-size:12px;color:var(--muted)}
+.empty{
+  text-align:center;color:var(--muted);font-size:14px;padding:40px 0;
+}
+
+/* ---------- 底部导航（移动端） ---------- */
+.tabbar{
+  position:fixed;bottom:0;left:0;right:0;z-index:60;
+  display:flex;justify-content:space-around;align-items:stretch;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);
+  height:calc(60px + env(safe-area-inset-bottom));
+}
+.tabbar button{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  color:var(--muted);font-size:11px;letter-spacing:.04em;padding-top:3px;
+}
+.tabbar .ico{font-size:19px;line-height:1.1;filter:grayscale(1);opacity:.55}
+.tabbar button.active{color:var(--ink);font-weight:600}
+.tabbar button.active .ico{filter:none;opacity:1}
+
+/* ---------- 桌面 ---------- */
+@media (min-width:820px){
+  body{font-size:16px;padding-bottom:0}
+  .topbar-in{padding:12px 20px}
+  .tabs{display:flex}
+  .hdr-progress{display:flex;margin-left:6px}
+  .tabbar{display:none}
+  .wrap{padding:26px 20px 60px}
+  .leaf-head .lt{-webkit-line-clamp:2}
+  .contrast-table{grid-template-columns:1fr}
+  .crow{grid-template-columns:1fr 1.25fr}
+  .crow>div+div{border-left:1px solid var(--line)}
+  .method-grid{grid-template-columns:1fr 1fr}
+  .mm-branches{display:block}
+  .mm{padding-bottom:20px}
+}
+@media (max-width:400px){
+  .brand-txt span{display:none}
+  .qcard{padding:13px}
+  .sp-body{padding:15px 13px 4px}
+}
+
+/* 打印 */
+@media print{
+  .topbar,.tabbar,.sp-nav,.dots{display:none}
+  body{background:#fff}
+}
+
+/* ---------- 补丁 ---------- */
+.lesson-card.closed .mm,
+.lesson-card.closed .lc-tools{display:none}
+
+.tabbar .ico svg{
+  width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.tabbar .ico{filter:none;opacity:.6}
+.tabbar button.active .ico{opacity:1}
+.method > button .chev{margin-right:0;margin-left:2px}
+.method.open > button .chev{transform:rotate(-45deg)}
+.lesson-card .lc-head:hover{background:var(--surface2)}
+.leaf-head:hover .lt{color:var(--ink)}
+@media (min-width:820px){
+  .page-head h1{font-size:27px}
+  .stepper{max-width:none}
+}
+
+/* ---------- 步骤路径 & 细节优化 ---------- */
+.sp-path{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 6px;justify-content:center}
+.pstep{
+  display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);
+  border:1px solid var(--line);background:#fff;padding:4px 9px;border-radius:99px;transition:.15s;
+}
+.pstep b{font-weight:700;font-size:10.5px;color:#b6ae9e}
+.pstep.on{color:var(--good);border-color:#bfdccd;background:var(--good-bg)}
+.pstep.cur{background:var(--ink);border-color:var(--ink);color:#fff}
+.pstep.cur b{color:rgba(255,255,255,.75)}
+@media (min-width:820px){
+  .mm{max-width:840px}
+  .sp-body{min-height:220px}
+  .leaf-head .lt{max-width:76ch}
+  .step-p{max-width:78ch}
+}
+.kw i{background:#fff;color:#4c5560;border-color:#e2ddd1}
+.mm-node b{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:5px;opacity:1}
+
+/* 修正：旧 .dots 规则影响步骤路径 */
+#spDots{display:block;margin-top:14px}
+#spDots .pstep{width:auto;height:auto;min-height:0;border-radius:99px;padding:4px 9px;background:#fff}
+#spDots .pstep.on{background:var(--good-bg)}
+#spDots .pstep.cur{background:var(--ink)}
+
+@media (min-width:980px){
+  .mm{max-width:none}
+  .mm-leaves{display:grid;grid-template-columns:1fr 1fr;gap:9px;align-items:start}
+  .leaf{margin-bottom:0}
+  .leaf:only-child{grid-column:1/-1}
+}
+@media (min-width:980px){
+  .leaf-head .lt{-webkit-line-clamp:3}
+  .mm-leaves{gap:10px}
+}
+
+.foot{
+  margin-top:38px;padding-top:18px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--muted);line-height:1.8;
+}
+
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="mark">道法</div>
+      <div class="brand-txt"><b>跟学伙伴</b><span>七年级上册 · 统编版</span></div>
+    </div>
+    <nav class="tabs">
+      <button data-view="map" class="active">思维导图</button>
+      <button data-view="learn">跟学</button>
+      <button data-view="test">测试</button>
+    </nav>
+    <div class="hdr-progress">
+      <span id="hdrPct">跟学 0%</span>
+      <div class="bar"><i id="hdrBar"></i></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===== 一、思维导图 ===== -->
+  <section class="view active" id="view-map">
+    <div class="page-head">
+      <h1>知识地图</h1>
+      <div class="sub">4 个单元 · 13 课 · 128 个知识点。点<b>框题</b>收起整枝，点<b>知识点</b>看关键词和易错提醒。</div>
+    </div>
+    <div class="chips" id="mapChips"></div>
+    <div id="mapBanner"></div>
+    <div id="mapList"></div>
+  </section>
+
+  <!-- ===== 二、跟学 ===== -->
+  <section class="view" id="view-learn">
+    <div class="page-head">
+      <h1>跟学 · 一步一步来</h1>
+      <div class="sub">每课一条学习路径：情境 → 逐条知识点 → 易错辨析 → 即时检测 → 知识清单。走完一遍，知识点就长在脑子里了。</div>
+    </div>
+    <div class="chips" id="learnChips"></div>
+    <div class="stepper" id="learnCard"></div>
+    <div class="dots" id="spDots"></div>
+  </section>
+
+  <!-- ===== 三、测试 ===== -->
+  <section class="view" id="view-test">
+    <div class="page-head">
+      <h1>检测 · 按考试的路子练</h1>
+      <div class="sub">每道选择题都有解析，主观题先自己写再看参考答案与评分要点。做错的题自动进错题本。</div>
+    </div>
+    <div class="chips" id="testChips"></div>
+    <div id="testBody"></div>
+
+    <div class="page-head" style="margin-top:30px">
+      <h2 style="font-family:var(--serif);font-size:18px">各题型答题模板</h2>
+      <div class="sub">阅卷看的是“踩点”，这五类题的答题骨架背下来，比多刷十套题有用。</div>
+    </div>
+    <div class="method-grid" id="methodGrid"></div>
+  </section>
+
+  <footer class="foot">
+    <p>内容依据统编版《道德与法治》七年级上册（人民教育出版社）整理，共 4 个单元、13 课、128 个知识点。</p>
+    <p>题库：63 道选择题 + 24 道主观题（辨析 / 情境探究 / 材料分析 / 实践探究）。学习记录保存在本机浏览器。</p>
+  </footer>
+
+</main>
+
+<nav class="tabbar">
+  <button data-view="map" class="active">
+    <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 6h6v5H4zM14 13h6v5h-6zM4 16h4M17 8h3"/><path d="M10 8.5h4v7"/></svg></span>
+    导图
+  </button>
+  <button data-view="learn">
+    <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5A1.5 1.5 0 0 0 20 18.5z"/></svg></span>
+    跟学
+  </button>
+  <button data-view="test">
+    <span class="ico"><svg viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></svg></span>
+    测试
+  </button>
+</nav>
+
+<script>
+/* ============ 数据层：依据统编版《道德与法治》七年级上册（2024版）整理 ============ */
+const UNITS = [
+{
+  id: "u1", name: "第一单元", title: "少年有梦", color: "#d97b29", tint: "#fdf3e7",
+  intro: "进入初中，我们跨进人生的新阶段。自我意识增强，我们更主动地认识自己；学习能力提高，我们对世界的认识越发深入；生活体验丰富，我们开始主动规划未来。",
+  goal: ["理解初中阶段的新机会、新要求与独特价值", "学会规划初中生活", "掌握认识自己的途径与方法", "理解梦想的意义，懂得学习成就梦想"],
+  lessons: [
+  {
+    id: "l1", no: "第一课", title: "开启初中生活",
+    scene: "开学第一周：社团招新、新的班规、陌生的同学、变多的科目……初中生活扑面而来。你既兴奋，又有点慌。这一课要解决两个问题：初中到底意味着什么？这三年我该怎么过？",
+    boxes: [
+      { name: "奏响中学序曲", points: [
+        { t: "初中阶段为我们的发展提供了新的机会：富有挑战的课程和学习任务，带领我们探索新的知识领域；丰富多彩的社团活动，给我们提供更多培养兴趣的平台；各种各样的社会实践，为我们打开认识社会的大门。在新的集体生活中，我们涵养品格，提升自我。", kw: ["新机会", "课程学习", "社团活动", "社会实践", "涵养品格"], tip: "回答“新机会”要答三个方面＋集体生活，只写“科目变多了”会丢分。" },
+        { t: "初中阶段对我们的成长提出了新的要求：期待我们越来越上进，志存高远、追梦远航；越来越踏实，努力学习、勤于思考；越来越包容，尊重他人、学会合作；越来越坚强，能坚持、有韧劲。", kw: ["上进", "踏实", "包容", "坚强"], tip: "四个“越来越”按“志向—学习—待人—意志”排列，用四个字记顺序。" },
+        { t: "初中阶段对我们的人生具有独特的价值。我们正处于生命成长的“拔节孕穗期”，这一时期我们初步形成世界观、人生观、价值观，需要精心引导和栽培。", kw: ["拔节孕穗期", "三观", "独特价值"], tip: "“拔节孕穗期”是必考关键词，指身心快速成长、价值观初步形成的关键阶段。" },
+        { t: "面对各种可能与挑战，我们要珍视当下，把握机遇，把准人生方向，积极追求进步，确立更高的发展目标，在担当中历练，在尽责中成长，努力成为有理想、敢担当、能吃苦、肯奋斗的中学生。", kw: ["珍视当下", "把握机遇", "担当", "尽责"], tip: "“有理想、敢担当、能吃苦、肯奋斗”是固定表述，不能改成“有文化、守纪律”。" }
+      ]},
+      { name: "规划初中生活", points: [
+        { t: "规划是对未来的事情作出事先的设计与安排。生活需要规划，没有规划容易让我们陷入盲目和无序，合理的规划可以帮助我们更好地度过初中阶段。", kw: ["事先设计安排", "避免盲目无序"], tip: "“凡事预则立，不预则废”常作选择题情境引文。" },
+        { t: "做好初中生活规划，应当先确定个人发展目标。我们可以在老师和家长的帮助下，结合社会需要和兴趣、性格、能力等自身条件，设定合理的发展目标。", kw: ["发展目标", "社会需要", "自身条件"], tip: "目标要“合理”：既不脱离实际，也不能毫无挑战。" },
+        { t: "还应当制订行动方案。我们可以根据实际情况对发展目标进行分解，明确实施细节，列出时间表，使行动方案切实可行。", kw: ["分解目标", "实施细节", "时间表"], tip: "目标→分解→细节→时间表，是完整的四步链条，缺一环就不“可行”。" },
+        { t: "有了规划，我们更应当持之以恒，向着既定目标前进，将“努力”落实在每一天的具体行动中。为者常成，行者常至。", kw: ["持之以恒", "每天行动"], tip: "规划不等于空想。问“怎么做”，答案必须落到行动。" },
+        { t: "“努力”有方法：分清主次，合理规划和管理时间；劳逸结合，学会科学用脑；每天进步一点点；学思并进；珍视团队合作。", kw: ["时间管理", "劳逸结合", "学思并进", "团队合作"], tip: "时间安排上，长远看应把一半以上时间放在“重要但不紧急”的事情上。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "初中只是作业变多、科目变难", r: "初中带来新机会、新要求，更是价值观形成的“拔节孕穗期”" },
+      { w: "规划就是写一句“我要努力”", r: "规划＝确定合理目标＋制订可执行的行动方案＋持之以恒落实" },
+      { w: "目标定得越高越好", r: "目标要结合社会需要和自身条件，做到合理、切实可行" }
+    ],
+    quiz: [
+      { q: "升入初中后，同学们对“初中和小学有什么不一样”议论纷纷。下列理解正确的是", o: ["初中只是作业变多了，其他没有区别", "初中课程更有挑战，社团活动和社会实践让我们有更多成长平台", "初中就是为中考做准备，其他都不重要", "初中可以自己安排时间，不用遵守规则"], a: 1, exp: "初中阶段提供了新的机会（课程学习、社团活动、社会实践、新的集体生活），也提出新的要求。A、C 缩小了初中的意义，D 忽视了规则意识。" },
+      { q: "小林给自己定了“期末数学进前十”的目标，一个月过去却毫无进展。他最需要补充的是", o: ["把目标直接改低一点", "把目标分解到每周，排出时间表并坚持执行", "换一个成绩更好的同桌", "等老师来替他安排"], a: 1, exp: "有目标无方案、无行动，规划就是空的。规划＝目标＋行动方案＋持之以恒，其中“分解目标、明确细节、列出时间表”是关键环节。" },
+      { q: "教材把初中阶段称为生命成长的“拔节孕穗期”，这强调的是", o: ["农作物生长最快的季节", "初中阶段是初步形成世界观、人生观、价值观的关键时期", "青春期身体发育的高峰期", "中考前的冲刺阶段"], a: 1, exp: "“拔节孕穗期”比喻初中阶段在人生中的独特价值：这一时期我们初步形成“三观”，需要精心引导和栽培。" }
+    ],
+    open: [
+      { type: "辨析题", q: "有同学说：“初中三年那么长，先玩两年，到初三再努力也来得及。”请你对这一观点进行辨析。", ref: "该观点错误。①初中阶段是生命成长的“拔节孕穗期”，是初步形成世界观、人生观、价值观的关键时期，具有独特价值，错过难以弥补；②初中阶段既提供新机会，也提出新要求，需要从现在起把握机遇、确立目标；③规划初中生活要求先确定发展目标，再制订行动方案，把努力落实在每一天，等到初三再开始既不现实也来不及。④我们应珍视当下，从确定本学期目标做起，排出时间表并坚持执行。", keys: ["明确判断", "拔节孕穗期与三观", "新机会新要求", "规划三要素", "联系自身做法"] }
+    ]
+  },
+  {
+    id: "l2", no: "第二课", title: "正确认识自我",
+    scene: "小蓉发现自己很矛盾：有时为自己勤奋、认真、有音乐天赋而骄傲，有时又羡慕别人能说会道、见多识广。她学着别人的样子说话做事，却觉得很累。问题出在哪里？",
+    boxes: [
+      { name: "认识自己", points: [
+        { t: "人贵自知。正确认识自己，准确把握自己的禀赋和特性，有助于我们增强自信，促进自我发展，促进与他人的交往，正确处理个人与社会的关系，从而更好地认识和改造外部世界。", kw: ["增强自信", "自我发展", "促进交往", "个人与社会"], tip: "“为什么”类题要答全四点，只写“能进步”会失分。" },
+        { t: "通过对自我的全面分析来认识自己：可以从身材、相貌、体能、性别等生理状况来认识自己，从性格、气质、能力等心理特征来认识自己，从自己在家庭或班级中的角色等社会关系来认识自己。", kw: ["生理状况", "心理特征", "社会关系"], tip: "三个维度是“身—心—社会”，答题时顺序不要混。" },
+        { t: "通过他人的评价来认识自己。他人的评价是我们认识自己的一面镜子，有助于我们形成对自己更为客观、完整、清晰的认识。正确对待他人的评价是走向成熟的表现。我们要客观冷静地对待，既不盲从也不轻视。", kw: ["一面镜子", "客观完整清晰", "不盲从不轻视"], tip: "“镜子”是固定比喻；态度关键词是“客观冷静”。" },
+        { t: "正确对待他人评价的方法：用心聆听；注重沟通；勇于面对；理性应对——对不客观的评价如吹捧或贬损，可经过理性思考后选择忽略或平静拒绝。", kw: ["聆听", "沟通", "面对", "理性"], tip: "四步顺序：先听→再沟通→敢面对→最后理性筛选。" },
+        { t: "在生活实践中认识自己。学习、劳动、人际交往等生活实践，能够让我们更加了解自己的优势和不足，不断证明自己、检视自己，使认识更准确、自我形象更清晰。", kw: ["生活实践", "优势与不足"], tip: "“在实践中认识自己”是第三个途径，最容易被漏掉。" },
+        { t: "认识自己是一个过程。随着年龄的增长、知识的积累、视野的开阔，我们对自己的认识逐步深入。在这个过程里，我们不断发展自己、完善自己。", kw: ["一个过程", "逐步深入"], tip: "遇到“我到底是谁”的困惑，正确方向是承认认识自己是过程，不必急于定论。" }
+      ]},
+      { name: "做更好的自己", points: [
+        { t: "世界上没有完全相同的两片树叶，也没有完全相同的两个人。每个人在兴趣、性格、气质、能力等方面都有所不同。我们要尊重和接受个体的差异，并根据自身特点和社会需要发展自己，做更好的自己。", kw: ["个体差异", "自身特点", "社会需要"], tip: "前提是接受差异，而不是把自己改成别人的样子。" },
+        { t: "学会欣赏自己。欣赏自己不是孤芳自赏、骄傲自大，而是欣赏自己的长处和优势，欣赏认真做事的态度、善于合作的品质、坚持不懈的精神，激励自己不断奋勇前进。", kw: ["欣赏长处", "非孤芳自赏"], tip: "选择题常把“欣赏自己”偷换成“自我陶醉”，要能识别。" },
+        { t: "学会接纳自己。接纳自己需要接纳自己的全部：既接纳优点又接纳不足，既接纳现在又接纳过去，既接纳满意的部分也接纳不满意的部分。接纳不足并不意味着裹足不前，而是要以乐观、勇气和智慧面对现实，努力向更好的方向发展。", kw: ["接纳全部", "不裹足不前", "乐观勇气智慧"], tip: "“接纳”不等于“躺平”，这是本课最高频的辨析点。" },
+        { t: "不断完善自己。善于发挥自己的优点和长处，及时主动改正自己的缺点、弥补不足；还要善于向他人学习、向书本学习、向社会学习，利用一切机会丰富和发展自己。", kw: ["扬长", "改短", "三种学习"], tip: "“完善”既含扬长也含补短，缺一不可。" },
+        { t: "不断发掘自己的潜能。通过学习发现兴趣爱好，找到喜爱的领域；通过参与多方面的活动，了解国家和社会的需要，寻求适合自己发展的空间；通过与他人合作，不断提升自己的能力。", kw: ["学习", "活动", "合作"], tip: "潜能的三个发掘途径：学习、活动、合作，记成“学—动—合”。" },
+        { t: "做更好的自己，是在为他人、为社会服务中实现的。这不仅是初中阶段的成长要求，更是值得我们用一生去探寻的人生课题。", kw: ["服务他人社会", "一生课题"], tip: "落脚点一定在“为他人、为社会”，不是“让自己更优秀”。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "接纳自己就是承认“我就这样了”，不用再努力", r: "接纳是接受现实（包括不足），再以乐观、勇气和智慧向更好的方向发展" },
+      { w: "做更好的自己就是把自己变成别人的样子", r: "尊重个体差异，根据自身特点和社会需要发展自己" },
+      { w: "他人评价要么全听，要么全不听", r: "客观冷静：用心聆听、注重沟通、勇于面对、理性应对" }
+    ],
+    quiz: [
+      { q: "数学老师说小亮“思维敏捷”，语文老师说他“不够踏实”，同学说他“热心”，妈妈说他“有点小脾气”。面对这些评价，小亮应该", o: ["只听老师的，同学和家长的意见不用管", "全部接受，努力变成所有人期待的样子", "客观冷静地分析，既不盲从也不轻视，并在实践中进一步认识自己", "谁说的都不听，因为没人真正了解我"], a: 2, exp: "他人的评价是认识自己的一面镜子，要客观冷静对待，既不盲从也不轻视；同时通过生活实践检验和校正，才能形成客观、完整、清晰的认识。" },
+      { q: "小美觉得自己“长得不好看、成绩一般”，于是不敢参加班级活动。下列建议最恰当的是", o: ["你确实不够优秀，还是别参加了", "学会接纳自己的全部，同时发掘潜能，在实践活动中完善自己", "每天对自己说“我最棒”就可以了", "等变优秀了再参加活动"], a: 1, exp: "接纳自己包括接纳不满意的部分，但不等于裹足不前；应在实践和集体活动中发掘潜能、完善自己，在服务他人中做更好的自己。" },
+      { q: "“知人者智，自知者明。”这句话告诉我们", o: ["认识别人比认识自己更重要", "正确认识自己是一种智慧，有助于自我发展和与人交往", "只有别人才能客观地认识自己", "认识自己可以一次完成"], a: 1, exp: "人贵自知。正确认识自己有助于增强自信、促进自我发展、促进与他人交往、正确处理个人与社会的关系；认识自己是一个逐步深入的过程。" }
+    ],
+    open: [
+      { type: "情境探究", q: "小蓉总拿自己和别人比较，学着别人的样子说话做事，结果“觉得很累”。请你运用“做更好的自己”的知识，给她提三条建议并说明理由。", ref: "①尊重和接受个体差异，根据自身特点发展自己。每个人在兴趣、性格、气质、能力上各不相同，盲目模仿别人只会更累。②学会欣赏和接纳自己。欣赏自己的长处和优势，接纳自己的不足，既不孤芳自赏，也不妄自菲薄。③不断完善自己、发掘潜能。发挥长处、主动改正缺点，通过学习、参加多方面活动、与他人合作发现自己的潜能。④把落脚点放在为他人、为社会服务上，在服务中实现更好的自己。", keys: ["接受个体差异", "欣赏＋接纳", "完善＋发掘潜能", "落脚服务他人社会"] }
+    ]
+  },
+  {
+    id: "l3", no: "第三课", title: "梦想始于当下",
+    scene: "小芸想学一门技术成为大国工匠，小胜想造出世界上最先进的芯片，小美想和堂哥一起助力乡村振兴……你的梦想是什么？如果梦想实现不了，它还有意义吗？",
+    boxes: [
+      { name: "做有梦想的少年", points: [
+        { t: "梦想能不断激发我们对生命的热情和勇气，让生活更有色彩。有梦想，就会有希望。人类需要有梦想，因为有了梦想，人类社会才能不断发展和进步。", kw: ["热情与勇气", "希望", "社会进步"], tip: "意义要答“个人＋人类”两个层面，只答个人不完整。" },
+        { t: "做有梦想的少年，应当树立远大志向。“志不立，天下无可成之事。”志向是人生的航标，是奋斗的原动力。我们要早立志，立大志，立长志。", kw: ["人生航标", "原动力", "早立志、立大志、立长志"], tip: "三个“立”的顺序和内容要记准：早—大—长。" },
+        { t: "做有梦想的少年，应当紧扣时代脉搏。我们共同享有人生出彩的机会、梦想成真的机会、同祖国和时代一起成长与进步的机会。要努力成为担当民族复兴大任的时代新人。", kw: ["时代脉搏", "三个共同享有", "时代新人"], tip: "把个人梦想与中国梦结合，是本课的价值观落点。" }
+      ]},
+      { name: "学习成就梦想", points: [
+        { t: "学习是立身做人的永恒主题，也是报国为民的重要基础。学习是我们现阶段的基本任务，也是我们成就梦想的重要路径。", kw: ["永恒主题", "基本任务", "重要路径"], tip: "三个定位：立身做人、报国为民、成就梦想。" },
+        { t: "学习可以提升我们的思想品德和精神境界，增强能力，增长智慧，使我们面前的世界更广阔、更精彩，让我们拥有实现梦想的持续力量。", kw: ["品德境界", "能力智慧", "持续力量"], tip: "“学习是半径，半径越大世界越广阔”，可作答题素材。" },
+        { t: "初中阶段的学习内容非常丰富，既有知识的获取，又有能力的提升、品德的培养。学习并不局限在学校，我们生活中的所看、所听、所尝、所触、所做，都可以是学习。学习不仅表现为接受和掌握，而且表现为探究、发现、体验和感悟。", kw: ["不局限学校", "探究发现体验感悟"], tip: "做家务、做义工、调查垃圾分类都是学习，这是最常见的考法。" },
+        { t: "梦想的实现，需要我们努力学习、善于学习：发现并保持对学习的兴趣，更加自觉、主动地学习；养成良好的学习习惯，掌握科学的学习方法，提高学习效率；积极参加社会实践活动，到社会大课堂去读好“无字之书”。", kw: ["兴趣", "习惯与方法", "社会实践"], tip: "“无字之书”＝社会实践，属固定表述。" },
+        { t: "学习不仅关乎个人的前途和命运，更关乎民族的未来和发展。我们应学以致用、开拓进取、勇于创新，运用所学知识帮助他人、服务社会。", kw: ["民族未来", "学以致用", "服务社会"], tip: "知识学习三层次：记忆—理解—运用，只有运用才能转化为能力。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "学习就是坐在教室里听课、写作业", r: "学习不局限在学校，也表现为探究、发现、体验和感悟" },
+      { w: "梦想实现不了就没有意义", r: "梦想激发热情与勇气、指引方向，追梦过程本身就有价值" },
+      { w: "梦想只是个人的事", r: "个人梦想应与时代脉搏相扣，与国家和民族的梦想结合" }
+    ],
+    quiz: [
+      { q: "小然课余读科幻小说，小冰主动做家务，小佳周末去敬老院做义工，小丽调查社区垃圾分类。对他们的行为评价正确的是", o: ["只有读书才是学习，其余都是浪费时间", "这些都是学习，学习不局限在学校，也表现为体验和感悟", "做家务和做义工与学习无关", "只有考试要考的内容才算学习"], a: 1, exp: "教材明确：学习不局限在学校，所看、所听、所尝、所触、所做都可以是学习，且不仅表现为接受和掌握，还表现为探究、发现、体验和感悟。" },
+      { q: "袁隆平少年时立志“让大家吃饱饭”，一生致力于杂交水稻研究。这启示我们", o: ["立志越早越容易成功，不必努力学习", "做有梦想的少年要树立远大志向，并紧扣时代脉搏", "只要志向远大，梦想就一定能实现", "梦想是个人的事，与国家无关"], a: 1, exp: "志向是人生的航标、奋斗的原动力，要早立志、立大志、立长志；同时把个人梦想同祖国和时代结合起来，成为担当民族复兴大任的时代新人。" },
+      { q: "关于学习与梦想的关系，下列说法正确的是", o: ["学习是成就梦想的重要路径，为梦想提供持续力量", "有了梦想就不需要学习", "学习只是为了考试拿高分", "学习成绩好的人梦想一定能实现"], a: 0, exp: "学习是现阶段的基本任务，也是成就梦想的重要路径；它能提升品德境界、增强能力、增长智慧，让人拥有实现梦想的持续力量。" }
+    ],
+    open: [
+      { type: "辨析题", q: "有同学说：“梦想太遥远，还是先把分数搞好，谈梦想没用。”请你对这一观点进行辨析。", ref: "该观点是片面的。①梦想并非无用：梦想能激发我们对生命的热情和勇气，让生活更有色彩，有梦想就有希望；志向是人生的航标和奋斗的原动力。②梦想与现实并不对立：学习是成就梦想的重要路径，努力学好功课本身就是追梦的一部分，二者相互支撑。③正确做法：早立志、立大志、立长志，把个人梦想同时代脉搏、中国梦结合起来，同时努力学习、善于学习，把梦想落实在每天的具体行动中。", keys: ["判断为片面", "梦想的作用", "学习是成就梦想的路径", "立志＋行动"] }
+    ]
+  }
+  ],
+  paper: {
+    title: "第一单元 综合检测",
+    quiz: [
+      { q: "“上了初中，我感觉自己长大了。”这种“长大”主要体现在", o: ["可以不再听父母的话", "有了新身份、新环境，也承担起新的成长要求", "学习科目变少、负担变轻", "可以自由安排所有时间"], a: 1, exp: "跨进中学校园，我们有了“中学生”这个新身份，意味着新的人生旅程开始，同时家庭、学校、社会寄予更高期望。" },
+      { q: "下列做法中，属于合理规划初中生活的是", o: ["小明把“要努力”写在纸上就收进抽屉", "小华把期末目标分解成每周任务，并列出时间表", "小刚只定目标，不做具体安排", "小丽把每天的时间都用来刷题，不休息"], a: 1, exp: "规划＝确定目标＋制订行动方案（分解目标、明确细节、列出时间表）＋持之以恒；同时要劳逸结合、科学用脑。" },
+      { q: "小敏在班级演讲比赛中失利，她说：“这次没发挥好，但我发现自己的表达还需要练。”小敏的做法体现了", o: ["自我否定，缺乏自信", "通过生活实践检视自己，在反思中完善自己", "盲目乐观，不重视结果", "过分在意他人的评价"], a: 1, exp: "在生活实践中认识自己，能让我们更了解自己的优势与不足，不断证明自己、检视自己；同时体现了接纳不足并向更好方向发展的态度。" },
+      { q: "“天生我材必有用。”下列做法与这句话蕴含的道理一致的是", o: ["小轩总觉得自己处处不如人，不敢发言", "小雅发现自己擅长绘画，主动承担班级黑板报设计", "小宇照搬同学的学习方法，结果成绩下滑", "小彤为了合群，隐藏自己的兴趣爱好"], a: 1, exp: "每个人都有值得欣赏的方面，要欣赏自己的长处和优势，并据此发展自己，而不是盲从他人或自我否定。" },
+      { q: "关于梦想，下列说法正确的是", o: ["梦想一旦确定就不能改变", "梦想能激发热情与勇气，但与社会进步无关", "梦想指引方向，实现梦想需要努力学习、善于学习", "梦想只是幻想，与现实没有联系"], a: 2, exp: "梦想是人生航标和奋斗的原动力，也能推动人类社会进步；实现梦想需要努力学习、善于学习，把梦想落实在行动中。" },
+      { q: "“学习是半径，半径越大，我们拥有的世界就越广阔。”这句话说明", o: ["学习会占用我们的时间", "学习能开阔视野、增长智慧，让我们拥有实现梦想的持续力量", "学习成绩决定一个人的一切", "学习只在课堂上进行"], a: 1, exp: "学习提升思想品德和精神境界，增强能力，增长智慧，使世界更广阔、更精彩，让人拥有实现梦想的持续力量。" }
+    ],
+    open: [
+      { type: "材料分析题", q: "材料：小明升入初中后，给自己定了“成为班级演讲高手”的目标。他报名参加朗诵社，坚持每天朗读 15 分钟并录音回听；第一次比赛失利后，他主动向语文老师请教，还请同学帮他挑毛病。半年后，他在校级比赛中获得二等奖。\n（1）小明身上体现了哪些值得我们学习的品质或做法？（2）结合材料，说明我们应如何做更好的自己。", ref: "（1）①有明确的个人发展目标并制订具体行动方案；②发挥长处、坚持训练（欣赏并发展自己的优势）；③能接纳失败、正视不足，主动向他人学习；④善于在生活实践中检视自己、不断完善自己。\n（2）①尊重和接受个体差异，根据自身特点和社会需要发展自己；②学会欣赏自己，欣赏自己的长处和优势；③学会接纳自己，接纳优点也接纳不足，并以乐观、勇气和智慧向更好方向发展；④不断完善自己，扬长补短，向他人、书本、社会学习；⑤不断发掘潜能，通过学习、参加活动、与他人合作发掘潜能；⑥把做更好的自己落实到为他人、为社会服务中。", keys: ["提取材料信息", "目标与行动方案", "欣赏与接纳", "完善与潜能", "结合材料不作空谈"] },
+      { type: "实践探究题", q: "班级要开展“我的初中三年”规划主题活动，请你完成两项任务：（1）为自己设计一份初中生活规划书，写出目标与行动方案要点；（2）为活动设计两种具体形式。", ref: "（1）目标：结合社会需要与自身兴趣、性格、能力，确定品德发展、学业发展、身心发展等方面的目标（如“本学期数学稳定在 85 分以上”“每周运动 3 次”）。行动方案：把目标分解为月度、周任务，明确完成时间并列出时间表；安排“重要但不紧急”的事项优先做；每周日复盘一次，请家长或同学监督。\n（2）形式示例：①“三年后的我”主题演讲或书信；②规划书展评与小组互评；③邀请高年级学生分享规划经验；④制作“目标打卡墙”，每周打卡记录。", keys: ["目标合理且具体", "行动方案含分解、时间表、监督", "活动形式可操作", "语言条理清晰"] }
+    ]
+  }
+},
+{
+  id: "u2", name: "第二单元", title: "成长的时空", color: "#2f8f76", tint: "#eaf6f2",
+  intro: "父母、老师和朋友是我们成长中重要的陪伴者和见证者。在集体生活中，我们不断发展和完善自己，逐步走向成熟。成长的时空里有欢乐，也有烦恼。",
+  goal: ["理解家的意味，学会让家更美好", "认识教师职业与老师的作用，珍惜师生情谊", "体悟友谊的真谛，掌握交友的智慧", "理解集体生活的价值，学会共建美好集体"],
+  lessons: [
+  {
+    id: "l4", no: "第四课", title: "幸福和睦的家庭",
+    scene: "“哪里有家人的关爱，哪里就是家。”家里有温暖的牵挂、真切的关怀，也有甜蜜的碰撞——比如妈妈非要你穿厚外套，而你觉得不冷。家对你来说到底意味着什么？",
+    boxes: [
+      { name: "家的意味", points: [
+        { t: "家庭是由婚姻关系、血缘关系或收养关系结合成的亲属生活组织。家庭关系的确立有多种情形：依法结婚成家；因血缘关系组成家庭；依法收养组成家庭；父或母再婚组建新的家庭。", kw: ["婚姻关系", "血缘关系", "收养关系"], tip: "三种关系是“定义三要素”，选择题常考“下列属于家庭关系确立情形的是”。" },
+        { t: "家是生命的居所，是心灵的港湾。我们的生命是父母给予的，我们的成长也离不开家庭的哺育和支持。家不只是一所房子，家里有亲人，家中有亲情，家让我们的心灵有所依托。", kw: ["生命居所", "心灵港湾", "不只是一所房子"], tip: "“家不只是一所房子”是高频辨析句，强调亲情而非物质。" },
+        { t: "父母关心我们的学习，关注我们的品行，用自己的言行影响和教育我们；父母给我们提供发展的机会和条件，对我们的未来寄予厚望。家长特别是父母对我们的影响很大，往往可以影响一个人的一生。", kw: ["关注品行", "提供条件", "影响一生"], tip: "“孟母三迁”“岳母刺字”“画荻教子”是说明父母影响的常用素材。" },
+        { t: "家是代代传承、血脉相连的生活共同体。在薪火相传中，我们不仅接续着祖先的生命，而且传承着家风。家风作为一种无形的力量，潜移默化地影响家庭成员的价值观念、性格特征、道德修养和行为习惯。优良家风引导我们向上向善，促进家庭幸福和谐。", kw: ["生活共同体", "家风", "潜移默化", "向上向善"], tip: "家风影响的四个方面要记全：价值观念、性格特征、道德修养、行为习惯。" },
+        { t: "家是我们的第一所学校，是我们的修身之所。父母是我们的第一任老师，我们在父母等家人的言传身教中学习为人处世，扣好人生的“第一粒扣子”。", kw: ["第一所学校", "第一任老师", "第一粒扣子"], tip: "三个“第一”是固定表述，不能换成“第二个家”。" }
+      ]},
+      { name: "让家更美好", points: [
+        { t: "家庭是社会的基本细胞。家庭和睦则社会安定，家庭幸福则社会祥和，家庭文明则社会文明。", kw: ["基本细胞", "和睦—安定", "幸福—祥和", "文明—文明"], tip: "三组对应关系要一一对应，别错位。" },
+        { t: "建设美好的家庭，需要用心体味亲情之爱。每个家庭的亲情表现不尽相同：有的温馨和睦，有的磕磕绊绊，有的内敛深沉，有的随和自然。只要我们用心体悟就会发现，家人间的爱蕴含在生活的点滴之中。", kw: ["表现不尽相同", "用心体味", "生活点滴"], tip: "“感受不到亲情”不等于“没有亲情”，这是常考的情境判断。" },
+        { t: "建设美好的家庭，需要相互关爱、彼此尊重。家庭成员之间相互关爱是家庭幸福美满的重要条件。在接受关爱的同时，也要学会回报爱：对父母长辈要孝顺敬重，对兄弟姐妹要相携相助。家庭成员要以彼此尊重为前提进行沟通和交流。", kw: ["相互关爱", "回报爱", "孝顺敬重", "彼此尊重"], tip: "关爱是双向的：接受爱＋回报爱，少一半就丢分。" },
+        { t: "生活中家庭成员之间的矛盾有时难以避免。我们要学会换位思考，有事多商量，主动化解矛盾，增进情感。", kw: ["换位思考", "多商量", "主动化解"], tip: "处理家庭矛盾的三招：换位、商量、主动。" },
+        { t: "建设美好的家庭，需要传承中华民族传统家庭美德。家庭是道德养成的起点。要发扬光大尊老爱幼、勤俭持家、知书达礼、遵纪守法等传统家庭美德，推动形成爱国爱家、相亲相爱、向上向善、共建共享的社会主义家庭文明新风尚。", kw: ["道德养成起点", "尊老爱幼", "勤俭持家", "新风尚"], tip: "四个“传统美德”与“新风尚”的四个短语容易混，注意区分层次。" },
+        { t: "建设美好的家庭，是家庭成员的共同责任。在家庭生活中，我们都有自己的角色，家庭成员共同分担、相互协作，有助于营造良好的家庭氛围。我们要提高自我管理能力，增强家庭责任意识，为家庭建设作出贡献。", kw: ["共同责任", "共同分担", "责任意识"], tip: "问“青少年能做什么”，答“提高自我管理能力＋增强责任意识＋做力所能及的家务”。" },
+        { t: "孝亲敬老是中华民族的传统美德，也是公民的法定义务。《宪法》规定成年子女有赡养扶助父母的义务；《老年人权益保障法》规定赡养人应履行经济上供养、生活上照料和精神上慰藉的义务。", kw: ["传统美德", "法定义务", "精神慰藉"], tip: "“既是美德又是义务”是必背的双重定位，只答美德不全面。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "家就是一套房子、一个地址", r: "家是亲属生活组织；家中有亲人、有亲情，让心灵有所依托" },
+      { w: "家人唠叨、管得多，说明他们不尊重我", r: "亲情表现不尽相同，要用心体味点滴中的爱，以彼此尊重为前提沟通" },
+      { w: "孝敬父母只是道德要求，做不做都行", r: "孝亲敬老既是传统美德，也是公民的法定义务" }
+    ],
+    quiz: [
+      { q: "下列关于家庭的认识，正确的是", o: ["家就是一所房子，有房就有家", "家庭是由婚姻关系、血缘关系或收养关系结合成的亲属生活组织", "只有血缘关系才能组成家庭", "家庭只承担经济功能"], a: 1, exp: "家庭是由婚姻关系、血缘关系或收养关系结合成的亲属生活组织。家是生命的居所、心灵的港湾，家中有亲人、有亲情。" },
+      { q: "妈妈让小强穿厚外套，小强说“我知道冷热，您放心吧”，妈妈拿着外套若有所思。面对这类“碰撞”，最恰当的做法是", o: ["坚持己见，直接摔门而出", "理解妈妈的关心，说明自己的想法，用平和的方式沟通", "表面答应，出门就脱掉", "认为妈妈管得太多，以后不理她"], a: 1, exp: "亲情表现不尽相同，要用心体味其中的爱；家庭成员要以彼此尊重为前提沟通交流，学会换位思考、有事多商量。" },
+      { q: "“一粥一饭，当思来处不易；半丝半缕，恒念物力维艰。”这条家训主要体现了", o: ["尊老爱幼的传统", "勤俭持家的传统家庭美德", "邻里和睦的传统", "尊师重教的传统"], a: 1, exp: "《朱子家训》这句话强调珍惜物力、勤俭持家，属于中华民族传统家庭美德。家庭是道德养成的起点。" }
+    ],
+    open: [
+      { type: "辨析题", q: "有同学说：“家是讲感情的地方，不需要讲规则和责任。”请你辨析这一观点。", ref: "该观点错误。①家确实以亲情为纽带，家中有亲情，家让我们的心灵有所依托；但家庭生活同样需要相互关爱、彼此尊重，家庭成员要以彼此尊重为前提进行沟通交流。②建设美好的家庭是家庭成员的共同责任，每个人在家庭中都有自己的角色，需要共同分担、相互协作，提高自我管理能力、增强家庭责任意识。③孝亲敬老既是中华民族传统美德，也是公民的法定义务，成年子女有赡养扶助父母的义务，赡养人还要给予精神上的慰藉。④因此，讲感情与讲责任、讲规则并不矛盾，二者统一于幸福和睦家庭的建设之中。", keys: ["判断明确", "亲情与尊重并存", "共同责任", "美德＋法定义务"] }
+    ]
+  },
+  {
+    id: "l5", no: "第五课", title: "和谐的师生关系",
+    scene: "小奇喜欢写小说，语文老师表扬他，数学课上他偷写小说被数学老师狠狠批评。同一件事，两种态度。假如你是小奇，你会怎么办？",
+    boxes: [
+      { name: "走近老师", points: [
+        { t: "教师是一个神圣的职业，承担教书育人的使命。“师者，所以传道受业解惑也。”教师对人类数千年文明的延续发挥着重要作用。", kw: ["教书育人", "传道受业解惑", "文明延续"], tip: "“传道受业解惑”是固定引文，注意“受”不写成“授”（教材原文）。" },
+        { t: "教师是履行教育教学职责的专业人员。《教师法》明确规定了教师的资格、任用、培养和培训等要求。教师作为人类文明的传承者，承载着传播知识、传播思想、传播真理，塑造灵魂、塑造生命、塑造新人的重任。", kw: ["专业人员", "教师法", "三传播三塑造"], tip: "“三传播、三塑造”要成对记住：知识—思想—真理；灵魂—生命—新人。" },
+        { t: "老师在我们的成长过程中发挥着不可替代的作用。老师是我们锤炼品格的引路人，是我们学习知识的引路人，是我们创新思维的引路人，是我们奉献祖国的引路人。", kw: ["四个引路人", "品格", "知识", "创新思维", "奉献祖国"], tip: "四个“引路人”顺序固定，答题漏一个就扣分。" },
+        { t: "随着时代的发展，老师正在不断改变工作理念和工作方式，提高自身素养，努力成为有理想信念、有道德情操、有扎实学识、有仁爱之心的好老师。", kw: ["四有好老师", "理想信念", "道德情操", "扎实学识", "仁爱之心"], tip: "“四有”是固定提法，与“教育家精神”不是同一组概念，别混答。" }
+      ]},
+      { name: "珍惜师生情谊", points: [
+        { t: "彼此尊重、教学相长、携手共进，是师生交往理想而美好的状态。老师是我们敬重的长辈，是我们的良师益友，也是有血有肉、有喜怒哀乐的普通人，我们应主动理解、关心老师。", kw: ["彼此尊重", "教学相长", "携手共进", "普通人"], tip: "“老师也是普通人”是用来反驳“老师不该有情绪”的关键句。" },
+        { t: "真诚接受老师的引领和指导。我们的成长离不开老师的悉心教导，应发自内心地尊重老师，善于从老师的教诲中汲取成长的营养，以勤学好问、积极主动的态度与老师交流。", kw: ["发自内心尊重", "勤学好问", "积极主动"], tip: "态度是“真诚接受”，不是“无条件服从”。" },
+        { t: "正确对待老师的表扬和批评。表扬意味着肯定、鼓励和期待，我们应戒骄戒躁、再接再厉；批评意味着关心、提醒和劝诫，帮助我们反省自己、完善自我，我们应把注意力放在批评的内容上，理解老师的良苦用心。", kw: ["表扬＝肯定鼓励期待", "批评＝关心提醒劝诫", "关注内容"], tip: "最高频考点：批评也是关爱，要“对事不对人”。" },
+        { t: "与老师发生矛盾时：自我反思，冷静、客观地分析原因；坦诚相待，注意沟通方式（选好时间地点场合，用老师容易接受的方式）；求同存异，尊重关心老师；相信善意，多些宽容和理解，有理恰当表达，无理主动认错。", kw: ["自我反思", "坦诚沟通", "求同存异", "相信善意"], tip: "四步法是标准答案框架，答题按“反思—沟通—求同—相信善意”展开。" },
+        { t: "尊重并适应不同风格的老师。由于年龄、专业、阅历、性格等差异，每位老师的教育教学方式有所不同，不同风格的老师都有值得我们学习的地方。", kw: ["风格差异", "尊重适应", "都有可学之处"], tip: "面对“我不喜欢这个老师的风格”，正确答案是“尊重并适应”，不是“换老师”或“不听课”。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "老师批评我就是不喜欢我、针对我", r: "批评意味着关心、提醒和劝诫，要把注意力放在批评的内容上" },
+      { w: "现在网上什么都能查到，老师没那么重要了", r: "老师是锤炼品格、学习知识、创新思维、奉献祖国的引路人，作用不可替代" },
+      { w: "老师应该永远温和，不能有情绪", r: "老师也是有血有肉、有喜怒哀乐的普通人，应主动理解、关心老师" }
+    ],
+    quiz: [
+      { q: "小奇在数学课上偷写小说被老师批评。下列做法最恰当的是", o: ["认为老师故意让自己难堪，从此不听课", "把注意力放在批评的内容上，反思自己并改正，同时理解老师的良苦用心", "当面顶撞老师，说明自己没错", "表面认错，以后继续在课上看小说"], a: 1, exp: "老师的批评意味着关心、提醒和劝诫，帮助我们反省自己、完善自我；应把注意力放在批评的内容上，理解老师的良苦用心。" },
+      { q: "“师者，所以传道受业解惑也。”这句话说明", o: ["教师只是知识的搬运工", "教师承担教书育人的使命，对人类文明的延续发挥重要作用", "只有大学老师才算真正的老师", "教师职业不需要专业素养"], a: 1, exp: "教师承担教书育人的使命，是人类文明的传承者，承载着传播知识、思想、真理和塑造灵魂、生命、新人的重任。" },
+      { q: "进入初中后，小北觉得英语老师讲课“太啰嗦”，上课总走神。你给他的建议是", o: ["向学校申请换掉这位老师", "承认老师的差别，主动了解老师，尊重并适应不同风格的老师", "干脆不学英语了", "在课堂上公开表达不满，让老师改变风格"], a: 1, exp: "由于年龄、专业、阅历、性格等差异，每位老师的教育教学方式不同，不同风格的老师都有值得学习的地方，应尊重并适应。" }
+    ],
+    open: [
+      { type: "情境探究", q: "语文老师常表扬小林的文章写得好，但一次他在数学课上看小说被数学老师严厉批评。小林觉得委屈：“我只是喜欢写作，为什么老师不理解我？”\n（1）你如何看待两位老师的做法？（2）请你给小林三条建议。", ref: "（1）两位老师的做法都是出于对小林的关心和负责。语文老师的表扬是肯定、鼓励和期待，激励他更好发展；数学老师的批评是关心、提醒和劝诫，帮助他反省自己、完善自我。二者并不矛盾。\n（2）①正确对待表扬，戒骄戒躁、再接再厉；②正确对待批评，把注意力放在批评的内容上，理解老师的良苦用心，认识上课看小说确实影响了课堂秩序；③真诚接受老师的引领和指导，主动与老师沟通，用恰当的时间、场合和方式说明自己的想法；④尊重并适应不同风格的老师，从不同老师身上学习。", keys: ["评价两位老师", "表扬的意义", "批评的意义", "沟通与适应风格"] }
+    ]
+  },
+  {
+    id: "l6", no: "第六课", title: "友谊之树常青",
+    scene: "美术课上你把颜料分给忘带的小鸣，后来你向他请教一道数学题，他却不耐烦地拒绝了。你心里很不是滋味：朋友之间，到底该怎么相处？",
+    boxes: [
+      { name: "友谊的真谛", points: [
+        { t: "友谊是一种亲密的关系。在真正的友谊中，我们能够得到朋友的理解和帮助、信任和忠诚、肯定和关心，享受更多的快乐和温暖，获得精神上的支持和满足。", kw: ["亲密的关系", "理解帮助", "信任忠诚", "精神支持"], tip: "“亲密”不是“形影不离”，而是心灵上的支持。" },
+        { t: "友谊是一种心灵的相遇。人之相识，贵在相知；人之相知，贵在知心。友谊的美好就在于它可以超越物质条件、家庭背景、学业成绩等，实现心灵的沟通与契合。志趣相投、志同道合的友谊，更能经得住时间的考验和风雨的洗礼。", kw: ["心灵的相遇", "超越物质条件", "志同道合"], tip: "“超越物质条件、家庭背景、学业成绩”是三个并列点，答题要写全。" },
+        { t: "友谊是平等的、双向的。接受朋友的帮助，也主动帮助对方；感受朋友的关怀，也主动关怀对方。我们共同分享，也相互分担，在相处中体验积极的情感，在交流中共同成长。", kw: ["平等", "双向", "共同分享", "相互分担"], tip: "这是解释“我帮了他，他却不帮我，我该不该难过”的标准依据。" },
+        { t: "朋友，见证了我们一起走过的成长历程。人生路上，有些朋友陪我们一程，有些朋友伴我们一生。我们应当不辜负每一段情谊，让友谊伴随我们成长。", kw: ["见证成长", "不辜负每段情谊"], tip: "可作开放性试题的升华句。" }
+      ]},
+      { name: "交友的智慧", points: [
+        { t: "交友需要真诚和热情。人与人之间不会自然而然地产生友谊，友谊是用心培育的结果。敞开心扉，主动表达，热情待人，朋友才不会彼此错过。", kw: ["真诚", "热情", "主动表达"], tip: "“等待别人来找我”是错误做法，友谊需要主动。" },
+        { t: "交友需要慎重选择。与品德高尚的人交朋友，有助于我们走好成长之路。无论是现实交友还是网上交友，我们都应学会理性辨别，做到慎交友、结好伴。", kw: ["慎重选择", "理性辨别", "慎交友结好伴"], tip: "《论语》“益者三友，损者三友”是常用素材：友直、友谅、友多闻。" },
+        { t: "交友需要学会关心和尊重对方。在朋友需要的时候，以行动向朋友表达关心和支持。关心朋友也要尊重对方，把握好彼此的界限和分寸，可以给予朋友积极合理的建议，但不要替朋友做决定。", kw: ["关心支持", "界限和分寸", "不替朋友做决定"], tip: "“朋友之间该不该有距离”——答案是有，要有界限和分寸。" },
+        { t: "交友需要学会处理朋友之间的矛盾和冲突。发生矛盾和冲突时，我们可以一起协商，寻找彼此能够接受的解决方式。基本策略：保持冷静、坦诚交流、换位思考、及时处理、勇担责任。", kw: ["协商", "保持冷静", "坦诚交流", "换位思考", "及时处理", "勇担责任"], tip: "五个策略是固定框架，答“怎么办”按此展开即可。" },
+        { t: "交友需要讲原则。友谊需要信任和忠诚，但不等于不加分辨地为朋友做任何事。当朋友做错事，甚至误入歧途时，我们要坚持正确立场、不随波逐流，并积极予以规劝，帮助朋友及时改正错误。", kw: ["讲原则", "不随波逐流", "积极规劝"], tip: "“为朋友两肋插刀”是典型错误选项，要能识别。" },
+        { t: "我们不可能和所有的人都成为朋友，但是我们应学会以诚待人，同大家和睦相处，努力构建和谐的人际关系。", kw: ["以诚待人", "和睦相处", "和谐人际关系"], tip: "结尾句常用来纠正“朋友越多越好、必须人人都喜欢我”的误区。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "好朋友就该有求必应、为对方做任何事", r: "友谊要讲原则，朋友做错事要规劝，不能不加分辨地帮忙" },
+      { w: "朋友之间不该有秘密和距离", r: "关心朋友要尊重对方，把握好界限和分寸，不替朋友做决定" },
+      { w: "交朋友靠缘分，不用主动", r: "友谊是用心培育的结果，需要真诚和热情、主动表达" }
+    ],
+    quiz: [
+      { q: "小川约好朋友“我”一起去教训和他闹矛盾的人。作为好朋友，“我”应该", o: ["答应他，朋友就该两肋插刀", "拒绝并劝他冷静处理，必要时寻求老师帮助", "假装答应，到时候不去", "跟他一起去，但只在旁边看着"], a: 1, exp: "交友需要讲原则。友谊不等于不加分辨地为朋友做任何事；当朋友做错事甚至误入歧途时，要坚持正确立场、不随波逐流，并积极规劝。" },
+      { q: "小刚最近情绪低落却不愿说原因，好友反复追问后他很不耐烦。这提醒我们", o: ["朋友之间不该有关心", "关心朋友要尊重对方，把握好界限和分寸", "他不把我当朋友，应该绝交", "必须问出原因才算好朋友"], a: 1, exp: "交友需要学会关心和尊重对方：在朋友需要时以行动表达关心，同时尊重对方，把握好界限和分寸，不替朋友做决定。" },
+      { q: "“友直，友谅，友多闻，益矣。”这句话启示我们", o: ["朋友越多越好", "交友要慎重选择，与正直、诚信、见闻广博的人交朋友", "只要成绩好就值得交朋友", "网上交友不必谨慎"], a: 1, exp: "交友需要慎重选择，与品德高尚的人交朋友有助于走好成长之路；无论现实交友还是网上交友，都要理性辨别，慎交友、结好伴。" }
+    ],
+    open: [
+      { type: "材料分析题", q: "材料：小雨和晓彤是好朋友。一次小雨生病缺课，晓彤把笔记整理好送到她家。后来晓彤竞选班干部失败，情绪低落，小雨陪她散步、听她倾诉，还提醒她“这次演讲确实准备得不够充分”。晓彤却说：“你是我朋友，怎么还帮别人说话？”\n（1）材料中小雨的做法体现了友谊的哪些特点？（2）请你帮助晓彤正确认识友谊。", ref: "（1）①友谊是一种亲密的关系：小雨在朋友需要时给予关心和帮助，晓彤也为小雨付出，体现理解、信任与关心；②友谊是平等的、双向的：接受帮助也主动帮助，感受关怀也主动关怀；③交友需要真诚，也需要讲原则：小雨既陪伴倾听，也坦诚指出问题。\n（2）①友谊需要信任和忠诚，但不等于不加分辨地为朋友做任何事；②真正的朋友会在你做错时坚持正确立场、积极规劝，帮助你及时改正错误，这才是对友谊负责；③朋友之间要坦诚交流、换位思考，理解对方的善意，而不是把“指出问题”当成“不站我这边”。", keys: ["亲密的关系", "平等双向", "真诚与原则", "规劝也是关心"] }
+    ]
+  },
+  {
+    id: "l7", no: "第七课", title: "在集体中成长",
+    scene: "从村小学来到镇初中，寄宿生活让你学会自理；运动会上，运动员的拼搏和啦啦队的呐喊让你感受到集体的力量；小组合作中，你的视野更开阔、思维更活跃。集体到底给了我们什么？",
+    boxes: [
+      { name: "集体生活成就我", points: [
+        { t: "集体不是个体的简单相加，而是人们联合起来的有组织的整体。每个人都有过集体生活的需要，集体生活在某种程度上可以影响甚至改变一个人。", kw: ["有组织的整体", "影响甚至改变"], tip: "“不是个体的简单相加”是高频判断点，强调组织性。" },
+        { t: "集体生活能带给我们温暖。一般来说，集体的联结度越高，个体感知到的温暖就越多。集体成员间的相互体贴、团结互助，传递着关爱和温暖，让我们获得安全感和归属感。", kw: ["温暖", "联结度", "安全感", "归属感"], tip: "联结度与成员关联程度、对成员重要性、交流频率、目标共识、默契程度、存在时间相关。" },
+        { t: "集体生活有助于我们学会与人交往。集体生活为我们搭建交往的平台。每个人有着不同的生活经历和性格特点，我们在集体生活中学会接纳和尊重，学会理解和包容，彼此友好相处。", kw: ["交往平台", "接纳尊重", "理解包容"], tip: "注意“学会接纳和尊重”与“学会理解和包容”是两层。" },
+        { t: "集体生活有助于培养我们的责任感。在集体生活中，每个人都有不同的角色，承担不同的职责。我们在认真做事的过程中体现自己的价值，体验责任感，做有担当的人。", kw: ["责任感", "角色与职责", "有担当"], tip: "责任感来自“角色—职责—做事”的链条。" },
+        { t: "集体生活有助于我们发展个性。人与人之间的差异是我们发展个性的“明镜”。在集体中学习他人的优点，有助于我们不断完善自己，发挥自己的优势和特长。", kw: ["发展个性", "差异是明镜", "发挥优势特长"], tip: "“集体的统一”与“个性的发展”不矛盾，这是易错点。" },
+        { t: "集体是我们共同成长的园地。在集体生活中，我们展示自己，发展自己。集体的发展推动个人提升能力和健康成长，让我们在集体生活中相互促进、相互成就、共同发展。", kw: ["共同成长园地", "相互促进", "相互成就"], tip: "个人与集体是双向成就，不能说“个人只能服从集体”。" }
+      ]},
+      { name: "共建美好集体", points: [
+        { t: "在美好集体中，我们能感受集体的关爱，凝聚拼搏向上的力量，坚定自己的生活信念。建设美好集体离不开你我他，需要我们共同参与和努力。", kw: ["感受关爱", "凝聚力量", "共同参与"], tip: "本框的总起句，答题可作开头。" },
+        { t: "建设美好集体，要确定共同的愿景。愿景是集体的精神动力之源，是推动集体发展的内驱力。拥有共同的梦想、向往美好的未来、承担共同的使命、认同正确的价值观、形成一致的目标和追求，这就是美好集体的愿景。", kw: ["共同愿景", "精神动力之源", "内驱力"], tip: "愿景的五个要素要能列举：梦想、未来、使命、价值观、目标。" },
+        { t: "建设美好集体，要树立主人翁意识。我们应主动作为，各负其责，各尽其能。对于集体的事务，应积极参与、共同商定；对于集体中存在的问题和不足，可以通过恰当的方式表达自己的意见，提出改进建议。", kw: ["主人翁意识", "主动作为", "共同商定", "恰当方式建言"], tip: "“恰当方式”很关键——不是抱怨、不是背后议论。" },
+        { t: "建设美好集体，要营造和谐有序的集体环境。我们要自觉遵守集体的共同规则，使集体生活有序开展；要学会处理与他人的关系，在人际交往中学会推己及人，多些宽容和理解；要弘扬正气，自觉抵制并机智应对欺凌行为。", kw: ["遵守规则", "推己及人", "弘扬正气", "抵制欺凌"], tip: "“机智应对”欺凌≠以暴制暴，也不是沉默忍受。" },
+        { t: "建设美好集体，要树立正确的合作与竞争观念。集体发展既有赖于成员间的相互合作，也需要成员间的良性竞争。我们既要敢于竞争、勇于挑战，又要善于合作、共同进步。", kw: ["相互合作", "良性竞争", "敢于竞争", "善于合作"], tip: "竞争不是“你死我活”，是“良性竞争”。" },
+        { t: "建设美好集体，要坚持集体主义原则，发扬集体主义精神。当个人利益与集体利益发生冲突时，应把集体利益放在个人利益之上。同时，要充分重视和保障个人的正当利益，促进集体和个人不断发展。", kw: ["集体主义", "集体利益优先", "保障正当利益"], tip: "两句话都要写：集体利益优先＋保障个人正当利益，只写一半会失分。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "集体就是把人凑在一起，人多就是集体", r: "集体是人们联合起来的有组织的整体，不是个体的简单相加" },
+      { w: "为了集体就要放弃个人一切利益", r: "坚持集体主义要求集体利益优先，同时充分重视和保障个人正当利益" },
+      { w: "竞争就是分出输赢，越激烈越好", r: "要树立正确的合作与竞争观念，既敢于竞争又善于合作，开展良性竞争" }
+    ],
+    quiz: [
+      { q: "元元担任班级黑板报主编后，主动与同学交流合作，性格比以前开朗，生活更充实。这说明", o: ["为集体做事只会耽误自己的时间", "集体生活有助于我们学会与人交往、培养责任感", "只有当班干部才能成长", "集体会限制个人发展"], a: 1, exp: "集体生活为我们搭建交往平台，有助于学会接纳尊重、理解包容；在承担职责、认真做事中体现价值、体验责任感、做有担当的人。" },
+      { q: "关于个人与集体的关系，下列说法正确的是", o: ["个人利益与集体利益总是完全一致的", "当个人利益与集体利益冲突时，应把集体利益放在个人利益之上，同时保障个人正当利益", "集体利益优先意味着可以随意牺牲个人任何利益", "个人发展完全取决于自己，与集体无关"], a: 1, exp: "坚持集体主义原则，要把集体利益放在个人利益之上；同时要充分重视和保障个人的正当利益，促进集体和个人共同发展。" },
+      { q: "班里同学对“研学活动去哪儿”意见不一，下列做法最能体现主人翁意识的是", o: ["谁声音大就听谁的", "把想法写在班级信箱，班会上充分讨论后共同商定", "不参与讨论，反正最后由老师定", "私下抱怨但不说出建议"], a: 1, exp: "树立主人翁意识，要主动作为、各负其责；对集体事务积极参与、共同商定，对问题和不足通过恰当方式表达意见、提出改进建议。" }
+    ],
+    open: [
+      { type: "实践探究题", q: "班级准备开展“共建美好集体”主题活动。请你完成：（1）写出你心目中美好集体的两个特征；（2）为班级建设提出两条具体建议，并说明依据。", ref: "（1）示例：①有共同的愿景，同学们目标一致、团结互助；②和谐有序，大家自觉遵守共同规则，彼此宽容理解；③人人有主人翁意识，各负其责、各尽其能。\n（2）建议与依据：①设立“班级信箱”，同学把想法写成纸条投入，班会集中讨论——依据：树立主人翁意识，对集体事务积极参与、共同商定，通过恰当方式提出改进建议。②制订班级目标和班级口号、布置班级文化墙——依据：确定共同愿景，愿景是集体的精神动力之源。③把班级事务细分到人、轮岗负责——依据：主动作为、各负其责，培养责任感。④开展学习互助小组，考试后互相讲题——依据：树立正确的合作与竞争观念，既敢于竞争又善于合作。", keys: ["特征具体", "建议可操作", "每条有依据", "结合教材术语"] }
+    ]
+  }
+  ],
+  paper: {
+    title: "第二单元 综合检测",
+    quiz: [
+      { q: "“家不只是一所房子。”这句话强调的是", o: ["房子越大家越幸福", "家中有亲人、有亲情，家让我们的心灵有所依托", "只有和父母同住才算有家", "家庭的经济条件最重要"], a: 1, exp: "家是生命的居所、心灵的港湾；家中有亲情，家让我们的心灵有所依托，而不只是物质空间。" },
+      { q: "小雨发现妈妈总翻看自己的手机，她很生气。下列处理方式最恰当的是", o: ["偷偷把手机设密码，从此不和妈妈说话", "冷静沟通，说明自己的感受，也了解妈妈的担心，共同约定使用规则", "在朋友圈公开吐槽妈妈", "把手机摔了表示抗议"], a: 1, exp: "家庭成员要以彼此尊重为前提沟通交流；遇到矛盾要学会换位思考、有事多商量、主动化解矛盾，增进情感。" },
+      { q: "老师批评小宇作业抄袭，小宇认为老师“故意针对”。下列认识正确的是", o: ["批评就是否定，说明老师不喜欢我", "批评意味着关心、提醒和劝诫，应把注意力放在批评的内容上", "只要成绩好，老师就不会批评", "被批评就该立刻反驳"], a: 1, exp: "老师的批评意味着关心、提醒和劝诫，帮助我们反省自己、完善自我；应把注意力放在批评的内容上，理解老师的良苦用心。" },
+      { q: "“友谊是平等的、双向的”，下列做法体现这一特点的是", o: ["小A只在需要抄作业时才找朋友", "小B接受朋友帮助后，也主动关心帮助对方", "小C要求朋友必须事事听自己的", "小D认为朋友就该无条件为自己付出"], a: 1, exp: "友谊是平等的、双向的：接受朋友的帮助也主动帮助对方，感受关怀也主动关怀对方，共同分享也相互分担。" },
+      { q: "运动会前，班委把任务分成训练、后勤、宣传三组，同学们各负其责；比赛中大家既为对手的精彩表现鼓掌，也为自己的成绩拼尽全力。这体现了", o: ["只有竞争没有合作", "共同愿景下的合作与良性竞争", "集体会压制个性", "个人利益高于集体利益"], a: 1, exp: "美好集体需要共同愿景引领，需要树立正确的合作与竞争观念：既敢于竞争、勇于挑战，又善于合作、共同进步。" },
+      { q: "关于集体生活的作用，下列说法错误的是", o: ["集体生活能带给我们温暖", "集体生活有助于培养责任感", "集体生活必然限制个性发展", "集体生活有助于我们学会与人交往"], a: 2, exp: "集体生活有助于我们发展个性。人与人之间的差异是我们发展个性的“明镜”，在集体中学习他人优点，有助于完善自己、发挥优势特长。" }
+    ],
+    open: [
+      { type: "辨析题", q: "有同学认为：“好朋友就应该有求必应，否则就不够义气。”请你辨析。", ref: "该观点错误。①友谊需要信任和忠诚，真正的友谊是亲密的关系，能给我们理解、信任与支持，朋友之间也应相互关心、相互帮助。②但友谊不等于不加分辨地为朋友做任何事，交友需要讲原则。当朋友做错事甚至误入歧途时，要坚持正确立场、不随波逐流，并积极予以规劝，帮助朋友及时改正错误。③“有求必应”还可能越过界限和分寸，替朋友做决定、包庇错误，最终害了朋友，也伤害友谊。④真正的“义气”是坦诚规劝、共同进步，而不是盲目顺从。", keys: ["判断错误", "友谊的亲密与忠诚", "交友讲原则", "界限与分寸", "真正的义气"] },
+      { type: "材料分析题", q: "材料一：小杰的父母常年在外打工，他和奶奶一起生活。奶奶不识字，小杰每天放学后帮奶奶读药盒说明、买菜记账。他说：“奶奶把我养大，我照顾她是应该的。”\n材料二：《中华人民共和国老年人权益保障法》规定，赡养人应当履行对老年人经济上供养、生活上照料和精神上慰藉的义务。\n（1）小杰的行为体现了哪些家庭美德？（2）结合两则材料，谈谈你对“孝亲敬老”的认识。", ref: "（1）体现了孝亲敬老、尊老爱幼、勤俭持家的中华民族传统家庭美德，也体现了家庭成员相互关爱、共同分担责任。\n（2）①孝亲敬老是中华民族的传统美德，家庭是道德养成的起点；②孝亲敬老也是公民的法定义务，《宪法》规定成年子女有赡养扶助父母的义务，《老年人权益保障法》要求在经济上供养、生活上照料、精神上慰藉；③建设美好家庭需要相互关爱、彼此尊重，在接受关爱的同时学会回报爱；④作为未成年人，我们应从现在做起，做力所能及的家务，关心家人的身体和情绪，提高自我管理能力，增强家庭责任意识。", keys: ["点明传统美德", "点明法定义务", "两种材料结合", "青少年的具体做法"] },
+      { type: "实践探究题", q: "学校开展“和谐师生关系”主题教育活动，请你设计一个活动方案，包括活动形式、活动步骤和预期效果。", ref: "活动形式：①“老师，我想对您说”书信（或便笺）活动；②“我当一天小老师”体验活动；③师生恳谈会/师生篮球赛。\n活动步骤（以书信活动为例）：①宣传发动，说明活动目的与写信要求（写一件老师帮助自己的具体事＋一句想说的话）；②学生撰写并投递到“心语信箱”；③班委整理后交给各位老师，邀请老师在班会上回应；④收集反馈，制作“师生心语墙”展示。\n预期效果：增进师生相互理解，让学生学会真诚接受老师的引领、正确对待表扬与批评；营造彼此尊重、教学相长、携手共进的师生关系。", keys: ["形式具体", "步骤清晰可操作", "体现教材观点", "预期效果对应目标"] }
+    ]
+  }
+},
+{
+  id: "u3", name: "第三单元", title: "珍爱我们的生命", color: "#3a72b0", tint: "#eaf1fa",
+  intro: "每一个完整的生命，都是由肉体和精神构成的。人的生命只有一次，每个人的生命不仅属于自己，还与他人的生命乃至整个人类的生命息息相关。",
+  goal: ["认识生命的特点，理解生命的可贵", "体悟敬畏生命的情怀与要求", "增强安全意识，提高防护能力", "学会爱护身体、滋养心灵"],
+  lessons: [
+  {
+    id: "l8", no: "第八课", title: "生命可贵",
+    scene: "出生、入队、入团、成年——人生的重要仪式一个接一个。奶奶临终前说“你们要好好活着”，这句话让你第一次认真思考：怎样才算好好活着？",
+    boxes: [
+      { name: "认识生命", points: [
+        { t: "人的生命是大自然的奇迹，是地球上最为珍贵的财富。有了生命，我们才能感受大自然的勃勃生机，才能体验生活的多姿多彩，才能拥有追求幸福生活的种种可能，才能创造璀璨的人类文明。", kw: ["大自然的奇迹", "最珍贵的财富", "四个“才能”"], tip: "四个“才能”是排比句，答题时可作开头铺陈。" },
+        { t: "每个人的生命都是独特的。我们来到这个世界，外形相貌、天资禀赋等各不相同，每个生命都不可替代。在成长过程中，每个人会汲取不同的物质和精神养分，形成独特的个性品质，拥有不同的人生道路。", kw: ["独特", "不可替代", "个性品质"], tip: "“独特”强调不可替代，“双胞胎指纹不同”是常用例证。" },
+        { t: "每个人的生命都是不可逆的。从婴孩成长为儿童，又从儿童成长为青少年，再到中年和老年，生命的时光一去不复返。我们要珍惜生命的每一天。", kw: ["不可逆", "一去不复返", "珍惜每一天"], tip: "“不可逆”对应做法是“珍惜”，不要与“有限”混。" },
+        { t: "每个人的生命都是有限的。新陈代谢、生老病死是无法抗拒的规律。我们应感恩生命的获得，把有限的生命投入到无限的奋斗和奉献之中，让生命的每一段历程都变得精彩和有意义。", kw: ["有限", "无法抗拒的规律", "无限奋斗奉献"], tip: "“有限的生命→无限的奋斗和奉献”是固定搭配，是价值观落点。" },
+        { t: "人的生命是代代接续的。在历史的长河中，虽然个人的生命很短暂，但一代又一代的个体生命实现了人类生命的接续。在生命的接续中，每个人的生命不仅是“我”的生命，还是“我们”的生命。", kw: ["代代接续", "“我”也是“我们”"], tip: "“我”的生命也是“我们”的生命，是理解家国情怀的关键句。" },
+        { t: "人的精神生命是不断传承的。伟大的思想、崇高的信仰、高尚的道德等都是精神生命的体现。在生命的传承中，人类的精神不断积淀和丰富。", kw: ["精神生命", "思想信仰道德", "传承"], tip: "对应“有的人死了，他还活着”，考精神生命的传承。" }
+      ]},
+      { name: "敬畏生命", points: [
+        { t: "当人的生命遭遇不可抗拒的自然灾害、人为的灾难、不可预知的意外时，我们会感受到生命的脆弱与艰难；当人们万众一心，为挽救生命而努力、为守护生命而拼搏、为悼念生命而默哀时，我们又会体悟到生命的坚强、崇高和神圣。我们对生命要有一种敬畏的情怀。", kw: ["脆弱与艰难", "坚强崇高神圣", "敬畏情怀"], tip: "“为什么敬畏”要从两面对照答，只答一面不完整。" },
+        { t: "敬畏生命，就要尊重并遵循生命存在和发展的规律。“天地之大德曰生”，万物的生长和生命的延续是宇宙天地间的重大法则。我们的生命是大自然的组成部分，效法天地自然、遵循自然界的规律，是对我们的生命最好的珍视和善待。", kw: ["遵循规律", "天地之大德曰生", "珍视善待"], tip: "乱捕滥食野生动物、破坏生态，违背的正是这一条。" },
+        { t: "敬畏生命，就要关爱他人的生命。“仁者爱人”“推己及人”，要求我们从珍惜自己的生命走向关爱他人的生命，谨慎地对待生命关系、处理生命问题，尊重、关怀和善待身边的每一个人。", kw: ["仁者爱人", "推己及人", "尊重关怀善待"], tip: "从“自己的生命”到“他人的生命”，是范围的扩展。" },
+        { t: "敬畏生命，就要坚持人民至上、生命至上。生命重于泰山，每个人的生命都比金钱、权势等身外之物更为重要。当人民的生命遭遇天灾人祸的威胁时，竭尽全力挽救和保护最广大人民的生命。", kw: ["人民至上", "生命至上", "生命重于泰山"], tip: "这是国家层面的要求，答题时要与“个人层面”区分开。" },
+        { t: "当我们对生命怀有敬畏之心时，我们会珍视它，在行动前思考后果，保持良好的判断力，从而避免鲁莽行事和不负责任的决策；我们也会用超凡的勇气面对挑战，以无畏的态度追求更高的生命价值。", kw: ["思考后果", "避免鲁莽", "超凡勇气"], tip: "“因为敬畏，所以无畏”“心存敬畏，行有所止”两句并不矛盾，可结合使用。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "生命属于自己，怎么活是自己的事", r: "每个人的生命不仅属于自己，还与他人乃至人类的生命息息相关" },
+      { w: "敬畏生命就是胆小怕事、什么都不敢做", r: "敬畏让人行动前思考后果、避免鲁莽，也让人以超凡勇气追求更高生命价值" },
+      { w: "生命有限，所以做什么都没意义", r: "正因有限，才应感恩生命的获得，把有限生命投入无限的奋斗和奉献" }
+    ],
+    quiz: [
+      { q: "“每个人的生命都是不可逆的。”这一特点要求我们", o: ["珍惜生命的每一天，不虚度时光", "尽量延长生命的长度", "把时间都用在娱乐上", "等待命运的安排"], a: 0, exp: "生命不可逆，时光一去不复返，因此要珍惜生命的每一天。注意与“有限”（对应投入奋斗奉献）、“独特”（对应不可替代）区分。" },
+      { q: "重庆缙云山山火中，无数救援人员迎着烈火“逆行”而上。这一行为最能说明", o: ["他们不珍惜自己的生命", "他们对生命怀有敬畏，坚持生命至上，用勇气守护他人生命", "救火是他们的法定义务", "火灾是可以完全避免的"], a: 1, exp: "敬畏生命要坚持人民至上、生命至上，竭尽全力挽救和保护最广大人民的生命；同时体现“因为敬畏，所以无畏”。" },
+      { q: "“有的人活着，他已经死了；有的人死了，他还活着。”这句话说明", o: ["生命是可以永恒的", "人的精神生命可以不断传承，伟大思想和高尚道德会被后人铭记", "人的肉体生命不会消亡", "活着没有意义"], a: 1, exp: "人的精神生命是不断传承的，伟大的思想、崇高的信仰、高尚的道德都是精神生命的体现，在传承中不断积淀和丰富。" }
+    ],
+    open: [
+      { type: "辨析题", q: "有同学说：“生命是我自己的，怎样对待生命与他人无关。”请你辨析。", ref: "该观点错误。①人的生命只有一次，每个人的生命不仅属于自己，还与他人的生命乃至整个人类的生命息息相关；在生命的接续中，每个人的生命不仅是“我”的生命，还是“我们”的生命。②敬畏生命就要关爱他人的生命，“仁者爱人”“推己及人”，要求我们从珍惜自己的生命走向关爱他人的生命，尊重、关怀和善待身边的每一个人。③不爱惜自己的生命，会给家人带来巨大痛苦，也会给社会带来损失；危害他人生命更是违法行为。④我们应珍爱生命，坚持生命至上，既对自己负责，也对他人、家庭和社会负责。", keys: ["判断错误", "生命不仅属于自己", "关爱他人生命", "对家庭社会负责"] }
+    ]
+  },
+  {
+    id: "l9", no: "第九课", title: "守护生命安全",
+    scene: "“我游泳技术很好，不会在河里溺水”“实验室安全须知我没读过，也没出过事”“进电影院我先找安全出口”——三种态度，三种结局的可能性。",
+    boxes: [
+      { name: "增强安全意识", points: [
+        { t: "生命安全是维系人的生命存在的条件和保障，也是我们创造和享受一切美好的前提。在日常生活中，突如其来的灾难、事故可能会危害人的生存、健康和幸福，甚至会毁灭鲜活的生命。", kw: ["条件和保障", "创造享受美好的前提"], tip: "本框的总起句，答题可作开篇。" },
+        { t: "树立规则意识。生活中的诸多“禁令”看似是对我们的限制，其实是对我们自由和生命安全的保障。我们要自觉遵守规则，对自身行为是否安全作出恰当评估，并及时纠正自己的不当行为。", kw: ["规则意识", "“禁令”是保障", "评估行为", "纠正不当"], tip: "“限制”与“保障”的辩证关系是高频考点。" },
+        { t: "在日常生活中，我们要牢固树立安全意识，对那些可能会对自己或他人造成伤害的外在环境、人为侵害有所警觉和戒备，保护好我们的生命。", kw: ["安全意识", "警觉戒备"], tip: "安全意识指向“外在环境、人为侵害”。" },
+        { t: "增强风险意识。“居安思危，思则有备，有备无患。”我们要能够觉察潜在的威胁生命安全的因素，不因好奇去做一些危险的事情，也不盲目触碰一些危险的领域。远离危险，方能平安生活。", kw: ["风险意识", "居安思危", "不因好奇冒险"], tip: "“好奇”“盲目”是风险意识缺失的典型表现。" },
+        { t: "安全与每个人息息相关，我们所做的事情不仅影响到自己，也影响着他人。我们用心对待和做好事关安全的每一件事，既是对自己的生命安全负责，也是对家庭和社会负责。", kw: ["息息相关", "对自己负责", "对家庭社会负责"], tip: "责任对象三层：自己—家庭—社会。" }
+      ]},
+      { name: "提高防护能力", points: [
+        { t: "面对生活中可能遇到的各种自然灾害、事故灾难、公共卫生事件等，我们要掌握有效的应对方法，拥有科学自救和救他的能力，保护自己的生命，救助他人的生命。", kw: ["应对方法", "自救", "救他"], tip: "“自救”与“救他”并列，缺一不可。" },
+        { t: "提高危险预判能力。自然灾害发生之前，往往有兆可循，危险大多可以预判；一些人为事故，经过得当考虑，本来可以避免。危险预判能力不是天生就有的，要在日常生活中主动学习安全知识，见微知著，防患于未然。", kw: ["危险预判", "有兆可循", "见微知著", "防患于未然"], tip: "隧道洪水中小侯及时提醒众人弃车逃生，是预判能力的典型例证。" },
+        { t: "提高避险和逃生能力。平时应当积极参加安全演练活动。危险来临时，要保持头脑冷静，就近、快速逃离到安全地带；有效利用各种资源，以便求救和逃生。", kw: ["安全演练", "头脑冷静", "就近快速", "利用资源"], tip: "地震时就近躲在承重墙墙根、墙角，护住头部，是标准做法。" },
+        { t: "学习防护和急救的知识与技能。平时多掌握一些防护和急救知识技能，需要紧急救护时就不会束手无策，可以争分夺秒地施救，为挽救生命赢得宝贵时间。", kw: ["急救技能", "争分夺秒", "赢得时间"], tip: "心肺复苏的“黄金 4 分钟”是常考数据。" },
+        { t: "公共卫生安全包括疾病预防控制、环境卫生、食品安全等多个方面，保障着人民的身体健康和生命安全。我们要争做维护公共卫生安全的小卫士：勤开窗通风、注意手卫生、分餐制用公筷、做好免疫接种、正确处理有害垃圾等。", kw: ["公共卫生安全", "通风", "公筷", "免疫接种"], tip: "公共卫生安全是“提高防护能力”的组成部分，容易被忽略。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "我技术好、运气好，不会出事", r: "要增强风险意识，觉察潜在威胁，不因好奇冒险、不盲目触碰危险领域" },
+      { w: "安全规则是对我们自由的限制", r: "诸多“禁令”看似限制，其实是对我们自由和生命安全的保障" },
+      { w: "遇到危险只要勇敢就行", r: "要掌握科学自救和救他的方法：预判、避险逃生、急救技能，并保持冷静" }
+    ],
+    quiz: [
+      { q: "对“我游泳技术很好，不会在河里溺水”这一想法，正确的评价是", o: ["有自信是好事，可以下河游泳", "缺乏风险意识，野泳水域情况复杂，容易发生危险", "只要结伴就可以下河", "技术好就不需要遵守规则"], a: 1, exp: "要增强风险意识，觉察潜在的威胁生命安全的因素，不因好奇做危险的事，也不盲目触碰危险领域。野外水域水情复杂，技术好也不能保证安全。" },
+      { q: "进入电影院后先查看安全疏散通道的位置，这一做法", o: ["多此一举，浪费时间", "体现了较强的安全意识和危险预判能力", "说明胆子太小", "只在火灾时才需要"], a: 1, exp: "要树立安全意识、提高危险预判能力，见微知著、防患于未然；平时熟悉逃生通道，紧急时才能快速撤离。" },
+      { q: "发生地震时，如果你在教室且无法立刻撤离，正确的做法是", o: ["躲在窗边观察外面的情况", "就近躲在承重墙的墙根、墙角，蹲下保护好头部", "乘电梯迅速下楼", "站在教室中央大声呼喊"], a: 1, exp: "不能立刻撤离到安全空旷区域时，可就近寻找合适躲避位置，如承重墙墙根、墙角，蹲下保护好头部，防止被楼板、墙体砸伤；同时不能乘电梯。" }
+    ],
+    open: [
+      { type: "情境探究", q: "暑假前，学校发出安全提示：不食用“三无”食品；不攀爬窗户和阳台护栏；不爬野山、不游野泳；严禁驾驶电动自行车和摩托车；不轻信网友，不擅自与网友会面。有同学说：“好不容易放个假，怎么这么多限制？”\n（1）你如何看待这一观点？（2）请你就其中两点，说明我们应如何做好自我保护。", ref: "（1）该观点错误。生活中的诸多“禁令”看似是对我们的限制，其实是对我们自由和生命安全的保障；生命安全是创造和享受一切美好的前提，安全与每个人息息相关，既对自己负责，也对家庭和社会负责。\n（2）示例：①不游野泳：增强风险意识，觉察潜在危险，不到无人看护的水域游泳；若遇同伴落水，不盲目下水施救，应大声呼救、寻找漂浮物或报警。②不轻信网友、不擅自会面：增强安全意识，对可能造成伤害的人为侵害保持警觉戒备；保护个人隐私，遇到可疑情况及时告知家长、老师或报警。③交通安全：树立规则意识，自觉遵守交通法规，对自身行为是否安全作出恰当评估，及时纠正不当行为。", keys: ["判断观点", "规则即保障", "两点具体做法", "自救与求助结合"] }
+    ]
+  },
+  {
+    id: "l10", no: "第十课", title: "保持身心健康",
+    scene: "小伟世界杯期间常常半夜起来看球，早上急急忙忙赶到学校。一天体育课跑步时，他突然眼前一黑，摔倒在地。身体发出的警报，你听见了吗？",
+    boxes: [
+      { name: "爱护身体", points: [
+        { t: "保持身心健康是提高生命质量的关键。只有拥有强健的体魄，才能保持充沛的精力和蓬勃的朝气；只有拥有健康的心理和丰富的精神世界，才能葆有积极的生活态度和良好的人际关系，看到生命中更多的希望和光彩。", kw: ["提高生命质量", "强健体魄", "精神世界"], tip: "总起句：身心健康＝身体＋心理＋精神。" },
+        { t: "身体是生命存在的根本。身体健康既关系个人的成长和发展，也关系家庭的生活质量，还关系国家的人口素质和社会的发展。爱护自己的身体，是一种对生命负责任的态度，我们要做自身健康的第一责任人。", kw: ["生命存在的根本", "三个关系", "第一责任人"], tip: "“第一责任人”是必背表述，强调自己的主体责任。" },
+        { t: "爱护身体，应当关注自己的身体状况。我们要关注并记录自身健康状况，定期体检，合理利用卫生保健服务；积极主动获取健康信息，知道生理健康的基本标准，能够判断自己的身体是否处于正常状态。如有不适，应及时科学就医。", kw: ["关注记录", "定期体检", "科学就医"], tip: "“及时科学就医”针对“硬扛”“乱吃药”等错误做法。" },
+        { t: "爱护身体，应当养成健康的生活方式。我们要自觉自律，注重饮食有节、起居有常、动静结合，杜绝不良嗜好。", kw: ["自觉自律", "饮食有节", "起居有常", "动静结合"], tip: "四个短语要记准，“起居有常”对应规律作息，正是熬夜的反面。" },
+        { t: "爱护身体，应当积极、主动、科学地锻炼身体，强健体魄。我们要参加适合自己的体育锻炼，选择合理的运动负荷，提高身体的免疫力和对自然环境的适应能力，预防并减少疾病的发生；在享受科学健身乐趣的同时，磨炼意志，健全人格。", kw: ["适合自己的项目", "合理负荷", "免疫力", "磨炼意志"], tip: "科学健身五法：多样化运动、适度运动、科学热身、合理饮食、健康心态。" }
+      ]},
+      { name: "滋养心灵", points: [
+        { t: "良好的生命状态既需要健康的身体，也需要健康的心理和丰富的精神。拥有健康、和谐的内心世界，是我们幸福生活的重要支柱。", kw: ["健康心理", "丰富精神", "幸福生活支柱"], tip: "可与“身体是生命存在的根本”对照记忆。" },
+        { t: "滋养心灵，需要我们保持心理健康。心理健康是一种良好而持续的心理状态，表现为个人具有生命的活力、积极的内心体验、良好的社会适应能力，并能有效地激发个人潜能。", kw: ["生命活力", "积极内心体验", "社会适应", "激发潜能"], tip: "心理健康的四个表现是选择题常考的“判断依据”。" },
+        { t: "在日常生活中，主动学习心理健康知识，掌握自我调节的方法，必要时积极寻求专业帮助，都有助于我们改善心理状况、促进心理健康。", kw: ["学习知识", "自我调节", "专业帮助"], tip: "“必要时寻求专业帮助”（如心理咨询室）是勇敢而聪明的选择，不是“有病”。" },
+        { t: "保持心理健康还需要我们磨炼意志，增强生命韧性。成长的道路不会总是鲜花铺路，也会有一些坎坷和泥泞。我们要对自己的行为和目标有清醒的认识，以顽强不屈的精神、百折不挠的毅力，勇往直前，战胜挫折和困难。", kw: ["磨炼意志", "生命韧性", "百折不挠"], tip: "增强韧性的方法：接纳挫折、培养幽默感、积极寻求帮助、培养兴趣爱好、眼光放长远、关心帮助他人。" },
+        { t: "滋养心灵，需要我们不断丰富自己的精神世界。生命是一个逐渐丰富和发展的过程。我们要学知识、长见识、练胆识，提升自己的底气与能力；要在生活实践中扩展生活阅历，提升人生境界，让生命充满色彩与活力。", kw: ["学知识", "长见识", "练胆识", "人生境界"], tip: "“三识”：知识、见识、胆识，是记这一点的口诀。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "身体没病就是健康", r: "良好的生命状态需要健康身体、健康心理和丰富精神，三者缺一不可" },
+      { w: "心理有问题很丢人，不能让别人知道", r: "要主动学习心理健康知识、掌握自我调节方法，必要时积极寻求专业帮助" },
+      { w: "熬夜偶尔一次没关系，年轻扛得住", r: "要养成健康生活方式：饮食有节、起居有常、动静结合，杜绝不良嗜好" }
+    ],
+    quiz: [
+      { q: "小伟常熬夜看球，体育课上突然晕倒。这警示我们", o: ["运动太危险，应尽量避免", "要养成健康的生活方式，起居有常，做自身健康的第一责任人", "看球赛不利于学习", "只要平时多锻炼，就可以随意熬夜"], a: 1, exp: "身体是生命存在的根本，爱护身体要养成健康生活方式：自觉自律，饮食有节、起居有常、动静结合，杜绝不良嗜好。" },
+      { q: "小俊上初中后成绩下滑，主动到学校心理咨询室求助，状态逐渐好转。这说明", o: ["去心理咨询室说明心理有严重疾病", "必要时积极寻求专业帮助，有助于改善心理状况、促进心理健康", "成绩下滑只能靠自己硬扛", "心理咨询没有作用"], a: 1, exp: "滋养心灵需要保持心理健康：主动学习心理健康知识、掌握自我调节方法，必要时积极寻求专业帮助。" },
+      { q: "下列做法中，属于滋养心灵的是", o: ["每天坚持跑步一小时", "参观博物馆、阅读好书、参加志愿服务", "按时吃三餐、定期体检", "保证每天八小时睡眠"], a: 1, exp: "滋养心灵包括保持心理健康、磨炼意志增强韧性、丰富精神世界（学知识、长见识、练胆识，扩展生活阅历）。A、C、D 属于爱护身体。" }
+    ],
+    open: [
+      { type: "实践探究题", q: "班级要开展“做自身健康的第一责任人”主题活动。请你完成：（1）列出三种不健康的生活方式及其危害；（2）设计一份“健康生活一周行动清单”，并说明你这样设计的依据。", ref: "（1）①长期熬夜：影响身体发育和记忆力，降低免疫力，易引发疾病；②久坐不动、缺乏锻炼：体能下降、肥胖，适应能力减弱；③偏食、常吃高油高糖零食：营养不良或超重，影响健康；④沉迷手机：视力下降、注意力涣散、影响人际交往。\n（2）行动清单示例：①作息：23:00 前睡觉，7:00 起床（依据：起居有常）；②运动：每天跳绳或跑步 30 分钟，运动前热身（依据：科学锻炼，合理负荷，科学热身）；③饮食：三餐定时，每天一份蔬菜水果，少喝含糖饮料（依据：饮食有节、合理饮食）；④心理：每天记录一件让自己开心的事，遇困扰主动找家人或老师聊（依据：保持心理健康、积极寻求帮助）；⑤每周：整理一次书桌、参加一次户外活动（依据：动静结合、丰富精神世界）。", keys: ["危害表述准确", "清单具体可执行", "每条有教材依据", "身心兼顾"] }
+    ]
+  }
+  ],
+  paper: {
+    title: "第三单元 综合检测",
+    quiz: [
+      { q: "“在生命的接续中，每个人的生命不仅是‘我’的生命，还是‘我们’的生命。”这句话说明", o: ["个人生命毫无意义", "人的生命是代代接续的，个人与国家、民族紧密相连", "生命可以无限延长", "只有伟人的生命才值得纪念"], a: 1, exp: "人的生命是代代接续的，一代又一代的个体生命实现了人类生命的接续；每个人的生命不仅是“我”的，还是“我们”的。" },
+      { q: "下列行为体现敬畏生命的是", o: ["为拍短视频攀爬野生动物保护区围栏", "发现有人落水，不会游泳仍立即跳下施救", "劝阻同学不要购买、食用野生动物", "在加油站吸烟"], a: 2, exp: "敬畏生命要尊重并遵循生命存在和发展的规律，关爱他人的生命；A、D 是危害生命的行为，B 缺乏科学施救意识，易造成更大伤害。" },
+      { q: "学校组织消防疏散演练，有同学认为“走个过场而已”。下列认识正确的是", o: ["演练确实没有意义", "演练能提高避险和逃生能力，关键时刻能救命", "只有火灾时才需要演练", "演练会耽误学习，不如多做题"], a: 1, exp: "平时积极参加安全演练，危险来临时才能保持头脑冷静、就近快速逃离到安全地带；这是提高避险和逃生能力的重要途径。" },
+      { q: "关于“身体健康”，下列认识正确的是", o: ["身体健康只关系个人", "身体健康关系个人成长、家庭生活质量以及国家人口素质和社会发展", "只要不生病就无需体检", "年轻时不需要注意作息"], a: 1, exp: "身体是生命存在的根本；身体健康既关系个人的成长和发展，也关系家庭的生活质量，还关系国家的人口素质和社会的发展。" },
+      { q: "小林遇到挫折时总对自己说：“倒霉的事谁都会遇到，先看看最坏会怎样，然后想办法解决。”他的做法属于", o: ["自我否定", "说服自己接纳挫折，增强生命韧性", "逃避现实", "盲目乐观"], a: 1, exp: "增强生命韧性的方法之一就是说服自己接纳挫折：预料挫折情境可能带来的最糟糕结果，接受它，就已经开始转向问题的解决。" },
+      { q: "关于生命，下列说法错误的是", o: ["每个人的生命都是独特的", "每个人的生命都是不可逆的", "生命是有限的，所以要抓紧享受、及时行乐", "人的精神生命是不断传承的"], a: 2, exp: "生命有限，应感恩生命的获得，把有限的生命投入到无限的奋斗和奉献中，让生命的每一段历程都变得精彩和有意义，而不是“及时行乐”。" }
+    ],
+    open: [
+      { type: "辨析题", q: "有同学说：“敬畏生命就是珍惜自己的生命，别人的生命与我无关。”请你辨析。", ref: "该观点错误。①敬畏生命首先要珍视自己的生命，在行动前思考后果，保持良好判断力，避免鲁莽行事和不负责任的决策。②但敬畏生命还包括关爱他人的生命。“仁者爱人”“推己及人”，要求我们从珍惜自己的生命走向关爱他人的生命，谨慎对待生命关系、处理生命问题，尊重、关怀和善待身边的每一个人。③敬畏生命还要坚持人民至上、生命至上，当人民的生命遭遇天灾人祸威胁时，竭尽全力挽救和保护最广大人民的生命。④敬畏生命还要尊重并遵循生命存在和发展的规律，善待自然、善待万物。", keys: ["判断错误", "珍视自己", "关爱他人", "生命至上", "遵循规律"] },
+      { type: "材料分析题", q: "材料：某地突降特大暴雨，隧道出口堵了上百辆车。雨水开始灌进隧道时，堵在尾部的小侯最早意识到危险，他知道水位上涨到一定程度人会被困在车里。他不停拍打车门劝人们弃车逃生，许多人因此避免了灾难。\n（1）小侯的行为体现了哪些能力？（2）结合材料，谈谈我们应如何提高防护能力。", ref: "（1）体现了危险预判能力、安全意识和救助他人的责任感；也体现了关键时刻的冷静判断。\n（2）①提高危险预判能力：危险大多有兆可循，要在日常生活中主动学习安全知识，见微知著，对潜在危险作出科学判断，防患于未然；②提高避险和逃生能力：积极参加安全演练，危险来临时保持头脑冷静，就近、快速逃离到安全地带，有效利用各种资源求救和逃生；③学习防护和急救的知识与技能，争分夺秒施救，为挽救生命赢得宝贵时间；④增强风险意识，不到危险区域，不盲目冒险。", keys: ["预判能力", "避险逃生", "急救技能", "结合材料"] },
+      { type: "实践探究题", q: "学校开展“珍爱生命·健康成长”主题教育活动，请你以班委会名义写一份倡议书（只需写出倡议要点，不少于三条）。", ref: "倡议要点示例：①树立安全意识，自觉遵守校规校纪和交通规则，不追逐打闹、不攀爬危险设施；②养成健康生活方式，按时作息、均衡饮食、坚持锻炼，做自身健康的第一责任人；③关注心理健康，学会自我调节，遇到困扰主动向家人、老师或心理老师求助；④敬畏生命、关爱他人，不做伤害自己和他人的事，发现同学情绪异常及时关心并报告老师；⑤掌握防护与急救技能，认真参加安全演练，学会科学自救和救他。", keys: ["格式规范", "要点具体", "身心兼顾", "体现教材观点"] }
+    ]
+  }
+},
+{
+  id: "u4", name: "第四单元", title: "追求美好人生", color: "#7a5aa8", tint: "#f1ecfa",
+  intro: "人生漫漫，有阳光也有风雨，有高山也有低谷。我们所追求的是有正确的人生目标和积极的人生态度，在奋斗中创造和实现人生价值的美好人生。",
+  goal: ["理解人生目标的意义，学会树立正确的人生目标", "拥有积极的人生态度，正确对待顺境与逆境", "理解人生价值通过劳动创造", "懂得在奉献中成就精彩人生"],
+  lessons: [
+  {
+    id: "l11", no: "第十一课", title: "确立人生目标",
+    scene: "马克思说：“最蹩脚的建筑师从一开始就比最灵巧的蜜蜂高明的地方，是他用蜂蜡建筑蜂房以前，已经在自己的头脑中把它建成了。”人为什么需要“先在头脑中建成”？",
+    boxes: [
+      { name: "探问人生目标", points: [
+        { t: "人的生命活动方式与动物不同。动物的活动是无意识的、本能的活动，人的活动则是有意识、有目的的活动。人能够积极主动地规划人生，确立自己的人生目标，过有意识、有目的的生活。", kw: ["无意识本能", "有意识有目的", "主动规划"], tip: "“建筑师与蜜蜂”的差别就在“目的性”，这是本框的逻辑起点。" },
+        { t: "人生目标体现着人在社会实践中对未来的向往和追求，决定着人生道路的发展方向。", kw: ["对未来的向往追求", "决定发展方向"], tip: "定义中的两个要点：来自社会实践、指向未来。" },
+        { t: "正确的人生目标会带来稳定而持久的内在激励，让我们排除干扰，克服困难，坚定前行，少走弯路，指引我们走上正确的人生道路。", kw: ["内在激励", "排除干扰", "少走弯路"], tip: "作用是“稳定而持久的内在激励”，不是外在奖励。" },
+        { t: "人生目标可以分为长远目标和近期目标。只有分阶段实现一个个近期目标，才能实现长远目标。所有近期目标都是围绕长远目标展开的。实现每一个近期目标带来的成就感和喜悦感，鼓舞我们继续奋发向上。", kw: ["长远目标", "近期目标", "分阶段实现"], tip: "关系是“近期围绕长远、长远靠近期累积”，双向都要写。" }
+      ]},
+      { name: "树立正确的人生目标", points: [
+        { t: "正确认识个人与社会的关系，是我们树立人生目标的必要前提。社会是由个人组成的，个人的发展离不开社会。我们只有在个人与社会的统一中明确人生目标，才能沿着正确的方向走好人生道路。", kw: ["必要前提", "个人与社会统一"], tip: "“必要前提”四个字是固定表述。" },
+        { t: "树立人生目标，应当从自身实际出发。个人的兴趣爱好、性格特征、知识能力、家庭环境等，都是我们树立人生目标的影响因素。我们要综合评估，全面考虑，以客观务实的态度树立切实可行的人生目标。", kw: ["自身实际", "兴趣爱好", "综合评估", "切实可行"], tip: "四个影响因素要能列举，答题别只写“兴趣”。" },
+        { t: "树立人生目标，应当与国家、民族和人民的利益相结合。我们要把个人的发展牢牢植根于国家、民族和人民的需要，植根于中华民族伟大复兴的事业。", kw: ["国家民族人民", "植根复兴事业"], tip: "程开甲“一切为了祖国的需要”、钱伟长“弃文从理”是标准例证。" },
+        { t: "树立人生目标，应当与人类的福祉相统一。志存高远，方能登高望远；胸怀天下，才可大展宏图。个人的追求与进步，只有与人类的发展进步紧密联系在一起，人生才能焕发无限的生机和活力。", kw: ["人类福祉", "志存高远", "胸怀天下"], tip: "层次递进：自身→国家民族→人类，三条依次展开最完整。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "人生目标就是将来想干什么工作", r: "人生目标是对未来的向往和追求，决定人生道路的发展方向，包含长远目标与近期目标" },
+      { w: "目标定得越宏大越好", r: "要从自身实际出发，综合评估、客观务实，树立切实可行的人生目标" },
+      { w: "只要有目标，就一定能实现", r: "长远目标要靠一个个近期目标分阶段实现，需要持续努力" }
+    ],
+    quiz: [
+      { q: "马克思关于“最蹩脚的建筑师”的比喻说明", o: ["人比动物更聪明", "人的活动是有意识、有目的的活动，能够确立目标、规划人生", "动物也会制定计划", "建筑比筑巢更难"], a: 1, exp: "动物的活动是无意识、本能的活动，人的活动则是有意识、有目的的活动；人能够积极主动地规划人生，确立人生目标。" },
+      { q: "小雅想成为一名记者，因为她是校报小记者，喜欢与人沟通、擅长写文章。她树立目标时主要考虑了", o: ["父母的意愿", "自身实际，包括兴趣爱好和能力", "社会上的热门职业", "同学的看法"], a: 1, exp: "树立人生目标应从自身实际出发，兴趣爱好、性格特征、知识能力、家庭环境都是影响因素，要综合评估、全面考虑。" },
+      { q: "关于长远目标与近期目标的关系，正确的是", o: ["两者互不相干", "所有近期目标都应围绕长远目标展开，通过实现近期目标逐步实现长远目标", "只要定了长远目标，就不用管近期目标", "近期目标越高越好"], a: 1, exp: "只有分阶段实现一个个近期目标，才能实现长远目标；所有近期目标都是围绕长远目标展开的，实现近期目标的成就感鼓舞我们继续奋发向上。" }
+    ],
+    open: [
+      { type: "材料分析题", q: "材料：程开甲说：“我的目标是一切为了祖国的需要。”新中国成立后他毅然回国，几次更改研究方向，原因都是“一切都是为了国家的利益、民族的利益”。当组织要求他参与原子弹研发时，他从学术界“销声匿迹”，名字进入国家绝密档案，数十年如一日潜心于核武器研究。\n（1）程开甲的事迹启示我们应如何树立人生目标？（2）有同学说：“我只想过好自己的小日子，国家大事离我太远。”请你评析。", ref: "（1）①树立人生目标要从自身实际出发，综合评估、全面考虑，以客观务实的态度树立切实可行的目标；②应当与国家、民族和人民的利益相结合，把个人发展牢牢植根于国家、民族和人民的需要，植根于中华民族伟大复兴的事业；③应当与人类的福祉相统一，志存高远、胸怀天下；④要把长远目标分解为近期目标，分阶段实现。\n（2）该观点是片面的。个人与社会密切相关，社会由个人组成，个人的发展离不开社会，只有在个人与社会的统一中明确人生目标，才能走好人生道路；“小日子”的安稳也离不开国家的发展与安全。把个人追求融入国家和人民的需要，人生才能焕发更大的生机与活力。", keys: ["自身实际", "国家民族人民", "人类福祉", "个人与社会关系"] }
+    ]
+  },
+  {
+    id: "l12", no: "第十二课", title: "端正人生态度",
+    scene: "两位同学参加艺术节：一个拿了二等奖说“下次争取一等奖”，一个拿了二等奖说“差一点就是一等奖，真沮丧，下次不参加了”。同样的结果，不同的人生。",
+    boxes: [
+      { name: "拥有积极的人生态度", points: [
+        { t: "人生态度是人在生活实践中形成的看待生活、对待人生的心理和行为倾向。积极的人生态度，会令人看到事物好的一面，从而热爱生活，对未来充满信心；消极的人生态度，往往使人看到事物坏的一面，从而心灰意懒、消极懈怠。我们应当努力拥有积极的人生态度。", kw: ["心理和行为倾向", "看好的一面", "心灰意懒"], tip: "定义＋两种表现＋结论，答题三步走。" },
+        { t: "积极的人生态度体现为乐观向上。“长风破浪会有时，直挂云帆济沧海。”乐观豁达、积极向上的人生态度，能够让我们变得更加自信和从容，体味更多的生活乐趣；遇到困难和挫折，能够及时调整心态，不畏惧，不退缩，勇敢面对。", kw: ["乐观向上", "自信从容", "调整心态", "不畏惧不退缩"], tip: "苏轼《定风波》是“乐观向上”的经典素材。" },
+        { t: "积极的人生态度体现为认真务实。“博学之，审问之，慎思之，明辨之，笃行之。”认真务实的人，往往有着严谨的态度、强烈的责任心和踏实的作风，做任何事情都会精益求精，不走投机取巧、不劳而获的“捷径”。", kw: ["认真务实", "严谨态度", "责任心", "踏实作风", "精益求精"], tip: "“不走捷径”是识别“认真务实”的关键词。" },
+        { t: "积极的人生态度体现为勤奋进取。“业精于勤，荒于嬉。”勤奋进取是一种全力以赴、坚持不懈、努力前行的勇毅品格。勤奋进取的人不会满足现状、贪图安逸，而是勤学上进、追求卓越。", kw: ["勤奋进取", "全力以赴", "不满足现状", "追求卓越"], tip: "华罗庚“聪明在于学习，天才在于积累”是常用例证。" }
+      ]},
+      { name: "正确对待顺境和逆境", points: [
+        { t: "顺境和逆境是人生历程中两种不同的境遇。无论顺境还是逆境，对人生的作用都是双重的，关键是以何种态度对待人生的境遇。", kw: ["作用双重", "关键在态度"], tip: "这句是辨析题的“理论支点”，一定要写。" },
+        { t: "顺境不骄。顺境中的有利因素，使我们更容易接近和实现目标。身处顺境时，我们应珍惜美好时光，抓住机遇，顺势而为；同时要有忧患意识，警惕优越条件滋生的骄傲、懈怠等不良心态，时刻保持谦虚谨慎的态度。", kw: ["珍惜时光", "抓住机遇", "忧患意识", "谦虚谨慎"], tip: "李自成攻占北京后骄傲懈怠而失败，是“顺境不骄”的反面例证。" },
+        { t: "逆境不馁。每个人都希望自己的人生一帆风顺，但是生活中难免会遇到各种各样的困难。在逆境中前行，需要鼓足勇气，迎难而上。在青少年时期经历一些挫折和考验，有助于我们走好人生路。", kw: ["逆境不馁", "迎难而上", "挫折是财富"], tip: "司马迁《报任安书》列举的先贤，是“逆境成才”的经典素材。" },
+        { t: "顺境和逆境在一定条件下可以相互转化。自满自足、意志衰退，顺境就有可能转化为逆境；受磨难而奋进，不悲观、不言败，逆境就有可能转化为顺境。只要我们正确对待成败得失，处优而不养尊，受挫而不短志，顺境和逆境都可以成为人生成长的阶梯。", kw: ["相互转化", "处优而不养尊", "受挫而不短志", "成长阶梯"], tip: "“一定条件下相互转化”＋“两种态度分别导致什么结果”是满分要点。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "顺境一定有利于成长，逆境一定阻碍成长", r: "顺境和逆境对人生的作用都是双重的，关键是以何种态度对待" },
+      { w: "顺境中就该尽情享受，不必忧患", r: "顺境不骄，要珍惜时光、抓住机遇，同时保持忧患意识和谦虚谨慎" },
+      { w: "人生态度是天生的，改不了", r: "人生态度是在生活实践中形成的心理和行为倾向，可以通过努力变得积极" }
+    ],
+    quiz: [
+      { q: "两位同学都获得艺术节二等奖，一个说“下次争取一等奖”，一个说“下次不参加了”。这说明", o: ["结果比态度更重要", "面对同样的境遇，不同的人生态度会带来不同的发展", "二等奖没有价值", "参加比赛没有意义"], a: 1, exp: "积极的人生态度让人看到事物好的一面，从而热爱生活、对未来充满信心；消极的人生态度则让人心灰意懒、消极懈怠。" },
+      { q: "李自成攻占北京后骄傲自满、沉迷享乐，短短几个月就土崩瓦解。这警示我们", o: ["逆境更能磨炼人", "顺境不骄，要警惕优越条件滋生的骄傲、懈怠", "成功靠运气", "起义注定失败"], a: 1, exp: "顺境不骄：身处顺境要珍惜时光、抓住机遇、顺势而为，同时要有忧患意识，警惕骄傲、懈怠等不良心态，保持谦虚谨慎。" },
+      { q: "“处优而不养尊，受挫而不短志”启示我们", o: ["顺境中要享受，逆境中要认命", "无论顺境逆境，正确对待成败得失，都能成为人生成长的阶梯", "顺境逆境无法改变", "只有逆境才能成才"], a: 1, exp: "顺境和逆境在一定条件下可以相互转化；只要正确对待成败得失，处优而不养尊、受挫而不短志，两者都可以成为人生成长的阶梯。" }
+    ],
+    open: [
+      { type: "辨析题", q: "有同学说：“逆境更能磨炼人，所以逆境比顺境好。”请你辨析。", ref: "该观点是片面的。①顺境和逆境是人生历程中两种不同的境遇，无论顺境还是逆境，对人生的作用都是双重的，关键是以何种态度对待。②顺境中的有利因素使我们更容易接近和实现目标，但如果自满自足、意志衰退，顺境也可能转化为逆境；逆境能磨炼意志，但如果悲观消沉、放弃努力，也可能一蹶不振。③因此不能简单比较孰优孰劣。正确态度是顺境不骄，珍惜时光、抓住机遇，保持忧患意识和谦虚谨慎；逆境不馁，鼓足勇气、迎难而上。④只要正确对待成败得失，处优而不养尊、受挫而不短志，顺境和逆境都可以成为人生成长的阶梯。", keys: ["判断片面", "作用双重", "关键在态度", "顺境不骄逆境不馁", "相互转化"] }
+    ]
+  },
+  {
+    id: "l13", no: "第十三课", title: "实现人生价值",
+    scene: "悬崖上捡垃圾 20 多年、放绳高度累计 1800 千米的李培生；每年 300 多天住在山上、写下 80 多本《迎客松日记》的胡晓春。平凡岗位上的他们，为什么被称作“中国好人”？",
+    boxes: [
+      { name: "在劳动中创造人生价值", points: [
+        { t: "人生价值是指人的生命和活动对自己、他人和社会所具有的积极意义。人生价值是通过劳动创造的。人们通过劳动创造物质财富和精神财富。人们各种各样的愿望都是在劳动中实现的，人们在劳动中感受到幸福和愉悦，体会到人生的价值和美好。", kw: ["积极意义", "通过劳动创造", "物质精神财富"], tip: "定义三对象：对自己、对他人、对社会。" },
+        { t: "一个人对他人和社会的贡献是衡量其人生价值的尺度。一般来说，一个人通过劳动为他人和社会作出的贡献越大，他的价值就越大。人们的职业不同、岗位有别，但只要为社会进步作出了贡献，就是为社会创造了价值，也就创造和实现了人生价值，就应当得到社会的尊重和积极评价。", kw: ["贡献是尺度", "贡献越大价值越大", "职业无高低"], tip: "“职业不同、岗位有别”是回应“清洁工有没有价值”的关键句。" },
+        { t: "人世间的一切美好生活都是通过劳动来创造的。千百年来，中华民族以勤劳智慧闻名于世。我们所取得的每一项成就，都是广大人民用辛勤劳动、诚实劳动、创造性劳动换来的。今天，国家富强、民族复兴、人民幸福的美好愿景都要靠劳动来实现。", kw: ["劳动创造美好生活", "辛勤诚实创造性劳动"], tip: "三种劳动的表述要准确：辛勤、诚实、创造性。" },
+        { t: "劳动是人的第一需要。通过自己的劳动，人们不仅改变了自然界，也改变了人的社会关系，塑造了人的本质，提升了人的能力。", kw: ["第一需要", "塑造人的本质", "提升能力"], tip: "马克思的观点，用于回答“劳动对人的意义”。" }
+      ]},
+      { name: "在奉献中成就精彩人生", points: [
+        { t: "每个人都有自己的人生追求，也会从事各种不同的工作，但只有把自己的小我融入时代，融入祖国和人民的大我之中，才能更好地实现人生价值。", kw: ["小我融入大我", "祖国和人民"], tip: "“小我—大我”是固定表述，用于总起。" },
+        { t: "立足岗位作奉献。任何一项工作都是社会存在和发展的需要，没有高低贵贱之分。没有环卫工人的辛勤劳动，就没有城市的干净整洁；没有建筑工人的风吹日晒，就没有我们的安身之所。人们在自己的岗位上勤勤恳恳、兢兢业业，在奉献社会中创造自身价值。", kw: ["立足岗位", "没有高低贵贱", "勤勤恳恳"], tip: "举例论证时要落到“平凡岗位也有价值”。" },
+        { t: "在踏实奋进中绽放人生的光彩。青春是用来奋斗的。只有沉下心来，干一行、爱一行、精一行，才能在实践中做出一番事业，书写自己的人生华章。", kw: ["踏实奋进", "干一行爱一行精一行"], tip: "“干一行、爱一行、精一行”语序固定。" },
+        { t: "在奉献中走向伟大，成就精彩人生。当我们将个人的命运和他人、集体、民族、国家乃至人类的命运联系在一起，并为之奉献时，人生就会闪耀出伟大的光辉。", kw: ["命运相连", "奉献", "伟大光辉"], tip: "层次由近及远：他人—集体—民族—国家—人类。" },
+        { t: "劳动精神是鼓舞全国各族人民风雨无阻、勇敢前进的强大精神动力。我们要弘扬劳动精神，崇尚劳动、尊重劳动，懂得劳动最光荣、劳动最崇高、劳动最伟大、劳动最美丽的道理，长大后能够辛勤劳动、诚实劳动、创造性劳动。", kw: ["劳动精神", "四个最", "崇尚尊重劳动"], tip: "“劳动最光荣、最崇高、最伟大、最美丽”四个“最”是必背。" }
+      ]}
+    ],
+    contrasts: [
+      { w: "只有科学家、企业家的人生才有价值", r: "衡量人生价值的尺度是对他人和社会的贡献；职业不同、岗位有别，只要为社会进步作贡献就创造了价值" },
+      { w: "打扫卫生、送快递这些工作低人一等", r: "任何一项工作都是社会存在和发展的需要，没有高低贵贱之分" },
+      { w: "人生价值靠想、靠说就能实现", r: "人生价值通过劳动创造，要在踏实奋进和奉献中实现" }
+    ],
+    quiz: [
+      { q: "其美多吉数十年如一日在雪线邮路上运送邮件，被评为“最美奋斗者”。这表明", o: ["只有艰苦的工作才有价值", "人生价值通过劳动创造，对他人和社会的贡献是衡量人生价值的尺度", "获得荣誉才算实现人生价值", "岗位越危险价值越大"], a: 1, exp: "人生价值通过劳动创造，一个人对他人和社会的贡献是衡量其人生价值的尺度；职业不同、岗位有别，只要为社会进步作贡献就应得到尊重。" },
+      { q: "“如果你是一颗最小的螺丝钉，你是否永远坚守在你生活的岗位上？”雷锋这句话启示我们", o: ["要做大事，不做小事", "要立足岗位作奉献，在平凡岗位上创造价值", "螺丝钉精神已经过时", "只有集体才能创造价值"], a: 1, exp: "任何一项工作都是社会存在和发展的需要，没有高低贵贱之分；在自己的岗位上勤勤恳恳、兢兢业业，就是在奉献社会中创造自身价值。" },
+      { q: "关于劳动，下列说法错误的是", o: ["人世间的一切美好生活都是通过劳动创造的", "劳动是人的第一需要", "劳动只有体力劳动一种形式", "国家富强、民族复兴、人民幸福都要靠劳动实现"], a: 2, exp: "劳动包括辛勤劳动、诚实劳动、创造性劳动，既有体力劳动也有脑力劳动；劳动是人的第一需要，能塑造人的本质、提升人的能力。" }
+    ],
+    open: [
+      { type: "材料分析题", q: "材料一：李培生、胡晓春是黄山风景区基层工作人员，一个在悬崖峭壁上捡拾垃圾 20 多年，累计放绳高度达 1800 千米；一个每年 300 多天住在山上守护迎客松，写下 80 多本、超过 140 万字的《迎客松日记》。2022 年 8 月，习近平总书记给他们回信，称赞他们的敬业奉献精神。\n（1）他们的经历告诉我们人生价值是如何实现的？（2）作为青少年，我们应如何向他们学习？", ref: "（1）①人生价值是指人的生命和活动对自己、他人和社会所具有的积极意义，人生价值是通过劳动创造的；②一个人对他人和社会的贡献是衡量其人生价值的尺度，贡献越大价值越大；③他们立足岗位作奉献，在踏实奋进中绽放人生光彩，把个人命运与祖国、人民的需要联系在一起，在奉献中实现并升华了人生价值。\n（2）①弘扬劳动精神，崇尚劳动、尊重劳动，懂得劳动最光荣、最崇高、最伟大、最美丽的道理；②从现在做起，做好值日、认真完成学习任务，自己的事情自己做；③积极参加志愿服务、社会实践，在服务他人、奉献社会中提升自己；④把个人成长融入国家和时代需要，努力学习、增长本领，长大后辛勤劳动、诚实劳动、创造性劳动。", keys: ["劳动创造价值", "贡献是尺度", "立足岗位奉献", "青少年具体做法"] }
+    ]
+  }
+  ],
+  paper: {
+    title: "第四单元 综合检测",
+    quiz: [
+      { q: "人能够积极主动地规划人生，确立人生目标，这是因为", o: ["人的生命比动物长", "人的活动是有意识、有目的的活动", "动物没有生命", "人有语言能力"], a: 1, exp: "动物的活动是无意识的、本能的活动，人的活动则是有意识、有目的的活动；人能够积极主动地规划人生，过有意识、有目的的生活。" },
+      { q: "钱伟长原本国文、历史满分，九一八事变后毅然“弃文从理”，他说“活着不是为了自己，而是为了我们的祖国”。这启示我们树立人生目标应", o: ["只考虑个人兴趣", "与国家、民族和人民的利益相结合", "选择最容易成功的道路", "听从他人的安排"], a: 1, exp: "树立人生目标应当与国家、民族和人民的利益相结合，把个人发展牢牢植根于国家、民族和人民的需要，植根于中华民族伟大复兴的事业。" },
+      { q: "面对考试失利，小宇说：“这次暴露了我基础不牢，正好查漏补缺。”小宇的态度体现了", o: ["盲目乐观", "乐观向上、积极调整心态", "逃避现实", "过分自信"], a: 1, exp: "积极的人生态度体现为乐观向上：遇到困难和挫折能及时调整心态，不畏惧、不退缩，勇敢面对。" },
+      { q: "“业精于勤，荒于嬉”体现的积极人生态度是", o: ["乐观向上", "认真务实", "勤奋进取", "谦虚谨慎"], a: 2, exp: "勤奋进取是一种全力以赴、坚持不懈、努力前行的勇毅品格；勤奋进取的人不满足现状、贪图安逸，而是勤学上进、追求卓越。" },
+      { q: "“任何一项工作都是社会存在和发展的需要，没有高低贵贱之分。”这句话说明", o: ["工作越轻松越有价值", "只要为社会进步作贡献，就创造了人生价值，应得到尊重", "只有高学历才有价值", "职业选择不重要"], a: 1, exp: "人们的职业不同、岗位有别，但只要为社会进步作出了贡献，就是为社会创造了价值，也就创造和实现了人生价值，应当得到社会的尊重和积极评价。" },
+      { q: "“小我融入大我”对我们的启示是", o: ["放弃个人追求", "把个人命运同他人、集体、民族、国家和人类的命运联系起来，并为之奉献", "只追求个人利益", "等长大后再考虑国家需要"], a: 1, exp: "只有把自己的小我融入时代，融入祖国和人民的大我之中，才能更好地实现人生价值；当个人命运与他人、集体、民族、国家乃至人类的命运联系在一起并为之奉献时，人生就会闪耀出伟大的光辉。" }
+    ],
+    open: [
+      { type: "辨析题", q: "有同学说：“人生价值的大小取决于职位的高低和收入的多少。”请你辨析。", ref: "该观点错误。①人生价值是指人的生命和活动对自己、他人和社会所具有的积极意义，人生价值通过劳动创造。②一个人对他人和社会的贡献是衡量其人生价值的尺度，贡献越大，价值越大；职位高低、收入多少并不是衡量标准。③人们的职业不同、岗位有别，但只要为社会进步作出了贡献，就创造了人生价值，就应得到社会的尊重和积极评价。④我们应立足岗位作奉献，在踏实奋进中绽放人生光彩，把个人命运同国家、民族和人民的命运联系起来，在奉献中成就精彩人生。", keys: ["判断错误", "人生价值的含义", "贡献是尺度", "职业无高低", "奉献中实现"] },
+      { type: "材料分析题", q: "材料：感动中国人物张桂梅说：“只要还有一口气，我就要站在讲台上，倾尽全力、奉献所有，九死亦无悔！”卓嘎、央宗姐妹说：“再苦再累也要守好祖国每一寸土地。”钱七虎说：“我这一生没有碌碌无为，没有虚度年华，为国家、为我们的人民安全，贡献出了自己的心血。”\n（1）三位人物的话共同体现了怎样的价值追求？（2）作为青少年，你打算如何追求美好人生？", ref: "（1）①他们把个人命运同他人、集体、民族、国家的命运联系在一起，在奉献中实现人生价值；②他们立足岗位作奉献，勤勤恳恳、兢兢业业，用劳动创造价值；③他们拥有积极的人生态度，面对困难迎难而上，在踏实奋进中绽放人生光彩。\n（2）①确立正确的人生目标，把个人发展植根于国家、民族和人民的需要；②端正人生态度，乐观向上、认真务实、勤奋进取，正确对待顺境和逆境；③努力学习、增长本领，弘扬劳动精神，崇尚劳动、尊重劳动；④积极参加志愿服务和社会实践，从身边小事做起，在服务他人、奉献社会中实现人生价值。", keys: ["小我融入大我", "劳动创造价值", "积极人生态度", "青少年行动"] },
+      { type: "实践探究题", q: "班级开展“寻访身边的劳动者”实践活动，请完成：（1）设计三个采访问题；（2）写一段活动结束后的感悟（不少于 80 字，需运用本单元知识）。", ref: "（1）问题示例：①您为什么选择这份职业？②这份工作需要具备哪些条件和能力？③工作中让您印象最深的一件事是什么？④您觉得这份工作对社会有什么意义？\n（2）感悟示例：这次采访让我真切理解了“人生价值是通过劳动创造的”。那位每天凌晨四点开始工作的环卫工人说，看到街道干净，心里就踏实。他的话让我明白：一个人的价值不在于岗位是否显眼，而在于他为他人和社会作出了多少贡献。任何一项工作都是社会存在和发展的需要，没有高低贵贱之分。作为青少年，我要弘扬劳动精神，懂得劳动最光荣、最崇高、最伟大、最美丽的道理，从认真完成每一次值日、每一份作业做起，努力学习本领，长大后用辛勤劳动、诚实劳动、创造性劳动去实现人生价值。", keys: ["问题有针对性", "感悟运用教材观点", "有具体细节", "落脚青少年行动"] }
+    ]
+  }
+}
+];
+
+/* 答题方法：按当前道德与法治常见题型整理 */
+const METHODS = [
+  { name: "选择题", tag: "稳分题", color: "#2f8f76",
+    steps: ["先看设问：是选“正确”还是“错误”，是“体现”还是“启示”，圈出限定词。", "排除绝对化表述：一定、必须、只要…就、完全、唯一，这类选项八成有坑。", "排除偷换概念：把“尊重”换成“服从”、把“集体利益优先”说成“放弃个人利益”。", "警惕“看似正确但答非所问”：选项本身对，却与材料无关，也不选。", "四个选项都像对时，回到材料找关键词，选与材料贴合度最高的。"],
+    pitfall: "最高频错误：把“老师的批评也是关爱”“接纳自己不等于躺平”“集体利益优先同时保障个人正当利益”这类辩证表述判成错误。" },
+  { name: "辨析题", tag: "必考", color: "#c4694a",
+    steps: ["第一步 判断：明确写出“这个观点正确／错误／片面”，不要含糊。", "第二步 说理：分点写出教材依据（是什么、为什么），一般 2—3 点。", "第三步 补全：观点片面时，补出它漏掉的那一面（如只讲个人、漏掉国家；只讲权利、漏掉义务）。", "第四步 表态：写出正确做法或我们应怎么做，收束全文。"],
+    pitfall: "只判断不说理，或只抄教材不结合材料，都会大幅失分。判断＋依据＋补全＋做法，四步缺一不可。" },
+  { name: "情境探究题", tag: "常见", color: "#3a72b0",
+    steps: ["看清角色：你是“我”“小明的朋友”还是“班委”，身份决定能做什么。", "分层作答：认识层面（怎么看）＋行为层面（怎么做），两条线都要有。", "做法要具体可操作：不写“要孝顺父母”，写“每周给爷爷奶奶打一次电话，帮妈妈做一顿饭”。", "理由必须挂教材观点：每个做法后跟一句“因为……”，用教材术语。"],
+    pitfall: "只写“我会怎么做”不写“为什么”，或只写空话套话，缺具体行动，是常见低分原因。" },
+  { name: "材料分析题", tag: "大分题", color: "#7a5aa8",
+    steps: ["读材料划关键词：人物、行为、结果、评价性语句，往往一句一个得分点。", "概括＋分析：先概括材料写了什么，再用教材观点分析“说明／体现／启示了什么”。", "分点作答，标序号，每点“观点＋材料”配对，避免只抄材料或只背教材。", "多问时按问作答，问“哪些”就列全，问“如何”就写做法。"],
+    pitfall: "两类典型失分：一是通篇复述材料没有观点；二是通篇背教材不结合材料。必须一一对应。" },
+  { name: "实践探究题", tag: "开放性", color: "#b8860b",
+    steps: ["活动形式要具体：主题班会、辩论赛、手抄报、倡议书、调查问卷、志愿服务、模拟法庭等。", "步骤写清“谁—做什么—怎么做”：准备、实施、总结三阶段，每阶段一两句话。", "倡议书／方案要格式规范：标题、称呼、正文（分条）、署名与日期。", "结尾落到“我”的行动，体现知行合一。"],
+    pitfall: "活动形式写“开展活动”这种空话不得分；步骤缺“总结反馈”环节也常被扣分。" }
+];
+
+/* =========================================================
+   交互逻辑
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const LS = "df7:v1";
+let S = (() => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; } })();
+S.learn = S.learn || {}; S.wrong = S.wrong || {}; S.ans = S.ans || {}; S.scores = S.scores || {};
+const save = () => { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} };
+
+/* ---------- 建立索引 ---------- */
+const ALLQ = {};
+UNITS.forEach(u => {
+  u.lessons.forEach(l => {
+    l.quiz.forEach((q, i) => { q._id = `${u.id}${l.id}q${i + 1}`; q._u = u; q._type = "单选题"; ALLQ[q._id] = q; });
+    l.open.forEach((o, i) => { o._id = `${u.id}${l.id}o${i + 1}`; o._u = u; o._type = o.type; ALLQ[o._id] = o; });
+    l._key = `${u.id}-${l.id}`;
+  });
+  u.paper.quiz.forEach((q, i) => { q._id = `${u.id}pq${i + 1}`; q._u = u; q._type = "单选题"; ALLQ[q._id] = q; });
+  u.paper.open.forEach((o, i) => { o._id = `${u.id}po${i + 1}`; o._u = u; o._type = o.type; ALLQ[o._id] = o; });
+});
+
+const TESTS = [];
+UNITS.forEach(u => {
+  u.lessons.forEach(l => TESTS.push({
+    id: l._key, name: `${l.no}　${l.title}`, short: `${l.no} ${l.title}`,
+    unit: u, quiz: l.quiz, open: l.open, kind: "lesson"
+  }));
+  TESTS.push({
+    id: `${u.id}-paper`, name: u.paper.title, short: `${u.name}综合`,
+    unit: u, quiz: u.paper.quiz, open: u.paper.open, kind: "paper"
+  });
+});
+
+/* ---------- 跟学步骤 ---------- */
+const pointsOf = (l) => l.boxes.reduce((s, b) => s + b.points.length, 0);
+function stepsOf(l) {
+  if (l._steps) return l._steps;
+  const out = [{ kind: "scene" }];
+  l.boxes.forEach(b => b.points.forEach((p, i) => out.push({ kind: "point", box: b.name, no: i + 1, p })));
+  out.push({ kind: "contrast" });
+  out.push({ kind: "check" });
+  out.push({ kind: "summary" });
+  l._steps = out;
+  return out;
+}
+let TOTAL_STEPS = 0;
+UNITS.forEach(u => u.lessons.forEach(l => { TOTAL_STEPS += stepsOf(l).length; }));
+
+/* 让当前选中的胶囊横向居中（只滚横向，不动页面） */
+function centerChip(box){
+  const a = box.querySelector(".chip.active");
+  if(!a) return;
+  const r1 = a.getBoundingClientRect(), r2 = box.getBoundingClientRect();
+  box.scrollLeft += (r1.left - r2.left) - (box.clientWidth - r1.width) / 2;
+}
+
+/* ---------- 全局状态 ---------- */
+let curUnit = UNITS[0].id;
+let curLessonKey = UNITS[0].lessons[0]._key;
+let curStep = 0;
+let curTestId = TESTS[0].id;
+
+/* ========== 导航 ========== */
+function switchView(v) {
+  $$(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + v));
+  $$("[data-view]").forEach(b => b.classList.toggle("active", b.dataset.view === v));
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "auto" : "auto" });
+  if (v === "map") renderMap();
+  if (v === "learn") renderLearn();
+  if (v === "test") renderTest();
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-view]");
+  if (t) switchView(t.dataset.view);
+});
+
+/* ---------- 顶部进度 ---------- */
+function paintProgress() {
+  let done = 0;
+  Object.values(S.learn).forEach(v => { done += (v.done || []).length; });
+  const pct = TOTAL_STEPS ? Math.min(100, Math.round(done / TOTAL_STEPS * 100)) : 0;
+  const bar = $("#hdrBar"), txt = $("#hdrPct");
+  if (bar) bar.style.width = pct + "%";
+  if (txt) txt.textContent = "跟学 " + pct + "%";
+}
+
+/* ========== 一、思维导图 ========== */
+function renderMap() {
+  const u = UNITS.find(x => x.id === curUnit) || UNITS[0];
+
+  $("#mapChips").innerHTML = UNITS.map(x =>
+    `<button class="chip ${x.id === u.id ? "active" : ""}" data-unit="${x.id}" style="--c:${x.color}">
+       <span class="dot"></span>${x.name}　${x.title}</button>`).join("");
+
+  $("#mapBanner").innerHTML = `
+    <div class="unit-banner" style="--c:${u.color};--tint:${u.tint}">
+      <h2><span>${u.name}</span>${u.title}
+        <span style="font-size:12px;color:var(--muted);font-family:var(--font);font-weight:400">
+          ${u.lessons.length} 课 · ${u.lessons.reduce((s, l) => s + pointsOf(l), 0)} 个知识点</span>
+      </h2>
+      <p>${esc(u.intro)}</p>
+      <div class="unit-goal">${u.goal.map(g => `<i>${esc(g)}</i>`).join("")}</div>
+    </div>`;
+
+  $("#mapList").innerHTML = u.lessons.map(l => lessonCard(u, l)).join("");
+  centerChip($("#mapChips"));
+  paintProgress();
+}
+
+function lessonCard(u, l) {
+  const branches = l.boxes.map(b => `
+    <div class="mm-branch">
+      <button class="mm-node" data-node>${esc(b.name)}<b>${b.points.length} 点</b><em class="chev"></em></button>
+      <div class="mm-leaves">
+        ${b.points.map((p, i) => `
+          <div class="leaf">
+            <button class="leaf-head" data-leaf>
+              <span class="idx">${i + 1}</span>
+              <span class="lt">${esc(p.t)}</span>
+            </button>
+            <div class="leaf-more">
+              <div class="kw">${p.kw.map(k => `<i>${esc(k)}</i>`).join("")}</div>
+              <div class="tip"><b>易错</b><span>${esc(p.tip)}</span></div>
+            </div>
+          </div>`).join("")}
+      </div>
+    </div>`).join("");
+
+  return `
+  <article class="lesson-card" data-lkey="${l._key}" style="--c:${u.color};--tint:${u.tint}">
+    <button class="lc-head" data-toggle-lesson>
+      <span class="no">${l.no}</span>
+      <span class="tt">${esc(l.title)}</span>
+      <span class="cnt">${pointsOf(l)} 个知识点</span>
+      <em class="chev"></em>
+    </button>
+    <div class="lc-tools">
+      <button class="tool" data-open-all>全部展开</button>
+      <button class="tool" data-shut-all>全部收起</button>
+      <button class="tool" data-go-learn>去跟学 →</button>
+    </div>
+    <div class="mm">
+      <div class="mm-root">${l.boxes.length} 个框题 · ${pointsOf(l)} 个知识点</div>
+      <div class="mm-branches">${branches}</div>
+    </div>
+  </article>`;
+}
+
+$("#mapChips").addEventListener("click", e => {
+  const b = e.target.closest("[data-unit]");
+  if (!b) return;
+  curUnit = b.dataset.unit;
+  renderMap();
+});
+
+$("#mapList").addEventListener("click", e => {
+  const card = e.target.closest(".lesson-card");
+  if (!card) return;
+  if (e.target.closest("[data-toggle-lesson]")) { card.classList.toggle("closed"); return; }
+  const node = e.target.closest("[data-node]");
+  if (node) { node.closest(".mm-branch").classList.toggle("closed"); return; }
+  const leaf = e.target.closest("[data-leaf]");
+  if (leaf) { leaf.closest(".leaf").classList.toggle("open"); return; }
+  if (e.target.closest("[data-open-all]")) {
+    card.classList.remove("closed");
+    $$(".mm-branch", card).forEach(x => x.classList.remove("closed"));
+    $$(".leaf", card).forEach(x => x.classList.add("open"));
+    return;
+  }
+  if (e.target.closest("[data-shut-all]")) { card.classList.add("closed"); return; }
+  if (e.target.closest("[data-go-learn]")) {
+    curLessonKey = card.dataset.lkey;
+    curStep = 0;
+    switchView("learn");
+  }
+});
+
+/* ========== 二、跟学 ========== */
+function findLesson(key) {
+  for (const u of UNITS) for (const l of u.lessons) if (l._key === key) return { u, l };
+  return { u: UNITS[0], l: UNITS[0].lessons[0] };
+}
+
+function renderLearn() {
+  $("#learnChips").innerHTML = UNITS.map(u => u.lessons.map(l =>
+    `<button class="chip sm ${l._key === curLessonKey ? "active" : ""}" data-lkey="${l._key}" style="--c:${u.color}">
+       <span class="dot"></span>${esc(l.title)}</button>`).join("")).join("");
+
+  centerChip($("#learnChips"));
+  const { u, l } = findLesson(curLessonKey);
+  const steps = stepsOf(l);
+  if (curStep >= steps.length) curStep = steps.length - 1;
+  const st = S.learn[curLessonKey] || (S.learn[curLessonKey] = { step: 0, done: [] });
+  if (!Array.isArray(st.done)) st.done = [];
+
+  const step = steps[curStep];
+  const tag = {
+    scene: "情境导入", point: step.box || "知识点", contrast: "易错辨析",
+    check: "即时检测", summary: "知识清单"
+  }[step.kind];
+
+  $("#learnCard").innerHTML = `
+    <div class="sp-head" style="--c:${u.color}">
+      <span class="badge">${l.no}</span>
+      <span class="title">${esc(l.title)}</span>
+      <span class="count">第 ${curStep + 1} / ${steps.length} 步</span>
+    </div>
+    <div class="sp-bar"><i style="width:${(curStep + 1) / steps.length * 100}%"></i></div>
+    <div class="sp-body" style="--c:${u.color};--tint:${u.tint}">
+      <div class="step-tag">${esc(tag)}</div>
+      ${stepBody(u, l, step)}
+    </div>
+    <div class="sp-nav">
+      <button class="btn ghost" id="spPrev" ${curStep === 0 ? "disabled" : ""}>上一步</button>
+      <span class="grow"></span>
+      <button class="btn ghost" id="spMark">${st.done.includes(curStep) ? "已掌握 ✓" : "标记已掌握"}</button>
+      <button class="btn" id="spNext">${curStep === steps.length - 1 ? "去测试 →" : "下一步"}</button>
+    </div>`;
+
+  const label = (s) => s.kind === "scene" ? "情境"
+    : s.kind === "point" ? `知识点${s.no}`
+    : s.kind === "contrast" ? "易错"
+    : s.kind === "check" ? "检测" : "清单";
+  $("#spDots").innerHTML = `<div class="sp-path">${steps.map((s, i) =>
+    `<button class="pstep ${i === curStep ? "cur" : (st.done.includes(i) ? "on" : "")}" data-dot="${i}">
+       <b>${i + 1}</b>${esc(label(s))}</button>`).join("")}</div>`;
+
+  st.step = curStep; save(); paintProgress();
+
+  $("#spPrev").onclick = () => { if (curStep > 0) { curStep--; renderLearn(); } };
+  $("#spNext").onclick = () => {
+    if (curStep === steps.length - 1) {
+      curTestId = l._key; switchView("test");
+    } else { curStep++; renderLearn(); }
+  };
+  $("#spMark").onclick = () => {
+    if (st.done.includes(curStep)) st.done = st.done.filter(x => x !== curStep);
+    else st.done.push(curStep);
+    save(); renderLearn();
+  };
+  $("#spDots").onclick = e => {
+    const b = e.target.closest("[data-dot]");
+    if (b) { curStep = +b.dataset.dot; renderLearn(); }
+  };
+  bindQuiz();
+}
+
+function stepBody(u, l, step) {
+  if (step.kind === "scene") {
+    return `<h3 class="step-h">先看一个真实场景</h3>
+      <div class="scene-box" style="--tint:${u.tint}">${esc(l.scene)}</div>
+      <p class="step-p" style="margin-top:16px;font-size:12.5px;color:var(--muted);letter-spacing:.08em">本单元学习目标</p>
+      <div class="lesson-goal" style="margin-top:6px">
+        ${u.goal.map(g => `<div>${esc(g)}</div>`).join("")}
+      </div>
+      <p class="step-p" style="margin-top:12px;font-size:13.6px;color:var(--muted)">
+        本课共 ${pointsOf(l)} 个知识点，分 ${l.boxes.length} 个框题。跟着往下走，一步一个点，走完就能自己讲出来。</p>`;
+  }
+  if (step.kind === "point") {
+    const p = step.p;
+    return `<h3 class="step-h">${esc(step.box)} · 知识点 ${step.no}</h3>
+      <p class="step-p strong" style="margin-top:8px">${esc(p.t)}</p>
+      <div class="kw" style="margin-top:14px">${p.kw.map(k => `<i>${esc(k)}</i>`).join("")}</div>
+      <div class="tip"><b>易错</b><span>${esc(p.tip)}</span></div>`;
+  }
+  if (step.kind === "contrast") {
+    return `<h3 class="step-h">这几个坑，别踩</h3>
+      <p class="step-p" style="margin-bottom:12px;font-size:14px">考试里常出现的错误说法，左边是错的，右边才是教材的说法。</p>
+      <div class="contrast-table">
+        ${l.contrasts.map(c => `<div class="crow">
+          <div class="w"><span class="k">✕ 错误</span>${esc(c.w)}</div>
+          <div class="r"><span class="k">✓ 正确</span>${esc(c.r)}</div>
+        </div>`).join("")}
+      </div>`;
+  }
+  if (step.kind === "check") {
+    const qs = l.quiz.slice(0, 2);
+    return `<h3 class="step-h">做两道题，检查一下</h3>
+      <p class="step-p" style="font-size:14px;margin-bottom:12px">选完立刻出解析，错了就回到上一步再看一遍。</p>
+      <div class="check-wrap">${qs.map((q, i) => quizCard(q, i + 1, true)).join("")}</div>`;
+  }
+  // summary
+  return `<h3 class="step-h">本课知识清单</h3>
+    <p class="step-p" style="font-size:14px;margin-bottom:10px">合上书，看看关键词能不能复述出来。能，才算真掌握。</p>
+    <div class="sum-list">
+      ${l.boxes.map(b => `<div class="sum-item">
+        <h4><em>${b.points.length}点</em>${esc(b.name)}</h4>
+        <div class="kw">${b.points.flatMap(p => p.kw).filter((v, i, a) => a.indexOf(v) === i).map(k => `<i>${esc(k)}</i>`).join("")}</div>
+      </div>`).join("")}
+    </div>
+    <p class="step-p" style="margin-top:14px;font-size:13.6px;color:var(--muted)">
+      提示：能用上面的关键词把知识点串成一段话说出来，说明你已经掌握了。</p>`;
+}
+
+$("#learnChips").addEventListener("click", e => {
+  const b = e.target.closest("[data-lkey]");
+  if (!b) return;
+  curLessonKey = b.dataset.lkey;
+  curStep = (S.learn[curLessonKey] && S.learn[curLessonKey].step) || 0;
+  renderLearn();
+});
+
+/* ========== 三、测试 ========== */
+function quizCard(q, idx, inLearn) {
+  const type = q._type || "单选题";
+  const u = q._u || {};
+  return `
+  <div class="qcard" data-qid="${q._id}" style="--c:${u.color || "#6b6b6b"};--tint:${u.tint || "#f3f0e9"}">
+    <div class="qhead">
+      <span class="qno">${idx}</span>
+      <span class="qtype">${type}</span>
+      <span class="qmark"></span>
+    </div>
+    <p class="qtext">${esc(q.q)}</p>
+    <div class="opts">
+      ${q.o.map((o, i) => `<button class="opt" data-i="${i}"><i>${"ABCD"[i]}</i><span>${esc(o)}</span></button>`).join("")}
+    </div>
+    <div class="exp" hidden></div>
+  </div>`;
+}
+
+function openCard(o, idx) {
+  const u = o._u || {};
+  const saved = S.ans[o._id] || "";
+  return `
+  <div class="qcard" data-qid="${o._id}" style="--c:${u.color || "#6b6b6b"};--tint:${u.tint || "#f3f0e9"}">
+    <div class="qhead">
+      <span class="qno">${idx}</span>
+      <span class="qtype">${o.type}</span>
+      <span class="qmark">先写再看答案</span>
+    </div>
+    <p class="qtext">${esc(o.q)}</p>
+    <textarea data-ans placeholder="用“观点＋依据＋做法”的格式写一写，再看参考答案对比。">${esc(saved)}</textarea>
+    <div style="margin-top:10px"><button class="btn ghost sm" data-reveal>查看参考答案</button></div>
+    <div class="ref" hidden>
+      <div class="ref-h" style="--c:${u.color || "#5a5a5a"};--tint:${u.tint || "#f4f1ea"}">参考答案</div>
+      <div class="ref-b">${esc(o.ref)}</div>
+      <div class="keys">${o.keys.map(k => `<i>${esc(k)}</i>`).join("")}</div>
+      <div class="ref-note">评分要点：答出以上要点即可得分，观点与材料要一一对应，序号分点更清晰。</div>
+    </div>
+  </div>`;
+}
+
+function renderTest() {
+  // 方法卡
+  $("#methodGrid").innerHTML = METHODS.map((m, i) => `
+    <div class="method" data-m="${i}" style="--c:${m.color}">
+      <button data-mhead><span class="mt">${m.name}</span><span class="tag">${m.tag}</span><em class="chev"></em></button>
+      <div class="body">
+        <ol>${m.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>
+        <div class="pf"><b>最容易丢分的地方：</b>${esc(m.pitfall)}</div>
+      </div>
+    </div>`).join("");
+
+  const wrongCount = Object.keys(S.wrong).length;
+  const chips = TESTS.map(t => {
+    const isP = t.kind === "paper";
+    return `<button class="chip sm ${t.id === curTestId ? "active" : ""}" data-test="${t.id}" style="--c:${t.unit.color}">
+      <span class="dot"></span>${isP ? "★ " : ""}${esc(t.short)}</button>`;
+  }).join("") + `<button class="chip sm ${curTestId === "wrong" ? "active" : ""}" data-test="wrong" style="--c:#b93b30">
+      <span class="dot"></span>错题重练（${wrongCount}）</button>`;
+  $("#testChips").innerHTML = chips;
+  centerChip($("#testChips"));
+
+  const box = $("#testBody");
+  if (curTestId === "wrong") {
+    const ids = Object.keys(S.wrong).filter(id => ALLQ[id]);
+    if (!ids.length) {
+      box.innerHTML = `<div class="empty">还没有错题。先去做几套题吧，做错的会自动收进这里。</div>`;
+      return;
+    }
+    box.innerHTML = `
+      <div class="test-head">
+        <h3>错题重练</h3>
+        <span class="score-pill" data-score>共 ${ids.length} 题</span>
+      </div>
+      ${ids.map((id, i) => quizCard(ALLQ[id], i + 1)).join("")}`;
+    bindQuiz();
+    return;
+  }
+
+  const t = TESTS.find(x => x.id === curTestId) || TESTS[0];
+  const total = t.quiz.length + t.open.length;
+  const prev = S.scores[t.id];
+  box.innerHTML = `
+    <div class="test-head" style="--c:${t.unit.color}">
+      <h3>${esc(t.name)}</h3>
+      <span class="score-pill" data-score>${t.quiz.length} 道选择 + ${t.open.length} 道主观题${prev ? ` · 上次正确 ${prev.right}/${prev.total}` : ""}</span>
+      <button class="tool" data-reset>重做</button>
+    </div>
+    ${t.quiz.map((q, i) => quizCard(q, i + 1)).join("")}
+    ${t.open.map((o, i) => openCard(o, t.quiz.length + i + 1)).join("")}`;
+  bindQuiz();
+  bindOpen();
+  bindScore(t);
+}
+
+function bindQuiz() {
+  $$("#testBody .qcard, #learnCard .qcard").forEach(card => {
+    const q = ALLQ[card.dataset.qid];
+    if (!q || !q.o) return;
+    const opts = $$(".opt", card);
+    opts.forEach(btn => {
+      btn.onclick = () => {
+        if (card.dataset.done) return;
+        card.dataset.done = "1";
+        const i = +btn.dataset.i;
+        const right = i === q.a;
+        opts.forEach((b, j) => {
+          if (j === q.a) b.classList.add("right");
+          else if (j === i) b.classList.add("wrong");
+          else b.classList.add("dim");
+        });
+        const exp = $(".exp", card);
+        exp.hidden = false;
+        exp.innerHTML = `<b>${right ? "✓ 答对了" : "✕ 正确答案 " + "ABCD"[q.a]}</b>${esc(q.exp)}`;
+        if (!right) { S.wrong[q._id] = 1; } else { delete S.wrong[q._id]; }
+        save();
+        const mk = $(".qmark", card);
+        if (mk) mk.textContent = right ? "✓" : "✕";
+        if (card.closest("#testBody")) updateScore();
+      };
+    });
+  });
+}
+
+function bindOpen() {
+  $$("#testBody .qcard").forEach(card => {
+    const ta = $("textarea[data-ans]", card);
+    if (ta) ta.oninput = () => { S.ans[card.dataset.qid] = ta.value; save(); };
+    const rev = $("[data-reveal]", card);
+    if (rev) rev.onclick = () => {
+      const ref = $(".ref", card);
+      ref.hidden = !ref.hidden;
+      rev.textContent = ref.hidden ? "查看参考答案" : "收起参考答案";
+    };
+  });
+}
+
+function updateScore() {
+  const pill = $("[data-score]");
+  if (!pill) return;
+  const cards = $$("#testBody .qcard").filter(c => c.dataset.done);
+  const right = cards.filter(c => $(".qmark", c) && $(".qmark", c).textContent === "✓").length;
+  const t = TESTS.find(x => x.id === curTestId);
+  if (t) {
+    pill.textContent = `已答 ${cards.length}/${t.quiz.length} · 正确 ${right}`;
+    S.scores[t.id] = { right, total: t.quiz.length };
+    save();
+  } else {
+    pill.textContent = `已答 ${cards.length} · 正确 ${right}`;
+  }
+}
+
+function bindScore(t) {
+  const pill = $("[data-score]");
+  if (pill) pill.textContent = `${t.quiz.length} 道选择 + ${t.open.length} 道主观题`;
+  const reset = $("[data-reset]");
+  if (reset) reset.onclick = () => { renderTest(); };
+}
+
+$("#testChips").addEventListener("click", e => {
+  const b = e.target.closest("[data-test]");
+  if (!b) return;
+  curTestId = b.dataset.test;
+  renderTest();
+});
+
+$("#methodGrid").addEventListener("click", e => {
+  const head = e.target.closest("[data-mhead]");
+  if (!head) return;
+  head.closest(".method").classList.toggle("open");
+});
+
+/* ========== 启动 ========== */
+paintProgress();
+renderMap();
+renderLearn();
+renderTest();
+switchView("map");
+
+</script>
+</body>
+</html>
